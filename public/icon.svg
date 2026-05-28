@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="body" x1="124" y1="120" x2="384" y2="432" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff7080"/>
+      <stop offset=".44" stop-color="#f8043d"/>
+      <stop offset="1" stop-color="#9a062b"/>
+    </linearGradient>
+    <linearGradient id="depth" x1="210" y1="160" x2="330" y2="424" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff244f" stop-opacity=".15"/>
+      <stop offset="1" stop-color="#620018" stop-opacity=".58"/>
+    </linearGradient>
+    <radialGradient id="softLight" cx="34%" cy="25%" r="58%">
+      <stop stop-color="#fff3f4" stop-opacity=".58"/>
+      <stop offset=".32" stop-color="#ff8d9a" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#ff8d9a" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-8%" width="140%" height="130%">
+      <feDropShadow dx="0" dy="24" stdDeviation="18" flood-color="#5b001d" flood-opacity=".32"/>
+    </filter>
+  </defs>
+  <path d="M256 430C178 370 97 314 97 222c0-68 51-116 111-100 20 5 38 20 48 39 10-19 28-34 48-39 60-16 111 32 111 100 0 92-81 148-159 208Z" fill="#65001d" opacity=".28" transform="translate(0 18)"/>
+  <path d="M256 421C178 361 97 305 97 214c0-66 51-113 111-97 20 6 38 20 48 39 10-19 28-33 48-39 60-16 111 31 111 97 0 91-81 147-159 207Z" fill="url(#body)" filter="url(#shadow)"/>
+  <path d="M256 421C178 361 97 305 97 214c0-66 51-113 111-97 20 6 38 20 48 39 10-19 28-33 48-39 60-16 111 31 111 97 0 91-81 147-159 207Z" fill="url(#softLight)"/>
+  <path d="M256 421C204 381 153 342 124 290c54 20 105 14 154-18 40-26 81-33 124-12-23 68-88 113-146 161Z" fill="url(#depth)" opacity=".68"/>
+  <path d="M158 214c11-41 46-61 82-48" fill="none" stroke="#fff7f8" stroke-width="15" stroke-linecap="round" opacity=".34"/>
+  <path d="M350 144c30 19 48 48 49 83" fill="none" stroke="#ffc5cd" stroke-width="8" stroke-linecap="round" opacity=".34"/>
+</svg>
