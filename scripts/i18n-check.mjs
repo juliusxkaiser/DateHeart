@@ -88,6 +88,12 @@ const allTags = [...new Set(dateIdeas.flatMap((idea) => idea.tags))].sort();
 const indianMarket = budgetMarketFor("en", { locales: ["en-IN"], timeZone: "Asia/Kolkata" });
 const indianBudget = formatBudgetLabel("Up to 40 EUR", "en", indianMarket);
 const indianNoAdsPrice = formatNoAdsPrice(indianMarket);
+const hindiIndianMarket = budgetMarketFor("hi", { locales: ["hi-IN"], timeZone: "Asia/Kolkata" });
+const hindiIndianBudget = formatBudgetLabel("Up to 40 EUR", "hi", hindiIndianMarket);
+const hindiIndianNoAdsPrice = formatNoAdsPrice(hindiIndianMarket);
+const arabicSaudiMarket = budgetMarketFor("ar", { locales: ["ar-SA"], timeZone: "Asia/Riyadh" });
+const arabicSaudiBudget = formatBudgetLabel("Up to 40 EUR", "ar", arabicSaudiMarket);
+const arabicSaudiNoAdsPrice = formatNoAdsPrice(arabicSaudiMarket);
 
 if (/EUR|€|\$/.test(indianBudget) || !/(₹|INR)/.test(indianBudget)) {
   errors.push(`Indian market budget must use INR, got: ${indianBudget}`);
@@ -95,6 +101,22 @@ if (/EUR|€|\$/.test(indianBudget) || !/(₹|INR)/.test(indianBudget)) {
 
 if (/EUR|€|\$/.test(indianNoAdsPrice) || !/(₹|INR)/.test(indianNoAdsPrice)) {
   errors.push(`Indian market no-ads price must use INR, got: ${indianNoAdsPrice}`);
+}
+
+if (/EUR|€|\$/.test(hindiIndianBudget) || !/(₹|INR)/.test(hindiIndianBudget)) {
+  errors.push(`Hindi Indian market budget must use INR, got: ${hindiIndianBudget}`);
+}
+
+if (/EUR|€|\$/.test(hindiIndianNoAdsPrice) || !/(₹|INR)/.test(hindiIndianNoAdsPrice)) {
+  errors.push(`Hindi Indian market no-ads price must use INR, got: ${hindiIndianNoAdsPrice}`);
+}
+
+if (/EUR|€|\$/.test(arabicSaudiBudget) || !/(ر\.س|SAR)/.test(arabicSaudiBudget)) {
+  errors.push(`Arabic Saudi market budget must use SAR, got: ${arabicSaudiBudget}`);
+}
+
+if (/EUR|€|\$/.test(arabicSaudiNoAdsPrice) || !/(ر\.س|SAR)/.test(arabicSaudiNoAdsPrice)) {
+  errors.push(`Arabic Saudi market no-ads price must use SAR, got: ${arabicSaudiNoAdsPrice}`);
 }
 
 for (const code of verifiedLanguageCodes) {
