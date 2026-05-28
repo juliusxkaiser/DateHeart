@@ -8,6 +8,7 @@ import {
   labelFor,
   languages,
   localizeIdea,
+  tagLabels,
   translations,
   verifiedLanguageCodes,
 } from "../src/i18n.ts";
@@ -60,30 +61,73 @@ for (const [code, translation] of Object.entries(translations)) {
   }
 }
 
+const englishResiduePatterns = [
+  /\bChoose a vibe\b/i,
+  /\bTap the heart\b/i,
+  /\bGet your next date cue\b/i,
+  /\bYour date idea\b/i,
+  /\bPrepare\b/i,
+  /\bSave\b/i,
+  /\bShare\b/i,
+  /\bNew idea\b/i,
+  /\bFilters\b/i,
+  /\bCategory\b/i,
+  /\bDuration\b/i,
+  /\bHistory\b/i,
+  /\bFavorites\b/i,
+  /\bLanguage\b/i,
+  /\bRemove ads\b/i,
+  /\bContinue\b/i,
+  /\b(Book|Choose|Bring|Keep|Make|Visit|Walk|Pick|Rent|Go|Take|Create|Prepare|Use|Find|Try|Build)\b/,
+];
+
+const allTags = [...new Set(dateIdeas.flatMap((idea) => idea.tags))].sort();
+
 for (const code of verifiedLanguageCodes) {
   for (const category of categories) {
     const label = labelFor("category", category, code);
-    if (!label || label === categoryLabels[code]?.[category]?.trim()) continue;
-    if (code !== "en" && !categoryLabels[code]?.[category]) errors.push(`${code} is missing category label ${category}.`);
+    if (!label || label.trim().length === 0) errors.push(`${code} has an empty category label for ${category}.`);
+    if (code !== "en" && (!categoryLabels[code]?.[category] || label === category)) {
+      errors.push(`${code} is missing category label ${category}.`);
+    }
   }
 
   for (const budget of budgets) {
     const label = labelFor("budget", budget, code);
-    if (!label || label === budgetLabels[code]?.[budget]?.trim()) continue;
-    if (code !== "en" && !budgetLabels[code]?.[budget]) errors.push(`${code} is missing budget label ${budget}.`);
+    if (!label || label.trim().length === 0) errors.push(`${code} has an empty budget label for ${budget}.`);
+    if (code !== "en" && (!budgetLabels[code]?.[budget] || label === budget)) {
+      errors.push(`${code} is missing budget label ${budget}.`);
+    }
   }
 
   for (const duration of durations) {
     const label = labelFor("duration", duration, code);
-    if (!label || label === durationLabels[code]?.[duration]?.trim()) continue;
-    if (code !== "en" && !durationLabels[code]?.[duration]) errors.push(`${code} is missing duration label ${duration}.`);
+    if (!label || label.trim().length === 0) errors.push(`${code} has an empty duration label for ${duration}.`);
+    if (code !== "en" && (!durationLabels[code]?.[duration] || label === duration)) {
+      errors.push(`${code} is missing duration label ${duration}.`);
+    }
   }
 
-  for (const idea of dateIdeas.slice(0, 250)) {
+  if (code !== "en") {
+    for (const tag of allTags) {
+      if (!tagLabels[code]?.[tag]) errors.push(`${code} is missing tag label ${tag}.`);
+    }
+  }
+
+  for (const idea of dateIdeas) {
     const localized = localizeIdea(idea, code);
     for (const field of ["title", "prompt", "prep"]) {
       if (!localized[field] || /undefined|null/.test(localized[field])) {
         errors.push(`${code} creates invalid ${field} for ${idea.id}.`);
+      }
+
+      if (code !== "en") {
+        for (const pattern of englishResiduePatterns) {
+          if (pattern.test(localized[field])) {
+            errors.push(`${code} still has English residue in ${field} for ${idea.id}: ${localized[field]}`);
+            break;
+          }
+        }
       }
     }
   }
@@ -100,7 +144,8 @@ console.log(
       verifiedLanguages: verifiedLanguageCodes.length,
       catalogLanguages: languages.length,
       iso6391Codes: iso6391LanguageCodes.length,
-      checkedIdeasPerLanguage: 250,
+      checkedIdeasPerLanguage: dateIdeas.length,
+      checkedTags: allTags.length,
     },
     null,
     2,

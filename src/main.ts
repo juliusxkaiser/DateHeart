@@ -107,8 +107,8 @@ app.innerHTML = `
     </main>
 
     <aside class="ad-banner" id="adBanner" aria-label="Ad" hidden>
-      <span>Ad</span>
-      <strong>Free app - reserved AdMob banner slot</strong>
+      <span id="adBannerLabel">Ad</span>
+      <strong id="adBannerText">Free app - reserved AdMob banner slot</strong>
     </aside>
   </div>
 
@@ -200,9 +200,9 @@ app.innerHTML = `
 
   <div class="ad-break" id="adBreak" hidden>
     <section class="ad-break-card" role="dialog" aria-modal="true" aria-labelledby="adBreakTitle">
-      <span>Ad</span>
+      <span id="adBreakLabel">Ad</span>
       <h2 id="adBreakTitle">Short ad moment</h2>
-      <p>This is the reserved interstitial placement for a later AdMob integration.</p>
+      <p id="adBreakBody">This is the reserved interstitial placement for a later AdMob integration.</p>
       <button class="primary-button wide" id="closeAdBreakButton" type="button" disabled>Continue</button>
     </section>
   </div>
@@ -256,7 +256,12 @@ const elements = {
   languageTitle: document.querySelector<HTMLHeadingElement>("#languageTitle")!,
   languageList: document.querySelector<HTMLDivElement>("#languageList")!,
   adBanner: document.querySelector<HTMLElement>("#adBanner")!,
+  adBannerLabel: document.querySelector<HTMLElement>("#adBannerLabel")!,
+  adBannerText: document.querySelector<HTMLElement>("#adBannerText")!,
   adBreak: document.querySelector<HTMLDivElement>("#adBreak")!,
+  adBreakLabel: document.querySelector<HTMLElement>("#adBreakLabel")!,
+  adBreakTitle: document.querySelector<HTMLHeadingElement>("#adBreakTitle")!,
+  adBreakBody: document.querySelector<HTMLParagraphElement>("#adBreakBody")!,
   closeAdBreakButton: document.querySelector<HTMLButtonElement>("#closeAdBreakButton")!,
 };
 
@@ -657,7 +662,7 @@ function showAdBreak() {
   stats = { ...stats, adBreaks: stats.adBreaks + 1 };
   saveJson(STORAGE_KEYS.stats, stats);
   elements.closeAdBreakButton.disabled = true;
-  elements.closeAdBreakButton.textContent = "Continue in 2";
+  elements.closeAdBreakButton.textContent = t.continueIn.replace("{seconds}", "2");
   elements.adBreak.hidden = false;
   elements.adBreak.classList.add("visible");
 
@@ -667,9 +672,9 @@ function showAdBreak() {
     if (remaining <= 0) {
       window.clearInterval(timer);
       elements.closeAdBreakButton.disabled = false;
-      elements.closeAdBreakButton.textContent = "Continue";
+      elements.closeAdBreakButton.textContent = t.continue;
     } else {
-      elements.closeAdBreakButton.textContent = `Continue in ${remaining}`;
+      elements.closeAdBreakButton.textContent = t.continueIn.replace("{seconds}", String(remaining));
     }
   }, 1000);
 }
@@ -778,6 +783,13 @@ function applyTranslations() {
   elements.purchaseBody.textContent = t.removeAdsBody;
   elements.buyNoAdsButton.textContent = noAdsPurchased ? t.noAdsPurchased : t.buyNoAds;
   elements.buyNoAdsButton.disabled = noAdsPurchased;
+  elements.adBanner.setAttribute("aria-label", t.adLabel);
+  elements.adBannerLabel.textContent = t.adLabel;
+  elements.adBannerText.textContent = t.adBanner;
+  elements.adBreakLabel.textContent = t.adLabel;
+  elements.adBreakTitle.textContent = t.adBreakTitle;
+  elements.adBreakBody.textContent = t.adBreakBody;
+  elements.closeAdBreakButton.textContent = elements.closeAdBreakButton.disabled ? t.continueIn.replace("{seconds}", "2") : t.continue;
   updateCounter();
 }
 

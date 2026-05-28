@@ -1,6 +1,6 @@
 import type { DateIdea } from "./dateIdeas";
 
-export type LanguageCode = "en" | "de";
+export type LanguageCode = "en" | "de" | "pl";
 
 export type LanguageOption = {
   code: string;
@@ -11,11 +11,12 @@ export type LanguageOption = {
   available: boolean;
 };
 
-export const verifiedLanguageCodes = ["en", "de"] as const satisfies readonly LanguageCode[];
+export const verifiedLanguageCodes = ["en", "de", "pl"] as const satisfies readonly LanguageCode[];
 
 const verifiedLanguageMeta: Record<LanguageCode, Pick<LanguageOption, "flag" | "name" | "nativeName">> = {
   en: { flag: "🇺🇸", name: "English", nativeName: "English" },
   de: { flag: "🇩🇪", name: "German", nativeName: "Deutsch" },
+  pl: { flag: "🇵🇱", name: "Polish", nativeName: "Polski" },
 };
 
 export const iso6391LanguageCodes = [
@@ -410,7 +411,7 @@ function displayName(code: string, locale: string) {
 }
 
 export function isLanguageCode(value: string | null | undefined): value is LanguageCode {
-  return value === "en" || value === "de";
+  return value === "en" || value === "de" || value === "pl";
 }
 
 export const languages: LanguageOption[] = iso6391LanguageCodes
@@ -464,6 +465,12 @@ type Translation = {
   aboutPoint1: string;
   aboutPoint2: string;
   aboutPoint3: string;
+  adLabel: string;
+  adBanner: string;
+  adBreakTitle: string;
+  adBreakBody: string;
+  continue: string;
+  continueIn: string;
   close: string;
 };
 
@@ -500,6 +507,12 @@ export const translations: Record<LanguageCode, Translation> = {
     aboutPoint1: "Practical date ideas",
     aboutPoint2: "Favorites and history",
     aboutPoint3: "Free app concept",
+    adLabel: "Ad",
+    adBanner: "Free app - reserved AdMob banner slot",
+    adBreakTitle: "Short ad moment",
+    adBreakBody: "This is the reserved interstitial placement for a later AdMob integration.",
+    continue: "Continue",
+    continueIn: "Continue in {seconds}",
     close: "Close",
   },
   de: {
@@ -534,7 +547,53 @@ export const translations: Record<LanguageCode, Translation> = {
     aboutPoint1: "Praktische Date-Ideen",
     aboutPoint2: "Favoriten und Verlauf",
     aboutPoint3: "Kostenloses App-Konzept",
+    adLabel: "Anzeige",
+    adBanner: "Kostenlose App - reservierter AdMob-Bannerplatz",
+    adBreakTitle: "Kurzer Werbemoment",
+    adBreakBody: "Dies ist der reservierte Interstitial-Platz für eine spätere AdMob-Integration.",
+    continue: "Weiter",
+    continueIn: "Weiter in {seconds}",
     close: "Schließen",
+  },
+  pl: {
+    ready: "Wybierz nastrój",
+    tapCopy: "Dotknij serca i wylosuj pomysł na randkę.",
+    resultLabel: "Wasz pomysł na randkę:",
+    prep: "Przygotowanie",
+    save: "Zapisz",
+    saved: "Zapisano",
+    share: "Udostępnij",
+    copied: "Skopiowano",
+    next: "Nowy pomysł",
+    filters: "Filtry",
+    removeAds: "Bez reklam",
+    removeAdsTitle: "DateHeart bez reklam",
+    removeAdsBody: "Usuń przyszłe miejsca reklamowe w DateHeart jednorazowym zakupem.",
+    buyNoAds: "Kup za 4,99 EUR",
+    noAdsPurchased: "Kupione",
+    category: "Kategoria",
+    budget: "Budżet",
+    duration: "Czas trwania",
+    all: "Wszystkie",
+    reset: "Pokaż wszystkie pomysły",
+    history: "Historia",
+    favorites: "Ulubione",
+    emptyHistory: "Nie wylosowano jeszcze żadnego pomysłu na randkę.",
+    emptyFavorites: "Nie zapisano jeszcze żadnego pomysłu.",
+    language: "Język",
+    about: "Informacje",
+    aboutTitle: "Czym jest DateHeart?",
+    aboutBody: "DateHeart daje parom praktyczne pomysły na randki jednym dotknięciem. Wybierz język, nastrój, budżet i czas, a potem zapisz pomysły, które naprawdę chcecie zrealizować.",
+    aboutPoint1: "Praktyczne pomysły na randki",
+    aboutPoint2: "Ulubione i historia",
+    aboutPoint3: "Koncepcja darmowej aplikacji",
+    adLabel: "Reklama",
+    adBanner: "Darmowa aplikacja - zarezerwowane miejsce na baner AdMob",
+    adBreakTitle: "Krótki moment reklamowy",
+    adBreakBody: "To zarezerwowane miejsce na reklamę pełnoekranową dla późniejszej integracji AdMob.",
+    continue: "Kontynuuj",
+    continueIn: "Kontynuuj za {seconds}",
+    close: "Zamknij",
   },
 };
 
@@ -552,6 +611,18 @@ export const categoryLabels: Record<LanguageCode, Partial<Record<string, string>
     "Rainy Day": "Regen",
     Seasonal: "Saisonal",
   },
+  pl: {
+    Home: "W domu",
+    Outdoors: "Na zewnątrz",
+    Food: "Jedzenie",
+    Creative: "Kreatywne",
+    Movement: "Ruch",
+    "Mini Adventure": "Mała przygoda",
+    Culture: "Kultura",
+    "Deep Talk": "Głębsza rozmowa",
+    "Rainy Day": "Deszczowy dzień",
+    Seasonal: "Sezonowe",
+  },
 };
 
 export const budgetLabels: Record<LanguageCode, Partial<Record<string, string>>> = {
@@ -562,6 +633,13 @@ export const budgetLabels: Record<LanguageCode, Partial<Record<string, string>>>
     "Up to 40 EUR": "bis 40 EUR",
     "Up to 100 EUR": "bis 100 EUR",
     Unlimited: "unbegrenzt",
+  },
+  pl: {
+    Free: "bezpłatnie",
+    "Up to 15 EUR": "do 15 EUR",
+    "Up to 40 EUR": "do 40 EUR",
+    "Up to 100 EUR": "do 100 EUR",
+    Unlimited: "bez limitu",
   },
 };
 
@@ -574,9 +652,17 @@ export const durationLabels: Record<LanguageCode, Partial<Record<string, string>
     "Half day": "halber Tag",
     Evening: "Abend",
   },
+  pl: {
+    "30 min": "30 minut",
+    "60-90 min": "60-90 minut",
+    "2-3 hours": "2-3 godziny",
+    "Half day": "pół dnia",
+    Evening: "wieczór",
+  },
 };
 
 const deTags: Record<string, string> = {
+  adventure: "Abenteuer",
   analog: "analog",
   anniversary: "Jahrestag",
   appreciation: "Wertschätzung",
@@ -585,12 +671,15 @@ const deTags: Record<string, string> = {
   arcade: "Arcade",
   archery: "Bogenschießen",
   aquarium: "Aquarium",
+  bar: "Bar",
   bike: "Radfahren",
   books: "Bücher",
   bowling: "Bowling",
   breakfast: "Frühstück",
   building: "Bauen",
   budget: "Budget",
+  cafe: "Café",
+  calm: "ruhig",
   care: "achtsam",
   canoe: "Kanu",
   city: "Stadt",
@@ -606,6 +695,7 @@ const deTags: Record<string, string> = {
   craft: "Basteln",
   creative: "kreativ",
   culture: "Kultur",
+  dance: "Tanz",
   deep: "tiefgehend",
   design: "Design",
   dinner: "Dinner",
@@ -614,6 +704,7 @@ const deTags: Record<string, string> = {
   easy: "leicht",
   explore: "erkunden",
   film: "Film",
+  flowers: "Blumen",
   focus: "Fokus",
   food: "Essen",
   fun: "lustig",
@@ -628,20 +719,29 @@ const deTags: Record<string, string> = {
   jump: "Springen",
   karaoke: "Karaoke",
   kindness: "hilfsbereit",
+  learn: "lernen",
+  literary: "literarisch",
+  local: "lokal",
   luxury: "besonders",
   market: "Markt",
   minigolf: "Minigolf",
   memory: "Erinnerung",
   mindful: "achtsam",
   morning: "Morgen",
+  movement: "Bewegung",
   movie: "Film",
+  museum: "Museum",
   music: "Musik",
+  mystery: "Rätsel",
   nature: "Natur",
+  new: "neu",
   night: "Nacht",
   offline: "offline",
   outdoors: "draußen",
   park: "Park",
   personal: "persönlich",
+  paint: "Malen",
+  pasta: "Pasta",
   photo: "Foto",
   picnic: "Picknick",
   plant: "Pflanzen",
@@ -656,14 +756,20 @@ const deTags: Record<string, string> = {
   reading: "Lesen",
   relationship: "Beziehung",
   relax: "Entspannung",
+  restaurant: "Restaurant",
   romantic: "romantisch",
   safe: "sicher",
+  scent: "Duft",
   seasonal: "saisonal",
   sharing: "teilen",
   short: "kurz",
+  skating: "Skaten",
   slow: "entschleunigt",
+  spa: "Spa",
   sport: "sportlich",
   spring: "Frühling",
+  stage: "Bühne",
+  stars: "Sterne",
   story: "Geschichte",
   streetart: "Streetart",
   streetfood: "Streetfood",
@@ -675,6 +781,7 @@ const deTags: Record<string, string> = {
   talk: "Gespräch",
   taste: "Geschmack",
   team: "Team",
+  travel: "Reise",
   trip: "Ausflug",
   treasure: "Schatzsuche",
   workshop: "Workshop",
@@ -687,6 +794,146 @@ const deTags: Record<string, string> = {
   wind: "Wind",
   winter: "Winter",
   writing: "Schreiben",
+};
+
+const plTags: Record<string, string> = {
+  adventure: "przygoda",
+  analog: "analogowo",
+  anniversary: "rocznica",
+  appreciation: "docenienie",
+  aquarium: "akwarium",
+  arcade: "salon gier",
+  archery: "łucznictwo",
+  art: "sztuka",
+  autumn: "jesień",
+  bar: "bar",
+  bike: "rower",
+  books: "książki",
+  bowling: "kręgle",
+  breakfast: "śniadanie",
+  budget: "budżet",
+  building: "budowanie",
+  cafe: "kawiarnia",
+  calm: "spokój",
+  canoe: "kajak",
+  care: "troska",
+  city: "miasto",
+  clarity: "jasność",
+  classic: "klasycznie",
+  clay: "plastelina",
+  climbing: "wspinaczka",
+  close: "bliskość",
+  coffee: "kawa",
+  comedy: "komedia",
+  cooking: "gotowanie",
+  cozy: "przytulnie",
+  craft: "rękodzieło",
+  creative: "kreatywnie",
+  culture: "kultura",
+  dance: "taniec",
+  deep: "głębiej",
+  design: "design",
+  dinner: "kolacja",
+  discover: "odkrywanie",
+  drink: "napój",
+  easy: "łatwo",
+  explore: "eksploracja",
+  film: "film",
+  flowers: "kwiaty",
+  focus: "skupienie",
+  food: "jedzenie",
+  fun: "zabawa",
+  future: "przyszłość",
+  game: "gra",
+  garden: "ogród",
+  gift: "prezent",
+  "hands-on": "praktycznie",
+  history: "historia",
+  home: "dom",
+  ice: "lód",
+  jump: "skakanie",
+  karaoke: "karaoke",
+  kindness: "życzliwość",
+  learn: "nauka",
+  literary: "literacko",
+  local: "lokalnie",
+  luxury: "wyjątkowo",
+  market: "targ",
+  memory: "wspomnienie",
+  mindful: "uważnie",
+  minigolf: "minigolf",
+  morning: "poranek",
+  movement: "ruch",
+  movie: "film",
+  museum: "muzeum",
+  music: "muzyka",
+  mystery: "zagadka",
+  nature: "natura",
+  new: "nowe",
+  night: "noc",
+  offline: "offline",
+  outdoors: "na zewnątrz",
+  paint: "malowanie",
+  park: "park",
+  pasta: "makaron",
+  personal: "osobiście",
+  photo: "zdjęcie",
+  picnic: "piknik",
+  planning: "planowanie",
+  plant: "rośliny",
+  playful: "zabawnie",
+  pottery: "ceramika",
+  premium: "premium",
+  puzzle: "łamigłówka",
+  quiet: "cisza",
+  rain: "deszcz",
+  random: "spontanicznie",
+  reading: "czytanie",
+  relationship: "relacja",
+  relax: "relaks",
+  restaurant: "restauracja",
+  romantic: "romantycznie",
+  safe: "bezpiecznie",
+  scent: "zapach",
+  seasonal: "sezonowo",
+  sharing: "dzielenie się",
+  short: "krótko",
+  skating: "rolki",
+  slow: "powoli",
+  spa: "spa",
+  sport: "sport",
+  spring: "wiosna",
+  stage: "scena",
+  stars: "gwiazdy",
+  story: "historia",
+  streetart: "street art",
+  streetfood: "street food",
+  style: "styl",
+  summer: "lato",
+  sunset: "zachód słońca",
+  surprise: "niespodzianka",
+  sushi: "sushi",
+  sweet: "słodko",
+  talk: "rozmowa",
+  taste: "smak",
+  team: "zespół",
+  travel: "podróż",
+  treasure: "poszukiwanie skarbu",
+  trip: "wycieczka",
+  view: "widok",
+  walk: "spacer",
+  warm: "ciepło",
+  water: "woda",
+  weatherproof: "na każdą pogodę",
+  wind: "wiatr",
+  winter: "zima",
+  workshop: "warsztat",
+  writing: "pisanie",
+};
+
+export const tagLabels: Record<Exclude<LanguageCode, "en">, Record<string, string>> = {
+  de: deTags,
+  pl: plTags,
 };
 
 const deSpecificActivities: Record<string, { title: string; prompt: string; prep: string }> = {
@@ -842,6 +1089,159 @@ const deSpecificActivities: Record<string, { title: string; prompt: string; prep
   },
 };
 
+const plSpecificActivities: Record<string, { title: string; prompt: string; prep: string }> = {
+  "air-dry-clay-portraits": {
+    title: "Małe portrety z gliny",
+    prompt: "Kupcie glinę samoutwardzalną albo masę plastyczną i ulepcie dla siebie małą postać, zwierzę albo symbol.",
+    prep: "Przygotujcie glinę lub masę plastyczną, podkładkę i wilgotną ściereczkę",
+  },
+  "knete-character-duel": {
+    title: "Figurki z plasteliny",
+    prompt: "Ulepcie siebie nawzajem jako małe postacie z plasteliny i celowo podkreślcie trzy charakterystyczne detale.",
+    prep: "Przygotujcie plastelinę, minutnik i tackę",
+  },
+  "pottery-painting-studio": {
+    title: "Malowanie ceramiki",
+    prompt: "Zarezerwujcie miejsce w pracowni ceramiki i pomalujcie kubki, talerze albo miski, których naprawdę będziecie używać.",
+    prep: "Zarezerwujcie pracownię i wymyślcie prosty motyw",
+  },
+  "canoe-ride": {
+    title: "Spływ kajakiem",
+    prompt: "Wypożyczcie kajak i przepłyńcie spokojną trasę z zaplanowanym postojem na przekąskę przy brzegu.",
+    prep: "Sprawdźcie wypożyczalnię kajaków, suchy worek, wodę i zapasową koszulkę",
+  },
+  "pedal-boat-date": {
+    title: "Randka na rowerku wodnym",
+    prompt: "Wypożyczcie rowerek wodny i zabierzcie napój albo małą przekąskę na środek jeziora.",
+    prep: "Sprawdźcie wypożyczalnię rowerków wodnych i pogodę",
+  },
+  "stand-up-paddle-tryout": {
+    title: "Próba pływania na desce",
+    prompt: "Wypożyczcie deski z wiosłem albo zarezerwujcie termin dla początkujących; cel jest prosty: utrzymać się i dobrze się bawić.",
+    prep: "Sprawdźcie wypożyczalnię desek, stroje kąpielowe i ręczniki",
+  },
+  "geocaching-hunt": {
+    title: "Poszukiwanie skarbów geocaching",
+    prompt: "Znajdźcie trzy pobliskie skrytki geocachingowe i wpiszcie się razem do logbooka.",
+    prep: "Przygotujcie aplikację geocachingową, długopis i mały przedmiot na wymianę",
+  },
+  "kite-flying-field": {
+    title: "Puszczanie latawca",
+    prompt: "Kupcie albo pożyczcie latawiec i sprawdźcie go na otwartej łące albo przy plaży.",
+    prep: "Przygotujcie latawiec i sprawdźcie wiatr",
+  },
+  "restaurant-roulette": {
+    title: "Restauracyjna ruletka",
+    prompt: "Wybierzcie trzy restauracje, które naprawdę pasują do budżetu, rzućcie kostką i zarezerwujcie zwycięskie miejsce.",
+    prep: "Przygotujcie trzy opcje restauracji i możliwość rezerwacji",
+  },
+  "sushi-rolling-class": {
+    title: "Robienie sushi",
+    prompt: "Zarezerwujcie kurs sushi albo zróbcie sushi w domu z matą bambusową i prostymi dodatkami.",
+    prep: "Przygotujcie kurs albo zestaw do sushi, ryż, dodatki i sos sojowy",
+  },
+  "dumpling-folding-night": {
+    title: "Lepienie pierożków",
+    prompt: "Lepcie razem pierożki, porównajcie kształty i od razu je ugotujcie albo usmażcie.",
+    prep: "Przygotujcie ciasto lub gotowe krążki, farsz i sos",
+  },
+  "pasta-from-scratch": {
+    title: "Makaron od zera",
+    prompt: "Zróbcie świeże ciasto na makaron, rozwałkujcie je ręcznie i podajcie z prostym sosem.",
+    prep: "Przygotujcie mąkę, jajka i składniki na sos",
+  },
+  "escape-room": {
+    title: "Pokój zagadek",
+    prompt: "Zarezerwujcie pokój zagadek na odpowiednim poziomie i grajcie jako zespół, nie przeciwko sobie.",
+    prep: "Zarezerwujcie pokój zagadek i zaplanujcie punktualny dojazd",
+  },
+  "arcade-token-night": {
+    title: "Wieczór w salonie gier",
+    prompt: "Ustalcie budżet na żetony i zagrajcie w air hockey, wyścigi, automat z chwytakiem oraz jedną absurdalną grę.",
+    prep: "Wybierzcie salon gier i budżet na żetony",
+  },
+  "bowling-lane-date": {
+    title: "Randka na kręglach",
+    prompt: "Zarezerwujcie tor do kręgli i nadajcie każdej rundzie inną zasadę.",
+    prep: "Zarezerwujcie tor i spakujcie skarpetki",
+  },
+  "trampoline-park": {
+    title: "Park trampolin",
+    prompt: "Zarezerwujcie godzinę w parku trampolin i zakończcie randkę napojem na spokojne zejście z emocji.",
+    prep: "Zarezerwujcie wejście i weźcie sportowe ubrania",
+  },
+  "ice-skating": {
+    title: "Łyżwy",
+    prompt: "Idźcie na łyżwy i ustawcie sobie cel: jedno pełne okrążenie za rękę.",
+    prep: "Sprawdźcie godziny lodowiska, rękawiczki i wypożyczalnię łyżew",
+  },
+  "salsa-trial-class": {
+    title: "Próbna lekcja salsy",
+    prompt: "Zarezerwujcie lekcję dla początkujących z salsy, bachaty albo swingu i pójdźcie potem na napój.",
+    prep: "Zarezerwujcie lekcję tańca i wybierzcie wygodne buty",
+  },
+  "aquarium-slow-walk": {
+    title: "Powolny spacer po akwarium",
+    prompt: "Odwiedźcie akwarium i wybierzcie zwierzę, które najlepiej pasuje do waszego nastroju.",
+    prep: "Sprawdźcie bilety i godziny otwarcia",
+  },
+  "planetarium-show": {
+    title: "Planetarium",
+    prompt: "Zarezerwujcie pokaz w planetarium i porozmawiajcie potem o tym, dokąd chcielibyście razem pojechać.",
+    prep: "Kupcie bilety do planetarium",
+  },
+  "comedy-night": {
+    title: "Wieczór komediowy",
+    prompt: "Zarezerwujcie mały występ komediowy i wybierzcie po nim żart, który zostanie waszym prywatnym żartem.",
+    prep: "Sprawdźcie bilety i godzinę występu",
+  },
+  "jazz-bar": {
+    title: "Bar jazzowy",
+    prompt: "Idźcie do małego baru jazzowego albo miejsca z muzyką na żywo i zostańcie przynajmniej na jeden cały set.",
+    prep: "Zarezerwujcie stolik albo bilety",
+  },
+  "karaoke-booth": {
+    title: "Prywatny pokój karaoke",
+    prompt: "Wynajmijcie prywatny pokój karaoke i wybierzcie po trzy piosenki: bezpieczną, odważną i kompletnie głupią.",
+    prep: "Zarezerwujcie karaoke i przygotujcie listę piosenek",
+  },
+  "flea-market-mission": {
+    title: "Misja na pchlim targu",
+    prompt: "Idźcie na pchli targ i kupcie drugiej osobie najlepszy mały przedmiot poniżej ustalonej ceny.",
+    prep: "Weźcie gotówkę, sprawdźcie godziny targu i ustalcie budżet",
+  },
+  "ikea-showroom-date": {
+    title: "Randka w showroomie",
+    prompt: "Przejdźcie przez sklep meblowy i zaprojektujcie fikcyjne mieszkanie dla waszej przyszłej wersji.",
+    prep: "Zaplanujcie trasę i przerwę na przekąskę",
+  },
+  "photo-booth-hunt": {
+    title: "Polowanie na fotobudkę",
+    prompt: "Znajdźcie starą fotobudkę i zróbcie jeden poważny oraz jeden kompletnie absurdalny pasek zdjęć.",
+    prep: "Znajdźcie fotobudkę i weźcie drobne",
+  },
+  "board-game-cafe": {
+    title: "Kawiarnia z planszówkami",
+    prompt: "Idźcie do kawiarni z grami planszowymi i poproście o polecenie gry kooperacyjnej.",
+    prep: "Sprawdźcie godziny kawiarni albo zróbcie rezerwację",
+  },
+  "indoor-mini-golf": {
+    title: "Minigolf pod dachem",
+    prompt: "Zagrajcie w minigolfa pod dachem albo w fluorescencyjną wersję i zamieńcie każdy dołek w małe wyzwanie.",
+    prep: "Zarezerwujcie wejście i załóżcie wygodne buty",
+  },
+  "strawberry-picking": {
+    title: "Zbieranie truskawek",
+    prompt: "Idźcie zbierać truskawki, jabłka, jagody albo kwiaty i zróbcie później z nich deser.",
+    prep: "Sprawdźcie godziny gospodarstwa i pojemniki",
+  },
+  "outdoor-cinema-blanket-night": {
+    title: "Kino plenerowe",
+    prompt: "Idźcie do kina plenerowego i weźcie koc, przekąski oraz coś cieplejszego do ubrania.",
+    prep: "Przygotujcie bilety, koc i przekąski",
+  },
+};
+
 type GermanTemplateSet = {
   titles: string[];
   prompts: string[];
@@ -951,6 +1351,135 @@ const germanIdeaTemplates: Record<string, GermanTemplateSet> = {
   },
 };
 
+const polishIdeaTemplates: Record<string, GermanTemplateSet> = {
+  Home: {
+    titles: ["Randka w domu z motywem: {mood}", "Domowy moment we dwoje", "Przytulna randka w domu", "Mały rytuał domowy"],
+    prompts: [
+      "Zadbajcie o domowy klimat: przygaście światło, przygotujcie coś małego i dajcie sobie czas bez rozpraszaczy.",
+      "Zmieńcie zwykły wieczór w randkę z jedną konkretną akcją i spokojnym wspólnym zakończeniem.",
+      "Zostańcie w domu, ale ustawcie wyjątkową oprawę: stół, koc, muzyka albo krótka gra w zupełności wystarczą.",
+      "Potraktujcie dom jak miejsce randki i dodajcie moment, o którym będziecie chcieli później porozmawiać.",
+    ],
+    prep: ["Przygotujcie światło, napój i małą aktywność", "Odłóżcie telefony i stwórzcie przytulne miejsce", "Przygotujcie muzykę, przekąskę i 30 minut bez przerw"],
+  },
+  Outdoors: {
+    titles: ["Randka na zewnątrz z motywem: {mood}", "Spacer z konkretnym celem", "Moment świeżego powietrza", "Mała wyprawa na zewnątrz"],
+    prompts: [
+      "Wyjdźcie razem i dajcie trasie cel: ładny widok, spokojne miejsce albo punkt, którego zwykle nie zauważacie.",
+      "Zróbcie ze spaceru randkę, dodając po drodze małe zadanie, jedno zdjęcie albo pytanie.",
+      "Wybierzcie bezpieczną trasę i idźcie na tyle wolno, żeby rozmowa nie była tylko dodatkiem.",
+      "Pozwólcie pogodzie i okolicy stać się częścią randki, a dopiero po drodze zdecydujcie, gdzie się zatrzymać.",
+    ],
+    prep: ["Sprawdźcie trasę, pogodę i wygodne buty", "Weźcie napój i ustalcie punkt spotkania", "Przygotujcie kurtkę, wodę i jedno dobre pytanie"],
+  },
+  Food: {
+    titles: ["Randka kulinarna z motywem: {mood}", "Smakowy moment we dwoje", "Mała randka z jedzeniem", "Wspólne próbowanie"],
+    prompts: [
+      "Zbudujcie randkę wokół jedzenia: gotowania, dzielenia się, próbowania albo miejsca, którego jeszcze nie znacie.",
+      "Wybierzcie coś, czego rzadko próbujecie, i zróbcie z tego świadome wspólne doświadczenie smakowe.",
+      "Podzielcie się kilkoma małymi rzeczami zamiast jedną dużą porcją i na koniec wybierzcie zwycięzcę.",
+      "Niech jedzenie stanie się początkiem rozmowy: co wam przypomina, co w nim lubicie i co byście zmienili?",
+    ],
+    prep: ["Sprawdźcie składniki, rezerwację albo godziny otwarcia", "Ustalcie budżet i przygotujcie dwie opcje", "Przygotujcie serwetki, napój i małą niespodziankę"],
+  },
+  Creative: {
+    titles: ["Kreatywna randka z motywem: {mood}", "Wspólne tworzenie", "Mini projekt dla dwojga", "Kreatywny moment"],
+    prompts: [
+      "Stwórzcie razem coś małego, co można zachować, sfotografować albo później rozwinąć.",
+      "Ustalcie prosty kreatywny cel i wyrzućcie perfekcję z planu: najważniejsze, że robicie to razem.",
+      "Użyjcie papieru, aparatu, muzyki albo prostych materiałów i nadajcie efektowi nazwę.",
+      "Zamieńcie pomysł w mini projekt, który po randce zostanie widoczny.",
+    ],
+    prep: ["Przygotujcie papier, długopisy albo aparat", "Zbierzcie materiały i prostą inspirację", "Ustawcie minutnik i nie oceniajcie efektu"],
+  },
+  Movement: {
+    titles: ["Aktywna randka z motywem: {mood}", "Ruch we dwoje", "Zabawa w ruchu", "Randka bez presji wyniku"],
+    prompts: [
+      "Poruszajcie się razem bez robienia z tego zawodów: liczy się energia, śmiech i dobre uczucie po wszystkim.",
+      "Wybierzcie aktywność, w której jesteście obok siebie albo współpracujecie, zamiast rywalizować.",
+      "Dodajcie małe wyzwanie, ale tak lekkie, żeby nadal dawało frajdę.",
+      "Niech ruch pomoże wam oczyścić głowę, a potem zaplanujcie krótkie wspólne wyciszenie.",
+    ],
+    prep: ["Przygotujcie wygodne ubranie, wodę i bezpieczną trasę", "Ustalcie małe wyzwanie i podejdźcie do niego lekko", "Sprawdźcie miejsce, pogodę i sprzęt"],
+  },
+  "Mini Adventure": {
+    titles: ["Mała przygoda z motywem: {mood}", "Krótka ucieczka od rutyny", "Spontaniczny moment dla pary", "Randka odkrywcza"],
+    prompts: [
+      "Wybierzcie mały cel, który będzie dla was czymś nowym, bez komplikowania całego dnia.",
+      "Zróbcie coś blisko was, co zwykle pomijacie, i potraktujcie to jak mini wakacje.",
+      "Niech jedna osoba wybierze początek, a druga zakończenie, żeby randka miała element zaskoczenia.",
+      "Wyjdźcie na chwilę poza rutynę i zbierzcie małą historię, która będzie należeć tylko do tej randki.",
+    ],
+    prep: ["Ustalcie trasę, bilet albo drogę powrotną", "Określcie budżet i ramy czasowe", "Przygotujcie niespodziankę i plan B"],
+  },
+  Culture: {
+    titles: ["Randka kulturalna z motywem: {mood}", "Wspólne odkrywanie", "Mały wieczór z kulturą", "Inspiracja dla dwojga"],
+    prompts: [
+      "Odwiedźcie miejsce, wydarzenie albo dzieło i porozmawiajcie potem o tym, co zostało wam w głowie.",
+      "Zaplanujcie mniej i patrzcie uważniej: każda osoba wybiera jeden moment, który coś w niej poruszył.",
+      "Nie róbcie z kultury sztywnego obowiązku, tylko coś osobistego: co byście zabrali, polecili albo zapamiętali?",
+      "Znajdźcie małe wydarzenie kulturalne i połączcie je ze spokojnym zakończeniem we dwoje.",
+    ],
+    prep: ["Sprawdźcie godziny, bilety albo program", "Przygotujcie jedno pytanie na później", "Zaplanujcie dojazd i spokojny finał"],
+  },
+  "Deep Talk": {
+    titles: ["Randka z głębszą rozmową: {mood}", "Szczera rozmowa we dwoje", "Sprawdzenie relacji bez presji", "Spokojny moment o przyszłości"],
+    prompts: [
+      "Dajcie sobie czas na prawdziwą rozmowę i zostańcie przy jednym pytaniu, zamiast rozwiązywać wszystko naraz.",
+      "Porozmawiajcie o życzeniach, wspomnieniach albo przyszłości, ale nie zmieniajcie tego w naradę problemową.",
+      "Wybierzcie spokojne miejsce i zakończcie rozmowę jednym konkretnym małym życzeniem dla siebie nawzajem.",
+      "Budujcie bliskość świadomie: słuchajcie, dopytujcie, nie przerywajcie i na końcu nazwijcie coś dobrego.",
+    ],
+    prep: ["Wybierzcie dobre pytanie i spokojne miejsce", "Odłóżcie telefony i zostawcie sobie wystarczająco dużo czasu", "Przygotujcie notatkę albo wspólny rytuał na koniec"],
+  },
+  "Rainy Day": {
+    titles: ["Deszczowa randka z motywem: {mood}", "Randka odporna na pogodę", "Przytulny deszczowy dzień", "Ładny plan pod dachem"],
+    prompts: [
+      "Nie traktujcie złej pogody jak przeszkody, tylko jako część randki: ciepło, powoli i świadomie.",
+      "Wybierzcie suchą, przytulną opcję i dodajcie jeden wspólny punkt skupienia.",
+      "Niech deszcz będzie pretekstem do czegoś spokojnego, ciepłego albo kreatywnego we dwoje.",
+      "Zostańcie elastyczni i wybierzcie randkę, która działa naprawdę dobrze nawet bez słońca.",
+    ],
+    prep: ["Przygotujcie parasol, ciepłe napoje albo przytulne miejsce", "Zaplanujcie opcję pod dachem i małą aktywność", "Sprawdźcie pogodę i przygotujcie ciepłe ubranie"],
+  },
+  Seasonal: {
+    titles: ["Randka sezonowa z motywem: {mood}", "Moment tej pory roku", "Sezonowa randka dla dwojga", "Randka teraz albo nigdy"],
+    prompts: [
+      "Wykorzystajcie aktualną porę roku: kolory, światło, jedzenie, pogodę albo małe wydarzenia.",
+      "Wybierzcie coś, co naprawdę pasuje właśnie teraz, i zróbcie z tego wspólny moment.",
+      "Połączcie porę roku ze wspomnieniem, zdjęciem albo małym rytuałem.",
+      "Zaplanujcie randkę, która pasuje do nastroju za oknem, ale nadal jest prosta do zrealizowania.",
+    ],
+    prep: ["Sprawdźcie pogodę, sezonową ofertę albo godziny wydarzenia", "Przygotujcie ubranie i jedno pamiątkowe zdjęcie", "Zaplanujcie mały sezonowy dodatek"],
+  },
+};
+
+const localizedIdeaPacks: Record<Exclude<LanguageCode, "en">, {
+  tags: Record<string, string>;
+  specificActivities: Record<string, { title: string; prompt: string; prep: string }>;
+  templates: Record<string, GermanTemplateSet>;
+  fallbackMood: string;
+  durationLabel: string;
+  budgetLabel: string;
+}> = {
+  de: {
+    tags: deTags,
+    specificActivities: deSpecificActivities,
+    templates: germanIdeaTemplates,
+    fallbackMood: "gemeinsam",
+    durationLabel: "Dauer",
+    budgetLabel: "Budget",
+  },
+  pl: {
+    tags: plTags,
+    specificActivities: plSpecificActivities,
+    templates: polishIdeaTemplates,
+    fallbackMood: "razem",
+    durationLabel: "Czas",
+    budgetLabel: "Budżet",
+  },
+};
+
 export function labelFor(
   kind: "category" | "budget" | "duration",
   value: string,
@@ -963,25 +1492,26 @@ export function labelFor(
 export function localizeIdea(idea: DateIdea, language: LanguageCode): DateIdea {
   if (language === "en") return idea;
 
+  const pack = localizedIdeaPacks[language];
   const index = Number.parseInt(idea.id.replace(/\D/g, ""), 10) || 1;
-  const templates = germanIdeaTemplates[idea.category] ?? germanIdeaTemplates.Home;
-  const tags = idea.tags.map((tag) => deTags[tag] ?? tag.toLowerCase()).slice(0, 4);
-  const specific = deSpecificActivities[idea.family];
+  const templates = pack.templates[idea.category] ?? pack.templates.Home;
+  const tags = idea.tags.map((tag) => pack.tags[tag] ?? tag.toLowerCase()).slice(0, 4);
+  const specific = pack.specificActivities[idea.family];
 
   if (specific) {
     return {
       ...idea,
       title: specific.title,
       prompt: specific.prompt,
-      prep: `${specific.prep}. Dauer: ${labelFor("duration", idea.duration, "de")}. Budget: ${labelFor("budget", idea.budget, "de")}.`,
+      prep: `${specific.prep}. ${pack.durationLabel}: ${labelFor("duration", idea.duration, language)}. ${pack.budgetLabel}: ${labelFor("budget", idea.budget, language)}.`,
       tags,
     };
   }
 
-  const mood = tags[0] ?? "gemeinsam";
+  const mood = tags[0] ?? pack.fallbackMood;
   const title = templates.titles[index % templates.titles.length].replace("{mood}", mood);
   const prompt = templates.prompts[(index + 1) % templates.prompts.length];
-  const prep = `${templates.prep[(index + 2) % templates.prep.length]}. Dauer: ${labelFor("duration", idea.duration, "de")}. Budget: ${labelFor("budget", idea.budget, "de")}.`;
+  const prep = `${templates.prep[(index + 2) % templates.prep.length]}. ${pack.durationLabel}: ${labelFor("duration", idea.duration, language)}. ${pack.budgetLabel}: ${labelFor("budget", idea.budget, language)}.`;
 
   return {
     ...idea,
