@@ -649,6 +649,15 @@ button:focus-visible {
   background: #fff0f3;
 }
 
+.language-row.unavailable {
+  cursor: default;
+  opacity: 0.48;
+}
+
+.language-row.unavailable .language-flag {
+  background: #f4edf0;
+}
+
 :root[dir="rtl"] .result-card,
 :root[dir="rtl"] .panel-card,
 :root[dir="rtl"] .idea-row,

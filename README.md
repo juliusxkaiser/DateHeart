@@ -10,6 +10,7 @@ Free date-cue app for couples with a red animated 3D heart. The core interaction
 - Filter nach Kategorie, Budget und Dauer, inklusive `Unbegrenzt`
 - Getrennte Bereiche fuer History und Favorites
 - Info-Tafel ohne Date-Metadaten, Merken-Button oder Teilen-Button
+- ISO-639-1-Sprachkatalog mit 184 Sprachen; auswaehlbar sind nur gepruefte Uebersetzungspakete
 - Werbe-Banner und Interstitial bleiben im Code vorbereitet, sind aber deaktiviert
 - PWA-Manifest, Service Worker und eigenes SVG-App-Logo
 
@@ -30,6 +31,12 @@ http://127.0.0.1:5174/
 
 ```bash
 npm run build
+```
+
+## Sprachprüfung
+
+```bash
+npm run i18n:check
 ```
 
 ## Visueller Check

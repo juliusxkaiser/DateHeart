@@ -15,6 +15,7 @@ import {
 } from "./dateIdeas";
 import {
   labelFor,
+  isLanguageCode,
   languages,
   localizeIdea,
   translations,
@@ -281,8 +282,8 @@ function normalizeFilters(value: IdeaFilters): IdeaFilters {
 }
 
 function loadLanguage() {
-  const saved = localStorage.getItem(STORAGE_KEYS.language) as LanguageCode | null;
-  if (saved && languages.some((language) => language.code === saved)) return saved;
+  const saved = localStorage.getItem(STORAGE_KEYS.language);
+  if (isLanguageCode(saved)) return saved;
   return "en";
 }
 
@@ -695,7 +696,7 @@ function renderLanguageList() {
   elements.languageList.innerHTML = languages
     .map(
       (language) => `
-        <button class="language-row${language.code === activeLanguage ? " active" : ""}" type="button" data-language="${language.code}">
+        <button class="language-row${language.code === activeLanguage ? " active" : ""}${language.available ? "" : " unavailable"}" type="button" data-language="${language.code}"${language.available ? "" : " disabled"}>
           <span class="language-flag" aria-hidden="true">${language.flag}</span>
           <span class="language-copy">
             <strong>${language.nativeName}</strong>
@@ -708,7 +709,8 @@ function renderLanguageList() {
 
   elements.languageList.querySelectorAll<HTMLButtonElement>(".language-row").forEach((button) => {
     button.addEventListener("click", () => {
-      activeLanguage = button.dataset.language as LanguageCode;
+      if (!isLanguageCode(button.dataset.language)) return;
+      activeLanguage = button.dataset.language;
       localStorage.setItem(STORAGE_KEYS.language, activeLanguage);
       t = translations[activeLanguage];
       applyTranslations();
