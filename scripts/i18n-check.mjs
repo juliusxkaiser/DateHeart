@@ -94,6 +94,12 @@ const hindiIndianNoAdsPrice = formatNoAdsPrice(hindiIndianMarket);
 const arabicSaudiMarket = budgetMarketFor("ar", { locales: ["ar-SA"], timeZone: "Asia/Riyadh" });
 const arabicSaudiBudget = formatBudgetLabel("Up to 40 EUR", "ar", arabicSaudiMarket);
 const arabicSaudiNoAdsPrice = formatNoAdsPrice(arabicSaudiMarket);
+const japaneseMarket = budgetMarketFor("ja", { locales: ["ja-JP"], timeZone: "Asia/Tokyo" });
+const japaneseBudget = formatBudgetLabel("Up to 40 EUR", "ja", japaneseMarket);
+const japaneseNoAdsPrice = formatNoAdsPrice(japaneseMarket);
+const chineseMarket = budgetMarketFor("zh", { locales: ["zh-CN"], timeZone: "Asia/Shanghai" });
+const chineseBudget = formatBudgetLabel("Up to 40 EUR", "zh", chineseMarket);
+const chineseNoAdsPrice = formatNoAdsPrice(chineseMarket);
 
 if (/EUR|€|\$/.test(indianBudget) || !/(₹|INR)/.test(indianBudget)) {
   errors.push(`Indian market budget must use INR, got: ${indianBudget}`);
@@ -117,6 +123,22 @@ if (/EUR|€|\$/.test(arabicSaudiBudget) || !/(ر\.س|SAR)/.test(arabicSaudiBudg
 
 if (/EUR|€|\$/.test(arabicSaudiNoAdsPrice) || !/(ر\.س|SAR)/.test(arabicSaudiNoAdsPrice)) {
   errors.push(`Arabic Saudi market no-ads price must use SAR, got: ${arabicSaudiNoAdsPrice}`);
+}
+
+if (/EUR|€|\$/.test(japaneseBudget) || !/[¥￥]|JPY/.test(japaneseBudget)) {
+  errors.push(`Japanese market budget must use JPY, got: ${japaneseBudget}`);
+}
+
+if (/EUR|€|\$/.test(japaneseNoAdsPrice) || !/[¥￥]|JPY/.test(japaneseNoAdsPrice)) {
+  errors.push(`Japanese market no-ads price must use JPY, got: ${japaneseNoAdsPrice}`);
+}
+
+if (/EUR|€|\$/.test(chineseBudget) || !/[¥￥]|CNY|CN¥/.test(chineseBudget)) {
+  errors.push(`Chinese market budget must use CNY, got: ${chineseBudget}`);
+}
+
+if (/EUR|€|\$/.test(chineseNoAdsPrice) || !/[¥￥]|CNY|CN¥/.test(chineseNoAdsPrice)) {
+  errors.push(`Chinese market no-ads price must use CNY, got: ${chineseNoAdsPrice}`);
 }
 
 for (const code of verifiedLanguageCodes) {

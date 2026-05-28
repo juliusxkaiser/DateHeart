@@ -1,6 +1,6 @@
 import type { Budget, DateIdea } from "./dateIdeas";
 
-export type LanguageCode = "en" | "de" | "pl" | "es" | "fr" | "it" | "pt" | "hi" | "ar";
+export type LanguageCode = "en" | "de" | "pl" | "es" | "fr" | "it" | "pt" | "hi" | "ar" | "ja" | "zh";
 
 export type LanguageOption = {
   code: string;
@@ -11,7 +11,7 @@ export type LanguageOption = {
   available: boolean;
 };
 
-export const verifiedLanguageCodes = ["en", "de", "pl", "es", "fr", "it", "pt", "hi", "ar"] as const satisfies readonly LanguageCode[];
+export const verifiedLanguageCodes = ["en", "de", "pl", "es", "fr", "it", "pt", "hi", "ar", "ja", "zh"] as const satisfies readonly LanguageCode[];
 
 const verifiedLanguageMeta: Record<LanguageCode, Pick<LanguageOption, "flag" | "name" | "nativeName">> = {
   en: { flag: "🇺🇸", name: "English", nativeName: "English" },
@@ -23,6 +23,8 @@ const verifiedLanguageMeta: Record<LanguageCode, Pick<LanguageOption, "flag" | "
   pt: { flag: "🇵🇹", name: "Portuguese", nativeName: "Português" },
   hi: { flag: "🇮🇳", name: "Hindi", nativeName: "हिन्दी" },
   ar: { flag: "🇸🇦", name: "Arabic", nativeName: "العربية" },
+  ja: { flag: "🇯🇵", name: "Japanese", nativeName: "日本語" },
+  zh: { flag: "🇨🇳", name: "Chinese", nativeName: "中文" },
 };
 
 export const iso6391LanguageCodes = [
@@ -417,7 +419,7 @@ function displayName(code: string, locale: string) {
 }
 
 export function isLanguageCode(value: string | null | undefined): value is LanguageCode {
-  return value === "en" || value === "de" || value === "pl" || value === "es" || value === "fr" || value === "it" || value === "pt" || value === "hi" || value === "ar";
+  return value === "en" || value === "de" || value === "pl" || value === "es" || value === "fr" || value === "it" || value === "pt" || value === "hi" || value === "ar" || value === "ja" || value === "zh";
 }
 
 export const languages: LanguageOption[] = iso6391LanguageCodes
@@ -841,6 +843,86 @@ export const translations: Record<LanguageCode, Translation> = {
     continueIn: "متابعة خلال {seconds}",
     close: "إغلاق",
   },
+  ja: {
+    ready: "雰囲気を選ぶ",
+    tapCopy: "ハートをタップして、次のデート案を受け取りましょう。",
+    resultLabel: "今日のデート案:",
+    prep: "準備",
+    save: "保存",
+    saved: "保存済み",
+    share: "共有",
+    copied: "コピー済み",
+    next: "新しい案",
+    filters: "フィルター",
+    removeAds: "広告を削除",
+    removeAdsTitle: "広告なしのDateHeart",
+    removeAdsBody: "一度の購入で、DateHeartの今後の広告枠を削除します。",
+    buyNoAds: "{price}で購入",
+    noAdsPurchased: "購入済み",
+    category: "カテゴリー",
+    budget: "予算",
+    duration: "所要時間",
+    all: "すべて",
+    reset: "すべての案を許可",
+    history: "履歴",
+    favorites: "お気に入り",
+    emptyHistory: "まだデート案はありません。",
+    emptyFavorites: "保存済みの案はまだありません。",
+    language: "言語",
+    about: "情報",
+    aboutTitle: "DateHeartとは？",
+    aboutBody: "DateHeartは、カップルに実行しやすいデート案をワンタップで提案します。言語、雰囲気、予算、所要時間を選び、本当にやりたい案を保存できます。",
+    aboutPoint1: "実行しやすいデート案",
+    aboutPoint2: "お気に入りと履歴",
+    aboutPoint3: "無料アプリ構想",
+    adLabel: "広告",
+    adBanner: "無料アプリ - AdMobバナー枠を予約済み",
+    adBreakTitle: "短い広告時間",
+    adBreakBody: "これは今後のAdMob連携のために確保しているインタースティシャル枠です。",
+    continue: "続ける",
+    continueIn: "{seconds}秒後に続ける",
+    close: "閉じる",
+  },
+  zh: {
+    ready: "选择氛围",
+    tapCopy: "轻点爱心，获取下一个约会想法。",
+    resultLabel: "你们的约会想法:",
+    prep: "准备",
+    save: "保存",
+    saved: "已保存",
+    share: "分享",
+    copied: "已复制",
+    next: "新想法",
+    filters: "筛选",
+    removeAds: "移除广告",
+    removeAdsTitle: "无广告版 DateHeart",
+    removeAdsBody: "通过一次性购买，移除 DateHeart 未来的广告位。",
+    buyNoAds: "以 {price} 购买",
+    noAdsPurchased: "已购买",
+    category: "类别",
+    budget: "预算",
+    duration: "时长",
+    all: "全部",
+    reset: "允许所有想法",
+    history: "历史",
+    favorites: "收藏",
+    emptyHistory: "还没有约会想法。",
+    emptyFavorites: "还没有保存的想法。",
+    language: "语言",
+    about: "信息",
+    aboutTitle: "DateHeart 是什么？",
+    aboutBody: "DateHeart 为情侣提供一键可得、可执行的约会想法。选择语言、氛围、预算和时长，然后保存你们真正想做的想法。",
+    aboutPoint1: "可执行的约会想法",
+    aboutPoint2: "收藏和历史",
+    aboutPoint3: "免费应用概念",
+    adLabel: "广告",
+    adBanner: "免费应用 - 已预留 AdMob 横幅广告位",
+    adBreakTitle: "短暂广告时刻",
+    adBreakBody: "这是为未来 AdMob 集成预留的插屏广告位。",
+    continue: "继续",
+    continueIn: "{seconds} 秒后继续",
+    close: "关闭",
+  },
 };
 
 export const categoryLabels: Record<LanguageCode, Partial<Record<string, string>>> = {
@@ -941,6 +1023,30 @@ export const categoryLabels: Record<LanguageCode, Partial<Record<string, string>
     "Rainy Day": "يوم ممطر",
     Seasonal: "موسمي",
   },
+  ja: {
+    Home: "家で",
+    Outdoors: "屋外",
+    Food: "食事",
+    Creative: "クリエイティブ",
+    Movement: "体を動かす",
+    "Mini Adventure": "小さな冒険",
+    Culture: "文化",
+    "Deep Talk": "深い会話",
+    "Rainy Day": "雨の日",
+    Seasonal: "季節",
+  },
+  zh: {
+    Home: "在家",
+    Outdoors: "户外",
+    Food: "美食",
+    Creative: "创意",
+    Movement: "运动",
+    "Mini Adventure": "小冒险",
+    Culture: "文化",
+    "Deep Talk": "深入交流",
+    "Rainy Day": "雨天",
+    Seasonal: "季节限定",
+  },
 };
 
 export type BudgetMarket = {
@@ -967,6 +1073,8 @@ const budgetCopy: Record<LanguageCode, BudgetCopy> = {
   pt: { free: "grátis", upTo: "até", unlimited: "sem limite", tiers: ["orçamento baixo", "orçamento médio", "orçamento mais alto"] },
   hi: { free: "मुफ़्त", upTo: "तक", upToPlacement: "after", unlimited: "असीमित", tiers: ["कम बजट", "मध्यम बजट", "ऊँचा बजट"] },
   ar: { free: "مجاني", upTo: "حتى", unlimited: "بلا حد", tiers: ["ميزانية منخفضة", "ميزانية متوسطة", "ميزانية أعلى"] },
+  ja: { free: "無料", upTo: "まで", upToPlacement: "after", unlimited: "上限なし", tiers: ["低予算", "中予算", "高めの予算"] },
+  zh: { free: "免费", upTo: "不超过", unlimited: "不限", tiers: ["低预算", "中等预算", "较高预算"] },
 };
 
 const defaultBudgetMarketByLanguage: Record<LanguageCode, BudgetMarket> = {
@@ -974,11 +1082,13 @@ const defaultBudgetMarketByLanguage: Record<LanguageCode, BudgetMarket> = {
   ar: { currency: "SAR", locale: "ar-SA", region: "SA" },
   de: { currency: "EUR", locale: "de-DE", region: "DE" },
   hi: { currency: "INR", locale: "hi-IN", region: "IN" },
+  ja: { currency: "JPY", locale: "ja-JP", region: "JP" },
   pl: { currency: "PLN", locale: "pl-PL", region: "PL" },
   es: { currency: "EUR", locale: "es-ES", region: "ES" },
   fr: { currency: "EUR", locale: "fr-FR", region: "FR" },
   it: { currency: "EUR", locale: "it-IT", region: "IT" },
   pt: { currency: "EUR", locale: "pt-PT", region: "PT" },
+  zh: { currency: "CNY", locale: "zh-CN", region: "CN" },
 };
 
 const currencyByRegion: Record<string, string> = {
@@ -1421,6 +1531,20 @@ export const budgetLabels: Record<LanguageCode, Partial<Record<string, string>>>
     "Up to 100 EUR": formatBudgetLabel("Up to 100 EUR", "ar"),
     Unlimited: formatBudgetLabel("Unlimited", "ar"),
   },
+  ja: {
+    Free: formatBudgetLabel("Free", "ja"),
+    "Up to 15 EUR": formatBudgetLabel("Up to 15 EUR", "ja"),
+    "Up to 40 EUR": formatBudgetLabel("Up to 40 EUR", "ja"),
+    "Up to 100 EUR": formatBudgetLabel("Up to 100 EUR", "ja"),
+    Unlimited: formatBudgetLabel("Unlimited", "ja"),
+  },
+  zh: {
+    Free: formatBudgetLabel("Free", "zh"),
+    "Up to 15 EUR": formatBudgetLabel("Up to 15 EUR", "zh"),
+    "Up to 40 EUR": formatBudgetLabel("Up to 40 EUR", "zh"),
+    "Up to 100 EUR": formatBudgetLabel("Up to 100 EUR", "zh"),
+    Unlimited: formatBudgetLabel("Unlimited", "zh"),
+  },
 };
 
 export const durationLabels: Record<LanguageCode, Partial<Record<string, string>>> = {
@@ -1480,6 +1604,20 @@ export const durationLabels: Record<LanguageCode, Partial<Record<string, string>
     "2-3 hours": "2-3 ساعات",
     "Half day": "نصف يوم",
     Evening: "المساء",
+  },
+  ja: {
+    "30 min": "30分",
+    "60-90 min": "60〜90分",
+    "2-3 hours": "2〜3時間",
+    "Half day": "半日",
+    Evening: "夜",
+  },
+  zh: {
+    "30 min": "30 分钟",
+    "60-90 min": "60-90 分钟",
+    "2-3 hours": "2-3 小时",
+    "Half day": "半天",
+    Evening: "晚上",
   },
 };
 
@@ -2563,6 +2701,276 @@ const arTags: Record<string, string> = {
   writing: "كتابة",
 };
 
+const jaTags: Record<string, string> = {
+  adventure: "冒険",
+  analog: "アナログ",
+  anniversary: "記念日",
+  appreciation: "感謝",
+  aquarium: "水族館",
+  arcade: "ゲームセンター",
+  archery: "アーチェリー",
+  art: "アート",
+  autumn: "秋",
+  bar: "バー",
+  bike: "自転車",
+  books: "本",
+  bowling: "ボウリング",
+  breakfast: "朝食",
+  budget: "予算",
+  building: "ものづくり",
+  cafe: "カフェ",
+  calm: "穏やか",
+  canoe: "カヌー",
+  care: "いたわり",
+  city: "街",
+  clarity: "整理",
+  classic: "定番",
+  clay: "粘土",
+  climbing: "クライミング",
+  close: "親密",
+  coffee: "コーヒー",
+  comedy: "コメディ",
+  cooking: "料理",
+  cozy: "居心地よい",
+  craft: "手作り",
+  creative: "創作",
+  culture: "文化",
+  dance: "ダンス",
+  deep: "深い",
+  design: "デザイン",
+  dinner: "夕食",
+  discover: "発見",
+  drink: "飲み物",
+  easy: "気軽",
+  explore: "探索",
+  film: "映画",
+  flowers: "花",
+  focus: "集中",
+  food: "食べ物",
+  fun: "楽しい",
+  future: "未来",
+  game: "ゲーム",
+  garden: "庭園",
+  gift: "贈り物",
+  "hands-on": "体験型",
+  history: "歴史",
+  home: "家",
+  ice: "氷",
+  jump: "ジャンプ",
+  karaoke: "カラオケ",
+  kindness: "やさしさ",
+  learn: "学び",
+  literary: "文学",
+  local: "地元",
+  luxury: "特別",
+  market: "市場",
+  memory: "思い出",
+  mindful: "丁寧",
+  minigolf: "ミニゴルフ",
+  morning: "朝",
+  movement: "運動",
+  movie: "映画館",
+  museum: "博物館",
+  music: "音楽",
+  mystery: "謎解き",
+  nature: "自然",
+  new: "新しい",
+  night: "夜",
+  offline: "スマホなし",
+  outdoors: "屋外",
+  paint: "絵の具",
+  park: "公園",
+  pasta: "パスタ",
+  personal: "個人的",
+  photo: "写真",
+  picnic: "ピクニック",
+  planning: "計画",
+  plant: "植物",
+  playful: "遊び心",
+  pottery: "陶芸",
+  premium: "上質",
+  puzzle: "パズル",
+  quiet: "静か",
+  rain: "雨",
+  random: "偶然",
+  reading: "読書",
+  relationship: "関係",
+  relax: "リラックス",
+  restaurant: "レストラン",
+  romantic: "ロマンチック",
+  safe: "安心",
+  scent: "香り",
+  seasonal: "季節",
+  sharing: "分け合う",
+  short: "短め",
+  skating: "スケート",
+  slow: "ゆっくり",
+  spa: "スパ",
+  sport: "スポーツ",
+  spring: "春",
+  stage: "舞台",
+  stars: "星",
+  story: "物語",
+  streetart: "ストリートアート",
+  streetfood: "屋台グルメ",
+  style: "スタイル",
+  summer: "夏",
+  sunset: "夕焼け",
+  surprise: "サプライズ",
+  sushi: "寿司",
+  sweet: "甘い",
+  talk: "会話",
+  taste: "味",
+  team: "チーム",
+  travel: "旅",
+  treasure: "宝探し",
+  trip: "お出かけ",
+  view: "景色",
+  walk: "散歩",
+  warm: "温かい",
+  water: "水辺",
+  weatherproof: "天候対応",
+  wind: "風",
+  winter: "冬",
+  workshop: "ワークショップ",
+  writing: "書く",
+};
+
+const zhTags: Record<string, string> = {
+  adventure: "冒险",
+  analog: "复古",
+  anniversary: "纪念日",
+  appreciation: "感谢",
+  aquarium: "水族馆",
+  arcade: "电玩城",
+  archery: "射箭",
+  art: "艺术",
+  autumn: "秋天",
+  bar: "酒吧",
+  bike: "骑行",
+  books: "书",
+  bowling: "保龄球",
+  breakfast: "早餐",
+  budget: "预算",
+  building: "搭建",
+  cafe: "咖啡馆",
+  calm: "平静",
+  canoe: "独木舟",
+  care: "照顾",
+  city: "城市",
+  clarity: "清晰",
+  classic: "经典",
+  clay: "黏土",
+  climbing: "攀岩",
+  close: "亲近",
+  coffee: "咖啡",
+  comedy: "喜剧",
+  cooking: "烹饪",
+  cozy: "舒适",
+  craft: "手作",
+  creative: "创意",
+  culture: "文化",
+  dance: "跳舞",
+  deep: "深入",
+  design: "设计",
+  dinner: "晚餐",
+  discover: "发现",
+  drink: "饮品",
+  easy: "轻松",
+  explore: "探索",
+  film: "电影",
+  flowers: "花",
+  focus: "专注",
+  food: "食物",
+  fun: "有趣",
+  future: "未来",
+  game: "游戏",
+  garden: "花园",
+  gift: "礼物",
+  "hands-on": "动手",
+  history: "历史",
+  home: "家",
+  ice: "冰",
+  jump: "跳跃",
+  karaoke: "卡拉OK",
+  kindness: "善意",
+  learn: "学习",
+  literary: "文学",
+  local: "本地",
+  luxury: "特别",
+  market: "市场",
+  memory: "回忆",
+  mindful: "用心",
+  minigolf: "迷你高尔夫",
+  morning: "早晨",
+  movement: "运动",
+  movie: "影院",
+  museum: "博物馆",
+  music: "音乐",
+  mystery: "谜题",
+  nature: "自然",
+  new: "新鲜",
+  night: "夜晚",
+  offline: "离线",
+  outdoors: "户外",
+  paint: "绘画",
+  park: "公园",
+  pasta: "意面",
+  personal: "个人",
+  photo: "照片",
+  picnic: "野餐",
+  planning: "计划",
+  plant: "植物",
+  playful: "好玩",
+  pottery: "陶艺",
+  premium: "高级",
+  puzzle: "拼图",
+  quiet: "安静",
+  rain: "雨",
+  random: "随机",
+  reading: "阅读",
+  relationship: "关系",
+  relax: "放松",
+  restaurant: "餐厅",
+  romantic: "浪漫",
+  safe: "安全",
+  scent: "香气",
+  seasonal: "季节",
+  sharing: "分享",
+  short: "短时",
+  skating: "滑冰",
+  slow: "慢节奏",
+  spa: "水疗",
+  sport: "运动",
+  spring: "春天",
+  stage: "舞台",
+  stars: "星星",
+  story: "故事",
+  streetart: "街头艺术",
+  streetfood: "街头小吃",
+  style: "风格",
+  summer: "夏天",
+  sunset: "日落",
+  surprise: "惊喜",
+  sushi: "寿司",
+  sweet: "甜",
+  talk: "谈话",
+  taste: "味道",
+  team: "团队",
+  travel: "旅行",
+  treasure: "寻宝",
+  trip: "短途",
+  view: "景色",
+  walk: "散步",
+  warm: "温暖",
+  water: "水边",
+  weatherproof: "不怕天气",
+  wind: "风",
+  winter: "冬天",
+  workshop: "工作坊",
+  writing: "写作",
+};
+
 export const tagLabels: Record<Exclude<LanguageCode, "en">, Record<string, string>> = {
   de: deTags,
   pl: plTags,
@@ -2572,6 +2980,8 @@ export const tagLabels: Record<Exclude<LanguageCode, "en">, Record<string, strin
   pt: ptTags,
   hi: hiTags,
   ar: arTags,
+  ja: jaTags,
+  zh: zhTags,
 };
 
 const deSpecificActivities: Record<string, { title: string; prompt: string; prep: string }> = {
@@ -3710,6 +4120,212 @@ const arabicIdeaTemplates: Record<string, GermanTemplateSet> = {
   },
 };
 
+const japaneseIdeaTemplates: Record<string, GermanTemplateSet> = {
+  Home: {
+    titles: ["家デート: {mood}", "ふたりの家時間", "心地よい家デート", "小さな家の習慣"],
+    prompts: [
+      "家の雰囲気を少し特別にしましょう。照明を落とし、簡単なものを用意し、邪魔の入らない時間をつくります。",
+      "いつもの夜をデートに変えるために、はっきりした小さな行動と静かな締めくくりを用意しましょう。",
+      "家にいるままでも、テーブル、毛布、音楽、短いゲームなどで場を整えると十分に特別になります。",
+      "家をデートの場所として扱い、あとでまた話したくなる小さな瞬間を加えましょう。",
+    ],
+    prep: ["やわらかい照明、飲み物、小さな活動を用意する", "スマホをしまい、くつろげる場所を作る", "音楽、軽い食べ物、途切れない30分を用意する"],
+  },
+  Outdoors: {
+    titles: ["外デート: {mood}", "目的地のある散歩", "新鮮な空気の時間", "小さなお出かけ"],
+    prompts: [
+      "一緒に外へ出て、眺めのよい場所、静かな場所、普段見落とす場所など、道に小さな目的を持たせましょう。",
+      "散歩に小さなミッション、写真、途中の質問を加えて、ただ歩くだけでないデートにします。",
+      "安全な道を選び、会話が自然に続くくらいゆっくり歩きましょう。",
+      "天気と周りの雰囲気もデートの一部にして、途中でどこに少し立ち止まるか決めましょう。",
+    ],
+    prep: ["道順、天気、歩きやすい靴を確認する", "飲み物を持ち、待ち合わせ場所を決める", "上着、水、よい質問を用意する"],
+  },
+  Food: {
+    titles: ["食のデート: {mood}", "ふたりの味わい時間", "小さな食事デート", "一緒に味見"],
+    prompts: [
+      "料理する、分け合う、味見する、まだ知らない店を試すなど、食べ物を中心にデートを組み立てましょう。",
+      "普段あまり選ばないものを選び、ふたりで意識して味わう体験にしましょう。",
+      "大きな一皿ではなく小さなものをいくつか分け合い、最後にいちばんよかったものを決めます。",
+      "食べ物を会話の入り口にしましょう。何を思い出すか、何が好きか、何を変えたいかを話します。",
+    ],
+    prep: ["材料、予約、営業時間を確認する", "予算を決め、候補を二つ用意する", "ナプキン、飲み物、小さな驚きを用意する"],
+  },
+  Creative: {
+    titles: ["創作デート: {mood}", "一緒に何かを作る", "ふたりの小さな作品", "創造的な時間"],
+    prompts: [
+      "保管したり写真に残したり後で続けたりできる、小さなものを一緒に作りましょう。",
+      "簡単な創作目標を決め、完璧さは横に置きます。大事なのは一緒に作ることです。",
+      "紙、カメラ、音楽、簡単な材料を使い、出来上がったものに名前をつけましょう。",
+      "ひとつのアイデアを、デートの後も見える小さなプロジェクトに変えましょう。",
+    ],
+    prep: ["紙、ペン、カメラを用意する", "材料と簡単な参考例を集める", "タイマーをかけ、出来栄えを評価しすぎない"],
+  },
+  Movement: {
+    titles: ["アクティブデート: {mood}", "ふたりで体を動かす", "遊びながら動く", "上手さを競わないデート"],
+    prompts: [
+      "競争にせず一緒に体を動かしましょう。大切なのはエネルギー、笑い、終わった後のよい気分です。",
+      "競い合うより、横に並んだり協力したりできる活動を選びます。",
+      "小さな挑戦を加えますが、楽しいままでいられる軽さにしましょう。",
+      "体を動かして気分を切り替え、その後に静かな締めくくりを用意します。",
+    ],
+    prep: ["動きやすい服、水、安全なルートを用意する", "小さな挑戦を決め、軽い内容にする", "場所、天気、必要な道具を確認する"],
+  },
+  "Mini Adventure": {
+    titles: ["小さな冒険: {mood}", "日常から少し外れる", "ふたりの気まぐれ時間", "発見のデート"],
+    prompts: [
+      "一日を複雑にしすぎず、新鮮に感じられる小さな目的を選びましょう。",
+      "近くにあるのに普段見過ごしているものを、小さな旅行のように扱ってみます。",
+      "ひとりが始まりを選び、もうひとりが終わりを選ぶと、ちょうどよい驚きが残ります。",
+      "少しだけ日常から外れて、このデートだけの小さな物語を作りましょう。",
+    ],
+    prep: ["道順、チケット、帰り方を確認する", "予算と時間枠を決める", "小さな驚きと予備案を用意する"],
+  },
+  Culture: {
+    titles: ["文化デート: {mood}", "一緒に何かを発見", "小さな文化の夜", "ふたりの刺激"],
+    prompts: [
+      "場所、イベント、作品を見に行き、あとで心に残ったことを話しましょう。",
+      "計画は少なめに、観察は多めにします。各自、心が動いた瞬間をひとつ選びます。",
+      "文化を堅苦しくせず個人的に扱いましょう。持ち帰りたいもの、勧めたいもの、覚えておきたいものを話します。",
+      "小さな文化体験を探し、ふたりで落ち着ける締めくくりと組み合わせます。",
+    ],
+    prep: ["時間、チケット、内容を確認する", "終わった後の質問をひとつ用意する", "到着と静かな終わり方を考える"],
+  },
+  "Deep Talk": {
+    titles: ["深い会話デート: {mood}", "ふたりの本音時間", "プレッシャーのない関係確認", "未来についての静かな時間"],
+    prompts: [
+      "本当の会話のための時間を取り、全部を解決しようとせず、ひとつの質問に集中しましょう。",
+      "願い、思い出、未来について話します。ただし問題会議のようにはしません。",
+      "静かな場所を選び、最後に相手への具体的な小さな願いをひとつ言葉にします。",
+      "聞く、質問する、遮らない、最後に良かったことを言うことで、丁寧に距離を縮めましょう。",
+    ],
+    prep: ["よい質問と静かな場所を選ぶ", "スマホをしまい、十分な時間を取る", "締めくくりのメモや共有の習慣を用意する"],
+  },
+  "Rainy Day": {
+    titles: ["雨の日デート: {mood}", "天気に合うデート", "心地よい雨の日", "室内のよい計画"],
+    prompts: [
+      "悪天候を邪魔ではなく、温かさ、ゆっくりさ、そばにいる感覚を作る一部として扱いましょう。",
+      "濡れずに落ち着ける選択肢を選び、共通の小さな注目点を加えます。",
+      "雨を、静かで温かいことや創作的なことをする理由にしましょう。",
+      "柔軟に考え、晴れていなくても本当に成立するデートを選びます。",
+    ],
+    prep: ["傘、温かい飲み物、落ち着ける場所を用意する", "室内案と小さな活動を考える", "天気を確認し、暖かい服を準備する"],
+  },
+  Seasonal: {
+    titles: ["季節のデート: {mood}", "今の季節の時間", "ふたりの季節デート", "今だからできるデート"],
+    prompts: [
+      "今の季節を使いましょう。色、光、食べ物、天気、小さなイベントがきっかけになります。",
+      "まさに今だから合うものを選び、ふたりの共有時間に変えましょう。",
+      "季節を思い出、写真、小さな習慣につなげます。",
+      "外の雰囲気に合い、実行しやすいデートを計画しましょう。",
+    ],
+    prep: ["天気、季節の催し、時間を確認する", "服装と記念写真の準備をする", "季節らしい小さな要素を考える"],
+  },
+};
+
+const chineseIdeaTemplates: Record<string, GermanTemplateSet> = {
+  Home: {
+    titles: ["在家约会: {mood}", "两个人的居家时光", "温暖的在家约会", "小小居家仪式"],
+    prompts: [
+      "在家营造特别氛围：调暗灯光，准备简单的东西，给彼此一段不被打扰的时间。",
+      "把普通夜晚变成约会：安排一个清楚的小行动，并用安静的方式收尾。",
+      "即使待在家里，也认真布置场景：一张桌子、一条毯子、音乐或一个小游戏就够了。",
+      "把家当作约会地点，再加入一个以后还想聊起的小瞬间。",
+    ],
+    prep: ["准备柔和灯光、饮品和一个小活动", "收起手机，布置一个舒服角落", "准备音乐、轻食和不被打断的30分钟"],
+  },
+  Outdoors: {
+    titles: ["户外约会: {mood}", "带目的地的散步", "新鲜空气时刻", "小小外出计划"],
+    prompts: [
+      "一起出门，并给路线一个目标：好看的景色、安静的地方，或平时很少注意的角落。",
+      "给散步加入一个小任务、一张照片或路上的一个问题，让它成为真正的约会。",
+      "选择安全路线，走得足够慢，让谈话有空间自然展开。",
+      "让天气和环境成为约会的一部分，然后边走边决定在哪里停留片刻。",
+    ],
+    prep: ["确认路线、天气和舒适的鞋", "带一杯饮品，并定好集合点", "准备外套、水和一个好问题"],
+  },
+  Food: {
+    titles: ["美食约会: {mood}", "两个人的味觉时刻", "小小美食约会", "一起品尝"],
+    prompts: [
+      "围绕食物安排约会：做饭、分享、试吃，或尝试一家还不熟悉的店。",
+      "选择平时很少尝试的东西，把它变成一次有意识的共同品味体验。",
+      "不要只点一大份，改为分享几样小东西，最后评出最喜欢的一个。",
+      "把食物当作谈话开头：它让你们想到什么，喜欢什么，又想改变什么。",
+    ],
+    prep: ["确认食材、预订或营业时间", "定好预算，并准备两个备选", "准备餐巾、饮品和一个小惊喜"],
+  },
+  Creative: {
+    titles: ["创意约会: {mood}", "一起做点东西", "两个人的小项目", "创作时刻"],
+    prompts: [
+      "一起做一个小东西，可以保存、拍照，或之后继续完成。",
+      "设定一个简单的创作目标，把完美放在一边，重点是一起完成。",
+      "使用纸、相机、音乐或简单材料，并给成果起一个名字。",
+      "把一个想法变成约会后依然看得见的小项目。",
+    ],
+    prep: ["准备纸、笔或相机", "收集材料和一个简单灵感", "设定计时器，不急着评价结果"],
+  },
+  Movement: {
+    titles: ["活力约会: {mood}", "两个人一起动起来", "边玩边运动", "没有表现压力的约会"],
+    prompts: [
+      "一起活动，但不要把它变成比赛；重要的是能量、笑声和结束后的好感觉。",
+      "选择可以并肩完成或互相合作的活动，而不是只想着竞争。",
+      "加入一个小挑战，但要轻松到仍然有趣。",
+      "用活动清空脑袋，然后安排一个安静的收尾。",
+    ],
+    prep: ["准备舒适衣服、水和安全路线", "定一个轻松的小挑战", "确认地点、天气和需要的装备"],
+  },
+  "Mini Adventure": {
+    titles: ["小冒险: {mood}", "短暂离开日常", "情侣的即兴时刻", "发现型约会"],
+    prompts: [
+      "选择一个小目标，让它感觉新鲜，但不要把整天变得复杂。",
+      "做一件离你们很近却平时忽略的事，把它当成一次小旅行。",
+      "一个人选择开始，另一个人选择结尾，这样能保留一点惊喜。",
+      "暂时离开日常，制造一个只属于这次约会的小故事。",
+    ],
+    prep: ["确认路线、票务或返回方式", "确定预算和时间范围", "准备一个惊喜和备用计划"],
+  },
+  Culture: {
+    titles: ["文化约会: {mood}", "一起发现点什么", "小小文化之夜", "两个人的灵感"],
+    prompts: [
+      "参观一个地方、活动或作品，然后聊聊什么留在了脑海里。",
+      "少计划，多观察：每个人选择一个触动自己的瞬间。",
+      "让文化体验变得个人化，而不是僵硬：什么想带走、推荐或记住。",
+      "寻找一个小型文化体验，并搭配一个两个人的安静收尾。",
+    ],
+    prep: ["确认时间、门票或节目安排", "准备一个结束后要问的问题", "安排到达方式和安静结尾"],
+  },
+  "Deep Talk": {
+    titles: ["深入交流约会: {mood}", "两个人的真诚谈话", "没有压力的关系回顾", "关于未来的安静时刻"],
+    prompts: [
+      "留出时间进行真正的谈话，不要试图一次解决所有事，只专注一个问题。",
+      "谈谈愿望、回忆或未来，但不要把它变成问题会议。",
+      "选择一个安静地点，最后为彼此说出一个具体的小愿望。",
+      "用倾听、提问、不打断和最后说出一件积极的事来建立亲近感。",
+    ],
+    prep: ["选择一个好问题和安静地点", "收起手机，留出足够时间", "准备一张便签或一个共同收尾仪式"],
+  },
+  "Rainy Day": {
+    titles: ["雨天约会: {mood}", "适合天气的约会", "舒适雨天", "不错的室内计划"],
+    prompts: [
+      "不要把坏天气当成阻碍，而是把它变成约会的一部分：温暖、慢节奏和陪伴感。",
+      "选择干燥舒适的方案，再加入一个共同关注的小点。",
+      "让下雨成为两个人做安静、温暖或创意事情的理由。",
+      "保持灵活，选择即使没有阳光也真正可行的约会。",
+    ],
+    prep: ["准备雨伞、热饮或舒适地点", "安排室内备选和一个小活动", "确认天气并准备保暖衣物"],
+  },
+  Seasonal: {
+    titles: ["季节约会: {mood}", "当季时刻", "两个人的季节限定约会", "现在才适合的约会"],
+    prompts: [
+      "利用当前季节：颜色、光线、食物、天气或小活动都可以成为主题。",
+      "选择一件此刻特别合适的事，把它变成共同的时刻。",
+      "把季节和一个回忆、一张照片或一个小仪式连接起来。",
+      "计划一个符合外面氛围、又容易执行的约会。",
+    ],
+    prep: ["确认天气、季节活动或开放时间", "准备衣物和一张纪念照片", "安排一个小小季节细节"],
+  },
+};
+
 const localizedIdeaPacks: Record<Exclude<LanguageCode, "en">, {
   tags: Record<string, string>;
   specificActivities: Record<string, { title: string; prompt: string; prep: string }>;
@@ -3718,6 +4334,7 @@ const localizedIdeaPacks: Record<Exclude<LanguageCode, "en">, {
   durationLabel: string;
   budgetLabel: string;
   labelSeparator: string;
+  sentenceSeparator?: string;
 }> = {
   de: {
     tags: deTags,
@@ -3781,6 +4398,7 @@ const localizedIdeaPacks: Record<Exclude<LanguageCode, "en">, {
     durationLabel: "अवधि",
     budgetLabel: "बजट",
     labelSeparator: ": ",
+    sentenceSeparator: "। ",
   },
   ar: {
     tags: arTags,
@@ -3790,6 +4408,26 @@ const localizedIdeaPacks: Record<Exclude<LanguageCode, "en">, {
     durationLabel: "المدة",
     budgetLabel: "الميزانية",
     labelSeparator: ": ",
+  },
+  ja: {
+    tags: jaTags,
+    specificActivities: {},
+    templates: japaneseIdeaTemplates,
+    fallbackMood: "一緒に",
+    durationLabel: "所要時間",
+    budgetLabel: "予算",
+    labelSeparator: "：",
+    sentenceSeparator: "。",
+  },
+  zh: {
+    tags: zhTags,
+    specificActivities: {},
+    templates: chineseIdeaTemplates,
+    fallbackMood: "一起",
+    durationLabel: "时长",
+    budgetLabel: "预算",
+    labelSeparator: "：",
+    sentenceSeparator: "。",
   },
 };
 
@@ -3813,13 +4451,15 @@ export function localizeIdea(idea: DateIdea, language: LanguageCode, market = bu
   const templates = pack.templates[idea.category] ?? pack.templates.Home;
   const tags = idea.tags.map((tag) => pack.tags[tag] ?? tag.toLowerCase()).slice(0, 4);
   const specific = pack.specificActivities[idea.family];
+  const sentenceSeparator = pack.sentenceSeparator ?? ". ";
+  const sentenceEnd = sentenceSeparator.trimEnd();
 
   if (specific) {
     return {
       ...idea,
       title: specific.title,
       prompt: specific.prompt,
-      prep: `${specific.prep}. ${pack.durationLabel}${pack.labelSeparator}${labelFor("duration", idea.duration, language)}. ${pack.budgetLabel}${pack.labelSeparator}${labelFor("budget", idea.budget, language, market)}.`,
+      prep: `${specific.prep}${sentenceSeparator}${pack.durationLabel}${pack.labelSeparator}${labelFor("duration", idea.duration, language)}${sentenceSeparator}${pack.budgetLabel}${pack.labelSeparator}${labelFor("budget", idea.budget, language, market)}${sentenceEnd}`,
       tags,
     };
   }
@@ -3827,7 +4467,7 @@ export function localizeIdea(idea: DateIdea, language: LanguageCode, market = bu
   const mood = tags[0] ?? pack.fallbackMood;
   const title = templates.titles[index % templates.titles.length].replace("{mood}", mood);
   const prompt = templates.prompts[(index + 1) % templates.prompts.length];
-  const prep = `${templates.prep[(index + 2) % templates.prep.length]}. ${pack.durationLabel}${pack.labelSeparator}${labelFor("duration", idea.duration, language)}. ${pack.budgetLabel}${pack.labelSeparator}${labelFor("budget", idea.budget, language, market)}.`;
+  const prep = `${templates.prep[(index + 2) % templates.prep.length]}${sentenceSeparator}${pack.durationLabel}${pack.labelSeparator}${labelFor("duration", idea.duration, language)}${sentenceSeparator}${pack.budgetLabel}${pack.labelSeparator}${labelFor("budget", idea.budget, language, market)}${sentenceEnd}`;
 
   return {
     ...idea,
