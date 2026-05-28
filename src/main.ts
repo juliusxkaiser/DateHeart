@@ -14,6 +14,8 @@ import {
   type IdeaFilters,
 } from "./dateIdeas";
 import {
+  budgetMarketFor,
+  formatNoAdsPrice,
   labelFor,
   isLanguageCode,
   languages,
@@ -33,7 +35,6 @@ const STORAGE_KEYS = {
 
 const APP_NAME = "DateHeart";
 const AD_EVERY_REVEALS = 7;
-const NO_ADS_PRICE = "4,99 EUR";
 const ENABLE_AD_BANNER = false;
 const ENABLE_INTERSTITIAL_AD = false;
 const HISTORY_LIMIT = 40;
@@ -192,9 +193,9 @@ app.innerHTML = `
       <button class="close-button" id="closePurchaseButton" type="button" aria-label="Close" title="Close">${icon("x")}</button>
       <span class="result-label" id="purchaseLabel">Remove ads</span>
       <h2 id="purchaseTitle">DateHeart without ads</h2>
-      <strong class="price-pill">${NO_ADS_PRICE}</strong>
+      <strong class="price-pill" id="purchasePrice"></strong>
       <p id="purchaseBody">Remove future ad placements from DateHeart with a one-time purchase.</p>
-      <button class="primary-button wide" id="buyNoAdsButton" type="button">Buy for ${NO_ADS_PRICE}</button>
+      <button class="primary-button wide" id="buyNoAdsButton" type="button">Buy</button>
     </article>
   </div>
 
@@ -249,6 +250,7 @@ const elements = {
   closePurchaseButton: document.querySelector<HTMLButtonElement>("#closePurchaseButton")!,
   purchaseLabel: document.querySelector<HTMLElement>("#purchaseLabel")!,
   purchaseTitle: document.querySelector<HTMLHeadingElement>("#purchaseTitle")!,
+  purchasePrice: document.querySelector<HTMLElement>("#purchasePrice")!,
   purchaseBody: document.querySelector<HTMLParagraphElement>("#purchaseBody")!,
   buyNoAdsButton: document.querySelector<HTMLButtonElement>("#buyNoAdsButton")!,
   languagePanel: document.querySelector<HTMLDivElement>("#languagePanel")!,
@@ -290,6 +292,18 @@ function loadLanguage() {
   const saved = localStorage.getItem(STORAGE_KEYS.language);
   if (isLanguageCode(saved)) return saved;
   return "en";
+}
+
+function activeBudgetMarket() {
+  const params = new URLSearchParams(window.location.search);
+  const locales = navigator.languages.length > 0 ? navigator.languages : [navigator.language];
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  return budgetMarketFor(activeLanguage, {
+    locales,
+    regionOverride: params.get("region") ?? params.get("market"),
+    timeZone,
+  });
 }
 
 let activeLanguage = loadLanguage();
@@ -490,13 +504,14 @@ function spawnSparks() {
 }
 
 function showResult(idea: DateIdea) {
-  const displayIdea = localizeIdea(idea, activeLanguage);
+  const market = activeBudgetMarket();
+  const displayIdea = localizeIdea(idea, activeLanguage, market);
   elements.resultTitle.textContent = displayIdea.title;
   elements.resultPrompt.textContent = displayIdea.prompt;
   elements.resultPrep.textContent = displayIdea.prep;
   elements.resultMeta.innerHTML = [
     labelFor("category", idea.category, activeLanguage),
-    labelFor("budget", idea.budget, activeLanguage),
+    labelFor("budget", idea.budget, activeLanguage, market),
     labelFor("duration", idea.duration, activeLanguage),
     ...displayIdea.tags.slice(0, 2),
   ]
@@ -538,7 +553,7 @@ function toggleFavorite() {
 async function shareCurrentIdea() {
   if (!currentIdea) return;
 
-  const displayIdea = localizeIdea(currentIdea, activeLanguage);
+  const displayIdea = localizeIdea(currentIdea, activeLanguage, activeBudgetMarket());
   const text = `${APP_NAME}: ${displayIdea.title}\n${displayIdea.prompt}\n${t.prep}: ${displayIdea.prep}`;
 
   if (navigator.share) {
@@ -559,6 +574,7 @@ function renderFilterGroup<T extends string>(
   current: T | "All",
   onPick: (value: T | "All") => void,
 ) {
+  const market = activeBudgetMarket();
   container.innerHTML = ["All", ...values]
     .map((value) => {
       const selected = value === current ? " active" : "";
@@ -566,6 +582,7 @@ function renderFilterGroup<T extends string>(
         container === elements.categoryChips ? "category" : container === elements.budgetChips ? "budget" : "duration",
         value,
         activeLanguage,
+        market,
       );
       return `<button class="chip${selected}" type="button" data-value="${value}">${label}</button>`;
     })
@@ -598,9 +615,10 @@ function saveFilters() {
 }
 
 function updateCounter() {
+  const market = activeBudgetMarket();
   const detail = [
     filters.category !== "All" ? labelFor("category", filters.category, activeLanguage) : "",
-    filters.budget !== "All" ? labelFor("budget", filters.budget, activeLanguage) : "",
+    filters.budget !== "All" ? labelFor("budget", filters.budget, activeLanguage, market) : "",
     filters.duration !== "All" ? labelFor("duration", filters.duration, activeLanguage) : "",
   ]
     .filter(Boolean)
@@ -624,10 +642,11 @@ function renderLibrary() {
 
   elements.ideaList.innerHTML = items
     .map((entry) => {
-      const displayIdea = localizeIdea(entry, activeLanguage);
+      const market = activeBudgetMarket();
+      const displayIdea = localizeIdea(entry, activeLanguage, market);
       return `
         <button class="idea-row" type="button" data-id="${entry.id}">
-          <span>${labelFor("category", entry.category, activeLanguage)} · ${labelFor("budget", entry.budget, activeLanguage)}</span>
+          <span>${labelFor("category", entry.category, activeLanguage)} · ${labelFor("budget", entry.budget, activeLanguage, market)}</span>
           <strong>${displayIdea.title}</strong>
           <small>${displayIdea.prompt}</small>
         </button>
@@ -728,6 +747,8 @@ function renderLanguageList() {
 }
 
 function applyTranslations() {
+  const noAdsPrice = formatNoAdsPrice(activeBudgetMarket());
+
   document.documentElement.lang = activeLanguage;
   document.documentElement.dir = languages.find((language) => language.code === activeLanguage)?.dir ?? "ltr";
 
@@ -780,8 +801,9 @@ function applyTranslations() {
   });
   elements.purchaseLabel.textContent = t.removeAds;
   elements.purchaseTitle.textContent = t.removeAdsTitle;
+  elements.purchasePrice.textContent = noAdsPrice;
   elements.purchaseBody.textContent = t.removeAdsBody;
-  elements.buyNoAdsButton.textContent = noAdsPurchased ? t.noAdsPurchased : t.buyNoAds;
+  elements.buyNoAdsButton.textContent = noAdsPurchased ? t.noAdsPurchased : t.buyNoAds.replace("{price}", noAdsPrice);
   elements.buyNoAdsButton.disabled = noAdsPurchased;
   elements.adBanner.setAttribute("aria-label", t.adLabel);
   elements.adBannerLabel.textContent = t.adLabel;

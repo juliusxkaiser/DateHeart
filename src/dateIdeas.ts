@@ -362,7 +362,7 @@ const activitySeeds: ActivitySeed[] = [
   activity("Nearby Staycation", "Book a special place nearby and treat it like a tiny vacation.", "Mini Adventure", "Unlimited", "Half day", "Booking, overnight bag", ["luxury", "trip"]),
   activity("Star Spot", "Go to a darker place and stay long enough to look up properly.", "Mini Adventure", "Free", "Evening", "Blanket, weather check", ["night", "romantic"]),
   activity("Street Name Quest", "Choose a street name on the map that sounds interesting and walk there.", "Mini Adventure", "Free", "60-90 min", "Map", ["random", "walk"]),
-  activity("24 EUR Challenge", "Set one shared budget and see how much afternoon you can create from it.", "Mini Adventure", "Up to 40 EUR", "Half day", "Cash or card", ["budget", "playful"]),
+  activity("Fixed Budget Challenge", "Set one shared spending limit and see how much afternoon you can create from it.", "Mini Adventure", "Up to 40 EUR", "Half day", "Cash or card", ["budget", "playful"]),
 
   activity("Small Gallery Hop", "Visit a small gallery and decide which work you would take home.", "Culture", "Free", "60-90 min", "Gallery times", ["art", "city"]),
   activity("Bookstore Pick", "Choose one book you think the other person should read.", "Culture", "Free", "60-90 min", "Bookstore", ["books", "quiet"]),

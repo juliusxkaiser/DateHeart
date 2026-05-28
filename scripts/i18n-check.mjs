@@ -1,8 +1,11 @@
 import { budgets, categories, dateIdeas, durations } from "../src/dateIdeas.ts";
 import {
+  budgetMarketFor,
   budgetLabels,
   categoryLabels,
   durationLabels,
+  formatBudgetLabel,
+  formatNoAdsPrice,
   iso6391LanguageCodes,
   isLanguageCode,
   labelFor,
@@ -82,6 +85,17 @@ const englishResiduePatterns = [
 ];
 
 const allTags = [...new Set(dateIdeas.flatMap((idea) => idea.tags))].sort();
+const indianMarket = budgetMarketFor("en", { locales: ["en-IN"], timeZone: "Asia/Kolkata" });
+const indianBudget = formatBudgetLabel("Up to 40 EUR", "en", indianMarket);
+const indianNoAdsPrice = formatNoAdsPrice(indianMarket);
+
+if (/EUR|€|\$/.test(indianBudget) || !/(₹|INR)/.test(indianBudget)) {
+  errors.push(`Indian market budget must use INR, got: ${indianBudget}`);
+}
+
+if (/EUR|€|\$/.test(indianNoAdsPrice) || !/(₹|INR)/.test(indianNoAdsPrice)) {
+  errors.push(`Indian market no-ads price must use INR, got: ${indianNoAdsPrice}`);
+}
 
 for (const code of verifiedLanguageCodes) {
   for (const category of categories) {
