@@ -53,6 +53,8 @@ assert(mainSource.includes('url.searchParams.set("budget", filters.budget)'), "S
 assert(mainSource.includes('url.searchParams.set("duration", filters.duration)'), "Share URL must include the duration filter.");
 assert(mainSource.includes("function handleSharedLink"), "Shared idea links must be handled on app load.");
 assert(/navigator\.share\(\{[\s\S]*url:\s*shareUrl[\s\S]*\}\)/s.test(mainSource), "Native share payload must include url.");
+assert(!mainSource.includes("<small>${count}</small>"), "Filter category choices must not show idea counts.");
+assert(!mainSource.includes("filterPanelSummary.textContent = `${category} · ${count}`"), "Filter summary must not show idea counts.");
 
 if (errors.length > 0) {
   console.error(errors.join("\n"));

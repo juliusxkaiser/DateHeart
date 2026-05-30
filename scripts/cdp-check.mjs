@@ -97,6 +97,7 @@ try {
     await page.locator('#categoryChips .choice-button[data-value="Creative"]').click();
     const categoryPanelScreenshot = join(screenshotDir, `dateheart-cdp-${viewport.name}-filter.png`);
     await page.screenshot({ path: categoryPanelScreenshot, fullPage: false });
+    const filterPanelText = await page.locator("#filterPanel").textContent();
     await page.locator('#budgetChips .choice-button[data-value="Up to 40 EUR"]').click();
     await page.locator('#durationChips .choice-button[data-value="60-90 min"]').click();
     await page.locator("#closeFilterButton").click();
@@ -146,6 +147,10 @@ try {
       throw new Error(`${viewport.name} filter controls did not produce a matching idea.`);
     }
 
+    if (/35002|4033|2305/.test([result.filterAction, filterPanelText, filterFunction.filterAction].join(" "))) {
+      throw new Error(`${viewport.name} filter UI still exposes idea counts.`);
+    }
+
     const sharedUrl = new URL(appUrl);
     sharedUrl.searchParams.set("idea", "date-00001");
     sharedUrl.searchParams.set("lang", "de");
@@ -175,7 +180,8 @@ try {
       !sharedLink.title ||
       sharedLink.activeCategory !== "Creative" ||
       sharedLink.activeBudget !== "Up to 40 EUR" ||
-      sharedLink.activeDuration !== "60-90 min"
+      sharedLink.activeDuration !== "60-90 min" ||
+      /35002|4033|2305/.test(sharedLink.filterAction)
     ) {
       throw new Error(`${viewport.name} shared idea link did not restore idea, language, and filters.`);
     }

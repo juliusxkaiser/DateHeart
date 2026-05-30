@@ -1155,21 +1155,17 @@ function renderFilterGroup<T extends string>(
   onPick: (value: T | "All") => void,
 ) {
   const market = activeBudgetMarket();
-  const isCategoryGroup = container === elements.categoryChips;
-  const filterKind = isCategoryGroup ? "category" : container === elements.budgetChips ? "budget" : "duration";
+  const filterKind = container === elements.categoryChips ? "category" : container === elements.budgetChips ? "budget" : "duration";
 
   container.innerHTML = ["All", ...values]
     .map((value) => {
       const selected = value === current ? " active" : "";
       const label = value === "All" ? t.all : labelFor(filterKind, value, activeLanguage, market);
-      const nextFilters = { ...filters, [filterKind]: value } as IdeaFilters;
-      const count = filterIdeas(normalizeFilters(nextFilters)).length;
 
       return `
         <button class="choice-button${selected}" type="button" data-value="${value}" aria-pressed="${value === current}">
           <span class="choice-copy">
             <strong>${label}</strong>
-            ${isCategoryGroup ? `<small>${count}</small>` : ""}
           </span>
           <span class="choice-check" aria-hidden="true">${value === current ? icon("check") : ""}</span>
         </button>
@@ -1215,8 +1211,7 @@ function updateCounter() {
   ]
     .filter(Boolean)
     .join(" · ");
-  const count = candidateIdeasForCurrentMode().length;
-  elements.ideaCounter.textContent = detail ? `${detail} · ${count}` : t.ready;
+  elements.ideaCounter.textContent = detail || t.ready;
   renderFilterAction();
 }
 
@@ -1227,13 +1222,12 @@ function renderFilterAction() {
     filters.budget !== "All" ? labelFor("budget", filters.budget, activeLanguage, market) : "",
     filters.duration !== "All" ? labelFor("duration", filters.duration, activeLanguage) : "",
   ].filter(Boolean);
-  const count = candidateIdeasForCurrentMode().length;
 
   elements.filterActionKicker.textContent = t.filters;
   elements.filterActionLabel.textContent = category;
-  elements.filterActionDetail.textContent = extraFilters.length > 0 ? `${extraFilters.join(" · ")} · ${count}` : String(count);
+  elements.filterActionDetail.textContent = extraFilters.join(" · ");
   elements.filterActionButton.setAttribute("aria-label", `${t.filters}: ${category}`);
-  elements.filterPanelSummary.textContent = `${category} · ${count}`;
+  elements.filterPanelSummary.textContent = [category, ...extraFilters].join(" · ");
 }
 
 function renderLibrary() {
