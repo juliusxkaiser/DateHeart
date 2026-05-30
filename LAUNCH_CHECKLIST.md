@@ -34,6 +34,7 @@
 - Native compliance check added via `npm run native:compliance`.
 - iOS app Privacy Manifest added at `ios/App/App/PrivacyInfo.xcprivacy`.
 - Apple App Privacy and Google Play Data Safety draft answers added at `docs/STORE_COMPLIANCE.md`.
+- Store submission packet check added via `npm run store:check`.
 
 ## Needs owner action before public launch
 
@@ -51,4 +52,5 @@
 - Add Android Play upload signing via `android/key.properties`.
 - Add iOS signing with Apple team, bundle id, certificate and provisioning profile.
 - Transfer the prepared Apple/Google privacy answers from `docs/STORE_COMPLIANCE.md` into the store consoles.
+- Use `docs/STORE_SUBMISSION_PACKET.md` when transferring assets and text into the store consoles.
 - Implement Apple IAP and Google Play Billing before selling the no-ads unlock in native apps.

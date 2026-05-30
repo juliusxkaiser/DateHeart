@@ -22,6 +22,12 @@ Native store-compliance check:
 npm run native:compliance
 ```
 
+Store submission packet check:
+
+```bash
+npm run store:check
+```
+
 Android debug APK:
 
 ```bash
@@ -140,5 +146,6 @@ store/screenshots/google-play/phone/
 - Android: Google Play Console app, Play App Signing/upload key, final data-safety answers and production track access.
 - iOS: Apple Developer team, registered bundle id, signing certificate/provisioning profile, App Store Connect app record and privacy labels.
 - Store forms: copy the current Apple App Privacy and Google Play Data Safety answers from `docs/STORE_COMPLIANCE.md`.
+- Store transfer: use `docs/STORE_SUBMISSION_PACKET.md` for the final file paths and commands.
 - Native payments: implement Apple IAP and Google Play Billing before selling the no-ads unlock inside the native apps.
 - Legal pages: replace placeholder operator/contact data before public launch.

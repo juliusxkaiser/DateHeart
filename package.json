@@ -36,6 +36,7 @@
     "screenshots:pwa": "SCREENSHOT_DIR=public/screenshots node scripts/cdp-check.mjs",
     "screenshots:store": "SCREENSHOT_DIR=store/screenshots node scripts/cdp-check.mjs",
     "screenshots:stores": "node scripts/store-screenshots.mjs",
+    "store:check": "node scripts/store-packet-check.mjs",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
