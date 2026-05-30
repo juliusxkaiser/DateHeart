@@ -27,6 +27,9 @@
 - Capacitor native projects added for iOS and Android with DateHeart app icon/splash assets.
 - Android debug APK and release AAB build commands added.
 - iOS simulator build command added.
+- Android upload-keystore helper added via `npm run android:keystore`.
+- iOS App Store archive helper added via `npm run ios:archive`.
+- Store screenshot generator added via `npm run screenshots:stores`.
 - Native builds hide the web-only Stripe no-ads purchase until store billing is implemented.
 
 ## Needs owner action before public launch

@@ -104,7 +104,9 @@ Capacitor-Projekte fuer iOS und Android sind vorbereitet:
 npm run native:build
 npm run android:debug
 npm run android:bundle
+npm run android:keystore
 npm run ios:build
+npm run ios:archive
 ```
 
 Artefakte:
@@ -116,6 +118,12 @@ Artefakte:
 Fuer Android Store-Uploads muss `android/key.properties` aus `android/key.properties.example` mit einer echten Play-Upload-Keystore-Konfiguration angelegt werden. Fuer iOS Store-Uploads fehlen noch Apple-Team, Bundle-Registrierung und Signing-Profil. Details stehen in `docs/NATIVE_DEPLOY.md`.
 
 In nativen Builds ist der web-only Stripe-Kauf fuer `DateHeart ohne Werbung` ausgeblendet, bis Apple IAP und Google Play Billing implementiert sind.
+
+Store-Screenshots fuer Apple/Google koennen mit laufender Preview erzeugt werden:
+
+```bash
+npm run screenshots:stores
+```
 
 Docker ist ebenfalls vorbereitet:
 

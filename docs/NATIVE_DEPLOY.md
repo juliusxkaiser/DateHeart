@@ -70,6 +70,65 @@ Fill `android/key.properties` with the upload keystore values. `storeFile` is re
 
 Without `android/key.properties`, `npm run android:bundle` still validates that the native project builds, but the generated bundle is not a store-ready signed upload artifact.
 
+To generate a local upload keystore and `android/key.properties` in one step:
+
+```bash
+DATEHEART_KEYSTORE_PASSWORD='replace-with-strong-password' \
+DATEHEART_KEY_PASSWORD='replace-with-strong-password' \
+npm run android:keystore
+```
+
+Then build the signed AAB:
+
+```bash
+npm run android:bundle
+```
+
+The upload artifact remains:
+
+```text
+android/app/build/outputs/bundle/release/app-release.aab
+```
+
+## iOS Archive
+
+The iOS target is configured as iPhone-only for the first store release.
+
+After the bundle id `com.czarletsgo.dateheart` exists in Apple Developer and the local Xcode account can sign it:
+
+```bash
+DATEHEART_IOS_TEAM_ID=YOURTEAMID npm run ios:archive
+```
+
+If Xcode should create/update signing profiles automatically:
+
+```bash
+DATEHEART_IOS_TEAM_ID=YOURTEAMID DATEHEART_IOS_ALLOW_PROVISIONING_UPDATES=true npm run ios:archive
+```
+
+Output:
+
+```text
+build/ios/DateHeart.xcarchive
+```
+
+Validate and upload the archive from Xcode Organizer or export/upload it with `xcodebuild` after App Store Connect signing is configured.
+
+## Store Screenshots
+
+With a local preview running at `http://127.0.0.1:4173/`:
+
+```bash
+npm run screenshots:stores
+```
+
+Outputs:
+
+```text
+store/screenshots/app-store/iphone-69/
+store/screenshots/google-play/phone/
+```
+
 ## Store Upload Blockers
 
 - Android: Google Play Console app, Play App Signing/upload key, final data-safety answers and production track access.
