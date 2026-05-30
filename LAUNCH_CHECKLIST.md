@@ -24,6 +24,10 @@
 - Static launch files added: `robots.txt`, `sitemap.xml` and `404.html`.
 - Legal page routes added: `privacy.html`, `terms.html`, `impressum.html`.
 - Share links generate app deep links with idea, language and active filters.
+- Capacitor native projects added for iOS and Android with DateHeart app icon/splash assets.
+- Android debug APK and release AAB build commands added.
+- iOS simulator build command added.
+- Native builds hide the web-only Stripe no-ads purchase until store billing is implemented.
 
 ## Needs owner action before public launch
 
@@ -37,4 +41,7 @@
 - Run live-mode payment tests for at least DE/EUR and one non-EUR market.
 - Run `APP_URL=https://your-production-domain REQUIRE_CONFIGURED_PAYMENT=true npm run api:smoke` after Stripe secrets are configured.
 - Resolve the GitHub Actions billing/spending-limit blocker so manual CI/deploy workflows can start.
-- Decide whether the native iOS/Android apps use Apple IAP and Google Play Billing for the same purchase.
+- Create Google Play Console and Apple Developer/App Store Connect app records.
+- Add Android Play upload signing via `android/key.properties`.
+- Add iOS signing with Apple team, bundle id, certificate and provisioning profile.
+- Implement Apple IAP and Google Play Billing before selling the no-ads unlock in native apps.

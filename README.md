@@ -96,6 +96,27 @@ Share-Links nutzen `VITE_APP_SHARE_URL` als Basis und haengen automatisch `idea`
 VITE_APP_SHARE_URL=https://dateheart.example/
 ```
 
+## Native Apps
+
+Capacitor-Projekte fuer iOS und Android sind vorbereitet:
+
+```bash
+npm run native:build
+npm run android:debug
+npm run android:bundle
+npm run ios:build
+```
+
+Artefakte:
+
+- Android Debug APK: `android/app/build/outputs/apk/debug/app-debug.apk`
+- Android Release AAB: `android/app/build/outputs/bundle/release/app-release.aab`
+- iOS Simulator App: `build/ios/Build/Products/Debug-iphonesimulator/App.app`
+
+Fuer Android Store-Uploads muss `android/key.properties` aus `android/key.properties.example` mit einer echten Play-Upload-Keystore-Konfiguration angelegt werden. Fuer iOS Store-Uploads fehlen noch Apple-Team, Bundle-Registrierung und Signing-Profil. Details stehen in `docs/NATIVE_DEPLOY.md`.
+
+In nativen Builds ist der web-only Stripe-Kauf fuer `DateHeart ohne Werbung` ausgeblendet, bis Apple IAP und Google Play Billing implementiert sind.
+
 Docker ist ebenfalls vorbereitet:
 
 ```bash

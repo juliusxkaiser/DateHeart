@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Capacitor } from "@capacitor/core";
 import "./styles.css";
 import {
   budgets,
@@ -45,6 +46,7 @@ const ENABLE_AD_BANNER = false;
 const ENABLE_INTERSTITIAL_AD = false;
 const HISTORY_LIMIT = 120;
 const FAMILY_REPEAT_WINDOW = 90;
+const IS_NATIVE_APP = Capacitor.isNativePlatform();
 const staticPageUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 type PersistedStats = {
@@ -723,7 +725,7 @@ let stats = loadJson<PersistedStats>(STORAGE_KEYS.stats, { reveals: 0, adBreaks:
 let currentIdea: DateIdea | null = null;
 let activeLibraryMode: "history" | "favorites" = "history";
 let revealLocked = false;
-let noAdsPurchased = localStorage.getItem(STORAGE_KEYS.noAds) === "true";
+let noAdsPurchased = IS_NATIVE_APP || localStorage.getItem(STORAGE_KEYS.noAds) === "true";
 let paymentBusy = false;
 let paymentStatusKey: PaymentStatusKey = "paymentNote";
 
@@ -1308,13 +1310,14 @@ function showInfo() {
 }
 
 function showPurchase() {
+  if (IS_NATIVE_APP) return;
   paymentStatusKey = noAdsPurchased ? "paymentConfirmed" : "paymentNote";
   applyTranslations();
   openPanel(elements.purchaseOverlay);
 }
 
 async function buyNoAds() {
-  if (noAdsPurchased || paymentBusy) return;
+  if (IS_NATIVE_APP || noAdsPurchased || paymentBusy) return;
 
   paymentBusy = true;
   paymentStatusKey = "paymentStarting";
@@ -1389,7 +1392,7 @@ async function verifyCheckoutSession(sessionId: string, showStatus: boolean) {
 }
 
 async function restoreNoAdsPurchase() {
-  if (noAdsPurchased || paymentBusy) return;
+  if (IS_NATIVE_APP || noAdsPurchased || paymentBusy) return;
 
   const email = elements.restoreEmailInput.value.trim();
   if (!email) {
@@ -1546,6 +1549,7 @@ function applyTranslations() {
   elements.filterActionButton.title = t.filters;
   elements.noAdsButton.setAttribute("aria-label", t.removeAds);
   elements.noAdsButton.title = t.removeAds;
+  elements.noAdsButton.hidden = IS_NATIVE_APP;
   elements.noAdsButton.classList.toggle("active", noAdsPurchased);
   elements.favoritesButton.setAttribute("aria-label", t.favorites);
   elements.favoritesButton.title = t.favorites;
