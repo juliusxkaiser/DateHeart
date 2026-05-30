@@ -618,6 +618,24 @@ function appShareUrl() {
   return DEFAULT_APP_SHARE_URL;
 }
 
+function buildShareUrl(idea: DateIdea) {
+  const url = new URL(appShareUrl(), window.location.href);
+  url.searchParams.set("idea", idea.id);
+  url.searchParams.set("lang", activeLanguage);
+  url.searchParams.set("category", filters.category);
+  url.searchParams.set("budget", filters.budget);
+  url.searchParams.set("duration", filters.duration);
+
+  return url.toString();
+}
+
+function filterParam<T extends string>(params: URLSearchParams, key: string, values: readonly T[]) {
+  const value = params.get(key);
+  if (value === "All") return "All";
+  if (value && values.includes(value as T)) return value as T;
+  return "All";
+}
+
 function purchaseClientId() {
   const saved = localStorage.getItem(STORAGE_KEYS.purchaseClientId);
   if (saved) return saved;
@@ -1092,13 +1110,13 @@ async function shareCurrentIdea() {
   if (!currentIdea) return;
 
   const displayIdea = localizeIdea(currentIdea, activeLanguage, activeBudgetMarket());
-  const shareUrl = appShareUrl();
+  const shareUrl = buildShareUrl(currentIdea);
   const baseText = currentPlanText() || `${APP_NAME}: ${displayIdea.title}\n${displayIdea.prompt}\n${t.prep}: ${displayIdea.prep}`;
   const text = `${baseText}\n\n${APP_NAME}: ${shareUrl}`;
 
   if (navigator.share) {
     try {
-      await navigator.share({ title: APP_NAME, text, url: shareUrl });
+      await navigator.share({ title: `${APP_NAME}: ${displayIdea.title}`, text, url: shareUrl });
       return;
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
@@ -1438,6 +1456,49 @@ function handleCheckoutReturn() {
   }
 }
 
+function handleSharedLink() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("checkout") || params.has("session_id")) return;
+
+  const sharedLanguage = params.get("lang");
+  let needsRerender = false;
+
+  if (isLanguageCode(sharedLanguage) && sharedLanguage !== activeLanguage) {
+    activeLanguage = sharedLanguage;
+    localStorage.setItem(STORAGE_KEYS.language, activeLanguage);
+    t = translations[activeLanguage];
+    needsRerender = true;
+  }
+
+  const sharedFilters = normalizeFilters({
+    category: filterParam(params, "category", categories),
+    budget: filterParam(params, "budget", budgets),
+    duration: filterParam(params, "duration", durations),
+  });
+  const hasSharedFilters = params.has("category") || params.has("budget") || params.has("duration");
+
+  if (hasSharedFilters) {
+    filters = sharedFilters;
+    saveJson(STORAGE_KEYS.filters, filters);
+    needsRerender = true;
+  }
+
+  if (needsRerender) {
+    applyTranslations();
+    renderFilters();
+    renderLibrary();
+  }
+
+  const sharedIdea = ideaById.get(params.get("idea") || "");
+  if (!sharedIdea) return;
+
+  currentIdea = sharedIdea;
+  historyIds = [sharedIdea.id, ...historyIds.filter((id) => id !== sharedIdea.id)].slice(0, HISTORY_LIMIT);
+  saveJson(STORAGE_KEYS.history, historyIds);
+  renderLibrary();
+  showResult(sharedIdea);
+}
+
 function renderLanguageList() {
   elements.languageList.innerHTML = languages
     .map(
@@ -1626,5 +1687,6 @@ applyTranslations();
 renderFilters();
 renderLanguageList();
 handleCheckoutReturn();
+handleSharedLink();
 updateCounter();
 elements.adBanner.hidden = noAdsPurchased || !ENABLE_AD_BANNER;

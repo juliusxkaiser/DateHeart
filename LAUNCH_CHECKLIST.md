@@ -23,6 +23,7 @@
 - Backend health endpoint added at `/api/health` and `/.netlify/functions/health`.
 - Static launch files added: `robots.txt`, `sitemap.xml` and `404.html`.
 - Legal page routes added: `privacy.html`, `terms.html`, `impressum.html`.
+- Share links generate app deep links with idea, language and active filters.
 
 ## Needs owner action before public launch
 

@@ -90,6 +90,12 @@ Wenn ein anderer Unterpfad gebraucht wird:
 VITE_BASE_PATH=/dein-pfad/ npm run build
 ```
 
+Share-Links nutzen `VITE_APP_SHARE_URL` als Basis und haengen automatisch `idea`, `lang` und aktive Filter als Deep-Link-Parameter an:
+
+```bash
+VITE_APP_SHARE_URL=https://dateheart.example/
+```
+
 Docker ist ebenfalls vorbereitet:
 
 ```bash

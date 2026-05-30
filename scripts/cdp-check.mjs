@@ -146,6 +146,40 @@ try {
       throw new Error(`${viewport.name} filter controls did not produce a matching idea.`);
     }
 
+    const sharedUrl = new URL(appUrl);
+    sharedUrl.searchParams.set("idea", "date-00001");
+    sharedUrl.searchParams.set("lang", "de");
+    sharedUrl.searchParams.set("category", "Creative");
+    sharedUrl.searchParams.set("budget", "Up to 40 EUR");
+    sharedUrl.searchParams.set("duration", "60-90 min");
+    await page.goto(sharedUrl.toString(), { waitUntil: "networkidle" });
+    await page.waitForTimeout(800);
+
+    const sharedLink = await page.evaluate(() => ({
+      lang: document.documentElement.lang,
+      visible: !document.querySelector("#resultOverlay")?.hidden,
+      title: document.querySelector("#resultTitle")?.textContent || "",
+      filterAction: document.querySelector("#filterActionButton")?.textContent?.trim() || "",
+      activeCategory: Array.from(document.querySelectorAll("#categoryChips .choice-button")).find((node) => node.classList.contains("active"))
+        ?.getAttribute("data-value") || "",
+      activeBudget: Array.from(document.querySelectorAll("#budgetChips .choice-button")).find((node) => node.classList.contains("active"))
+        ?.getAttribute("data-value") || "",
+      activeDuration: Array.from(document.querySelectorAll("#durationChips .choice-button")).find((node) => node.classList.contains("active"))
+        ?.getAttribute("data-value") || "",
+      query: window.location.search,
+    }));
+
+    if (
+      sharedLink.lang !== "de" ||
+      !sharedLink.visible ||
+      !sharedLink.title ||
+      sharedLink.activeCategory !== "Creative" ||
+      sharedLink.activeBudget !== "Up to 40 EUR" ||
+      sharedLink.activeDuration !== "60-90 min"
+    ) {
+      throw new Error(`${viewport.name} shared idea link did not restore idea, language, and filters.`);
+    }
+
     checks.push({
       viewport: viewport.name,
       homeScreenshot,
@@ -154,6 +188,7 @@ try {
       canvas,
       result,
       filterFunction,
+      sharedLink,
       layout,
     });
 
