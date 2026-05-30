@@ -33,8 +33,24 @@ function output(command, args, options = {}) {
   return run(command, args, { ...options, capture: true }).stdout.trim();
 }
 
+function optionalOutput(command, args, options = {}) {
+  const result = run(command, args, { ...options, capture: true, allowFailure: true });
+  return result.status === 0 ? result.stdout.trim() : "";
+}
+
 function ghApi(args, options = {}) {
   return run("gh", ["api", ...args], { ...options, capture: true });
+}
+
+function configureDeployGitIdentity(deployDir) {
+  const name = process.env.DEPLOY_GIT_NAME || optionalOutput("git", ["config", "--get", "user.name"]) || "DateHeart Deploy Bot";
+  const email =
+    process.env.DEPLOY_GIT_EMAIL ||
+    optionalOutput("git", ["config", "--get", "user.email"]) ||
+    "dateheart-deploy@users.noreply.github.com";
+
+  run("git", ["config", "user.name", name], { cwd: deployDir });
+  run("git", ["config", "user.email", email], { cwd: deployDir });
 }
 
 async function cleanDeployDir(deployDir) {
@@ -118,6 +134,7 @@ ensureRepoExists();
 
 const deployDir = await mkdtemp(join(tmpdir(), "dateheart-pages-"));
 run("git", ["clone", repoUrl, deployDir]);
+configureDeployGitIdentity(deployDir);
 
 await cleanDeployDir(deployDir);
 await copyDist(deployDir);
