@@ -26,6 +26,8 @@ import {
   type LanguageCode,
 } from "./i18n";
 
+const DEFAULT_APP_SHARE_URL = "https://czarletsgo.github.io/dateheart-web/";
+
 const STORAGE_KEYS = {
   favorites: "dateheart:favorites",
   history: "dateheart:history",
@@ -35,7 +37,6 @@ const STORAGE_KEYS = {
   noAds: "dateheart:no_ads",
   pendingCheckoutSession: "dateheart:pending_checkout_session",
   purchaseClientId: "dateheart:purchase_client_id",
-  quickMode: "dateheart:quick_mode",
 };
 
 const APP_NAME = "DateHeart";
@@ -301,7 +302,9 @@ const resultCopy: Record<LanguageCode, ResultCopy> = {
 
 const quickModeOrder = ["all", "tonight", "free", "home", "out", "ai"] as const satisfies readonly QuickMode[];
 
-const icon = (name: "globe" | "info" | "sliders" | "history" | "heart" | "share" | "copy" | "x" | "spark" | "star") => {
+const icon = (
+  name: "globe" | "info" | "sliders" | "history" | "heart" | "share" | "copy" | "x" | "spark" | "star" | "check",
+) => {
   const paths = {
     globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20"/><path d="M12 2a15 15 0 0 0 0 20"/>',
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 17v-6"/><path d="M12 8h.01"/>',
@@ -313,6 +316,7 @@ const icon = (name: "globe" | "info" | "sliders" | "history" | "heart" | "share"
     x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
     spark: '<path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7Z"/><path d="m19 17 .7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7Z"/>',
     star: '<path d="m12 2 3.1 6.3 6.9 1-5 4.8 1.2 6.9-6.2-3.3L5.8 21 7 14.1 2 9.3l6.9-1Z"/>',
+    check: '<path d="m5 13 4 4L19 7"/>',
   } satisfies Record<string, string>;
 
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[name]}</svg>`;
@@ -330,9 +334,6 @@ app.innerHTML = `
       <div class="topbar-actions">
         <button class="icon-button" id="historyButton" type="button" aria-label="History" title="History">
           ${icon("history")}
-        </button>
-        <button class="icon-button" id="filterButton" type="button" aria-label="Filter" title="Filter">
-          ${icon("sliders")}
         </button>
         <button class="icon-button" id="noAdsButton" type="button" aria-label="Remove ads" title="Remove ads">
           ${icon("star")}
@@ -356,7 +357,11 @@ app.innerHTML = `
 
     <main class="stage" aria-labelledby="stageTitle">
       <p class="counter" id="ideaCounter"></p>
-      <div class="quick-modes" id="quickModes" role="group" aria-label="Quick filters"></div>
+      <button class="filter-action" id="filterActionButton" type="button">
+        <span id="filterActionKicker">Category</span>
+        <strong id="filterActionLabel">All</strong>
+        <small id="filterActionDetail"></small>
+      </button>
       <h2 class="sr-only" id="stageTitle">Pull a date cue</h2>
       <div class="heart-wrap">
         <button class="heart-button" id="heartButton" type="button" aria-label="Tap the heart for a date cue">
@@ -401,22 +406,23 @@ app.innerHTML = `
   </div>
 
   <div class="panel" id="filterPanel" hidden>
-    <section class="panel-card" role="dialog" aria-modal="true" aria-labelledby="filterTitle">
+    <section class="panel-card filter-card" role="dialog" aria-modal="true" aria-labelledby="filterTitle">
       <div class="panel-header">
         <h2 id="filterTitle">Filters</h2>
         <button class="close-button" id="closeFilterButton" type="button" aria-label="Close" title="Close">${icon("x")}</button>
       </div>
+      <p class="filter-summary" id="filterPanelSummary"></p>
       <div class="filter-group">
         <h3 id="categoryLabel">Category</h3>
-        <div class="chip-grid" id="categoryChips"></div>
+        <div class="choice-list" id="categoryChips"></div>
       </div>
       <div class="filter-group">
         <h3 id="budgetLabel">Budget</h3>
-        <div class="chip-grid compact" id="budgetChips"></div>
+        <div class="choice-grid" id="budgetChips"></div>
       </div>
       <div class="filter-group">
         <h3 id="durationLabel">Duration</h3>
-        <div class="chip-grid compact" id="durationChips"></div>
+        <div class="choice-grid" id="durationChips"></div>
       </div>
       <button class="primary-button wide" id="resetFiltersButton" type="button">Allow all ideas</button>
     </section>
@@ -504,7 +510,10 @@ const elements = {
   copyPlanButton: document.querySelector<HTMLButtonElement>("#copyPlanButton")!,
   againButton: document.querySelector<HTMLButtonElement>("#againButton")!,
   closeResultButton: document.querySelector<HTMLButtonElement>("#closeResultButton")!,
-  filterButton: document.querySelector<HTMLButtonElement>("#filterButton")!,
+  filterActionButton: document.querySelector<HTMLButtonElement>("#filterActionButton")!,
+  filterActionKicker: document.querySelector<HTMLSpanElement>("#filterActionKicker")!,
+  filterActionLabel: document.querySelector<HTMLElement>("#filterActionLabel")!,
+  filterActionDetail: document.querySelector<HTMLElement>("#filterActionDetail")!,
   noAdsButton: document.querySelector<HTMLButtonElement>("#noAdsButton")!,
   favoritesButton: document.querySelector<HTMLButtonElement>("#favoritesButton")!,
   languageButton: document.querySelector<HTMLButtonElement>("#languageButton")!,
@@ -519,9 +528,9 @@ const elements = {
   categoryLabel: document.querySelector<HTMLElement>("#categoryLabel")!,
   budgetLabel: document.querySelector<HTMLElement>("#budgetLabel")!,
   durationLabel: document.querySelector<HTMLElement>("#durationLabel")!,
+  filterPanelSummary: document.querySelector<HTMLParagraphElement>("#filterPanelSummary")!,
   planLabel: document.querySelector<HTMLElement>("#planLabel")!,
   aiPromptLabel: document.querySelector<HTMLElement>("#aiPromptLabel")!,
-  quickModes: document.querySelector<HTMLDivElement>("#quickModes")!,
   resetFiltersButton: document.querySelector<HTMLButtonElement>("#resetFiltersButton")!,
   historyButton: document.querySelector<HTMLButtonElement>("#historyButton")!,
   libraryPanel: document.querySelector<HTMLDivElement>("#libraryPanel")!,
@@ -609,6 +618,12 @@ function cleanCheckoutUrl() {
   return url;
 }
 
+function appShareUrl() {
+  const configuredUrl = import.meta.env.VITE_APP_SHARE_URL?.trim();
+  if (configuredUrl) return configuredUrl;
+  return DEFAULT_APP_SHARE_URL;
+}
+
 function purchaseClientId() {
   const saved = localStorage.getItem(STORAGE_KEYS.purchaseClientId);
   if (saved) return saved;
@@ -690,7 +705,7 @@ function setNoAdsPurchased() {
 let activeLanguage = loadLanguage();
 let t = translations[activeLanguage];
 let filters = normalizeFilters(loadJson<IdeaFilters>(STORAGE_KEYS.filters, defaultFilters));
-let activeQuickMode = normalizeQuickMode(localStorage.getItem(STORAGE_KEYS.quickMode));
+let activeQuickMode: QuickMode = "all";
 let historyIds = loadJson<string[]>(STORAGE_KEYS.history, []);
 let favoriteIds = new Set(loadJson<string[]>(STORAGE_KEYS.favorites, []));
 let stats = loadJson<PersistedStats>(STORAGE_KEYS.stats, { reveals: 0, adBreaks: 0 });
@@ -849,28 +864,6 @@ function quickModeLabel(mode: QuickMode) {
   if (mode === "home") return labelFor("category", "Home", activeLanguage);
   if (mode === "out") return uiCopy().out;
   return "AI";
-}
-
-function renderQuickModes() {
-  elements.quickModes.setAttribute("aria-label", t.filters);
-  elements.quickModes.innerHTML = quickModeOrder
-    .map(
-      (mode) => `
-        <button class="quick-mode${mode === activeQuickMode ? " active" : ""}" type="button" data-mode="${mode}" aria-pressed="${mode === activeQuickMode}">
-          ${quickModeLabel(mode)}
-        </button>
-      `,
-    )
-    .join("");
-
-  elements.quickModes.querySelectorAll<HTMLButtonElement>(".quick-mode").forEach((button) => {
-    button.addEventListener("click", () => {
-      activeQuickMode = normalizeQuickMode(button.dataset.mode ?? null);
-      localStorage.setItem(STORAGE_KEYS.quickMode, activeQuickMode);
-      renderQuickModes();
-      updateCounter();
-    });
-  });
 }
 
 function pickIdea() {
@@ -1130,11 +1123,13 @@ async function shareCurrentIdea() {
   if (!currentIdea) return;
 
   const displayIdea = localizeIdea(currentIdea, activeLanguage, activeBudgetMarket());
-  const text = currentPlanText() || `${APP_NAME}: ${displayIdea.title}\n${displayIdea.prompt}\n${t.prep}: ${displayIdea.prep}`;
+  const shareUrl = appShareUrl();
+  const baseText = currentPlanText() || `${APP_NAME}: ${displayIdea.title}\n${displayIdea.prompt}\n${t.prep}: ${displayIdea.prep}`;
+  const text = `${baseText}\n\n${APP_NAME}: ${shareUrl}`;
 
   if (navigator.share) {
     try {
-      await navigator.share({ title: APP_NAME, text });
+      await navigator.share({ title: APP_NAME, text, url: shareUrl });
       return;
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
@@ -1173,21 +1168,33 @@ function renderFilterGroup<T extends string>(
   onPick: (value: T | "All") => void,
 ) {
   const market = activeBudgetMarket();
+  const isCategoryGroup = container === elements.categoryChips;
+  const filterKind = isCategoryGroup ? "category" : container === elements.budgetChips ? "budget" : "duration";
+
   container.innerHTML = ["All", ...values]
     .map((value) => {
       const selected = value === current ? " active" : "";
-      const label = value === "All" ? t.all : labelFor(
-        container === elements.categoryChips ? "category" : container === elements.budgetChips ? "budget" : "duration",
-        value,
-        activeLanguage,
-        market,
-      );
-      return `<button class="chip${selected}" type="button" data-value="${value}">${label}</button>`;
+      const label = value === "All" ? t.all : labelFor(filterKind, value, activeLanguage, market);
+      const nextFilters = { ...filters, [filterKind]: value } as IdeaFilters;
+      const count = filterIdeas(normalizeFilters(nextFilters)).length;
+
+      return `
+        <button class="choice-button${selected}" type="button" data-value="${value}" aria-pressed="${value === current}">
+          <span class="choice-copy">
+            <strong>${label}</strong>
+            ${isCategoryGroup ? `<small>${count}</small>` : ""}
+          </span>
+          <span class="choice-check" aria-hidden="true">${value === current ? icon("check") : ""}</span>
+        </button>
+      `;
     })
     .join("");
 
-  container.querySelectorAll<HTMLButtonElement>(".chip").forEach((button) => {
-    button.addEventListener("click", () => onPick(button.dataset.value as T | "All"));
+  container.querySelectorAll<HTMLButtonElement>(".choice-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      onPick(button.dataset.value as T | "All");
+      renderFilterAction();
+    });
   });
 }
 
@@ -1224,6 +1231,23 @@ function updateCounter() {
     .join(" · ");
   const count = candidateIdeasForCurrentMode().length;
   elements.ideaCounter.textContent = detail ? `${detail} · ${count}` : t.ready;
+  renderFilterAction();
+}
+
+function renderFilterAction() {
+  const market = activeBudgetMarket();
+  const category = filters.category === "All" ? `${t.all} ${t.category}` : labelFor("category", filters.category, activeLanguage);
+  const extraFilters = [
+    filters.budget !== "All" ? labelFor("budget", filters.budget, activeLanguage, market) : "",
+    filters.duration !== "All" ? labelFor("duration", filters.duration, activeLanguage) : "",
+  ].filter(Boolean);
+  const count = candidateIdeasForCurrentMode().length;
+
+  elements.filterActionKicker.textContent = t.filters;
+  elements.filterActionLabel.textContent = category;
+  elements.filterActionDetail.textContent = extraFilters.length > 0 ? `${extraFilters.join(" · ")} · ${count}` : String(count);
+  elements.filterActionButton.setAttribute("aria-label", `${t.filters}: ${category}`);
+  elements.filterPanelSummary.textContent = `${category} · ${count}`;
 }
 
 function renderLibrary() {
@@ -1496,8 +1520,7 @@ function applyTranslations() {
   elements.shareButton.innerHTML = `${icon("share")} ${t.share}`;
   elements.copyPlanButton.innerHTML = `${icon("copy")} ${uiCopy().copyPlan}`;
   elements.againButton.innerHTML = `${icon("spark")} ${t.next}`;
-  elements.filterButton.setAttribute("aria-label", t.filters);
-  elements.filterButton.title = t.filters;
+  elements.filterActionButton.title = t.filters;
   elements.noAdsButton.setAttribute("aria-label", t.removeAds);
   elements.noAdsButton.title = t.removeAds;
   elements.noAdsButton.classList.toggle("active", noAdsPurchased);
@@ -1557,7 +1580,7 @@ function applyTranslations() {
   elements.adBreakTitle.textContent = t.adBreakTitle;
   elements.adBreakBody.textContent = t.adBreakBody;
   elements.closeAdBreakButton.textContent = elements.closeAdBreakButton.disabled ? t.continueIn.replace("{seconds}", "2") : t.continue;
-  renderQuickModes();
+  renderFilterAction();
   updateCounter();
 }
 
@@ -1573,7 +1596,7 @@ elements.resultOverlay.addEventListener("click", (event) => {
 elements.favoriteButton.addEventListener("click", toggleFavorite);
 elements.shareButton.addEventListener("click", () => void shareCurrentIdea());
 elements.copyPlanButton.addEventListener("click", () => void copyCurrentPlan());
-elements.filterButton.addEventListener("click", () => openPanel(elements.filterPanel));
+elements.filterActionButton.addEventListener("click", () => openPanel(elements.filterPanel));
 elements.noAdsButton.addEventListener("click", showPurchase);
 elements.buyNoAdsButton.addEventListener("click", buyNoAds);
 elements.restorePurchaseForm.addEventListener("submit", (event) => {
@@ -1589,8 +1612,6 @@ elements.closeLanguageButton.addEventListener("click", () => closePanel(elements
 elements.resetFiltersButton.addEventListener("click", () => {
   filters = defaultFilters;
   activeQuickMode = "all";
-  localStorage.setItem(STORAGE_KEYS.quickMode, activeQuickMode);
-  renderQuickModes();
   saveFilters();
 });
 elements.historyButton.addEventListener("click", () => {

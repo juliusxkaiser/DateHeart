@@ -90,7 +90,14 @@ for (const screenshot of manifest.screenshots ?? []) {
 }
 
 const envExample = await readFile(".env.example", "utf8");
-for (const key of ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "VITE_CHECKOUT_ENDPOINT", "VITE_VERIFY_PAYMENT_ENDPOINT", "VITE_RESTORE_PAYMENT_ENDPOINT"]) {
+for (const key of [
+  "STRIPE_SECRET_KEY",
+  "STRIPE_WEBHOOK_SECRET",
+  "VITE_CHECKOUT_ENDPOINT",
+  "VITE_VERIFY_PAYMENT_ENDPOINT",
+  "VITE_RESTORE_PAYMENT_ENDPOINT",
+  "VITE_APP_SHARE_URL",
+]) {
   if (!envExample.includes(key)) errors.push(`.env.example is missing ${key}`);
 }
 

@@ -145,6 +145,7 @@ PAYMENT_ALLOWED_ORIGINS=https://dein-github-pages-host
 VITE_CHECKOUT_ENDPOINT=https://dein-backend.example/api/create-checkout-session
 VITE_VERIFY_PAYMENT_ENDPOINT=https://dein-backend.example/api/verify-checkout-session
 VITE_RESTORE_PAYMENT_ENDPOINT=https://dein-backend.example/api/restore-purchase
+VITE_APP_SHARE_URL=https://dein-app-oder-store-link.example/
 ```
 
 Vercel nutzt `/api/create-checkout-session`, `/api/verify-checkout-session`, `/api/restore-purchase` und `/api/stripe-webhook`. Netlify nutzt die entsprechenden Funktionen unter `/.netlify/functions/...`. GitHub Pages braucht wegen fehlender Serverless-Funktionen ein externes Backend ueber die `VITE_*_ENDPOINT` Variablen.

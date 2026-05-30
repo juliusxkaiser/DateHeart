@@ -149,10 +149,7 @@ try {
           prompt: document.querySelector('#resultPrompt')?.textContent || '',
           visible: !document.querySelector('#resultOverlay')?.hidden,
           count: document.querySelector('#ideaCounter')?.textContent || '',
-          quickModes: Array.from(document.querySelectorAll('.quick-mode')).map((node) => ({
-            text: node.textContent?.trim() || '',
-            active: node.classList.contains('active')
-          })),
+          filterAction: document.querySelector('#filterActionButton')?.textContent?.trim() || '',
           planItems: Array.from(document.querySelectorAll('#resultPlan li')).map((node) => node.textContent?.trim() || ''),
           aiPromptLength: document.querySelector('#resultAiPrompt')?.textContent?.trim().length || 0,
           copyPlanLabel: document.querySelector('#copyPlanButton')?.textContent?.trim() || ''
@@ -196,17 +193,21 @@ try {
     await client.send("Runtime.evaluate", {
       expression: `
         (() => {
-          const aiMode = Array.from(document.querySelectorAll('.quick-mode')).find((node) => node.textContent?.trim() === 'AI');
-          aiMode?.click();
+          document.querySelector('#filterActionButton')?.click();
+          const category = Array.from(document.querySelectorAll('#categoryChips .choice-button')).find((node) => node.dataset.value === 'Creative');
+          category?.click();
+          document.querySelector('#closeFilterButton')?.click();
           document.querySelector('#heartButton')?.click();
         })()
       `,
     });
     await wait(1300);
-    const quickModeFunctionCheck = await client.send("Runtime.evaluate", {
+    const filterFunctionCheck = await client.send("Runtime.evaluate", {
       expression: `
         (() => ({
-          activeMode: Array.from(document.querySelectorAll('.quick-mode')).find((node) => node.classList.contains('active'))?.textContent?.trim() || '',
+          filterAction: document.querySelector('#filterActionButton')?.textContent?.trim() || '',
+          activeCategory: Array.from(document.querySelectorAll('#categoryChips .choice-button')).find((node) => node.classList.contains('active'))?.dataset.value || '',
+          meta: document.querySelector('#resultMeta')?.textContent || '',
           title: document.querySelector('#resultTitle')?.textContent || '',
           prompt: document.querySelector('#resultPrompt')?.textContent || '',
           visible: !document.querySelector('#resultOverlay')?.hidden
@@ -226,21 +227,17 @@ try {
       throw new Error(`${name} result card did not reveal an idea.`);
     }
 
-    if (resultValue.quickModes.length < 6 || !resultValue.quickModes.some((mode) => mode.active)) {
-      throw new Error(`${name} quick modes are missing or have no active mode.`);
+    if (!resultValue.filterAction) {
+      throw new Error(`${name} filter action is missing.`);
     }
 
     if (resultValue.planItems.length < 3 || resultValue.aiPromptLength < 80 || !resultValue.copyPlanLabel) {
       throw new Error(`${name} result plan tools are incomplete.`);
     }
 
-    const quickModeFunctionValue = quickModeFunctionCheck.result.value;
-    if (
-      quickModeFunctionValue.activeMode !== "AI" ||
-      !quickModeFunctionValue.visible ||
-      !/\bAI\b/.test(`${quickModeFunctionValue.title} ${quickModeFunctionValue.prompt}`)
-    ) {
-      throw new Error(`${name} AI quick mode did not produce an AI-driven idea.`);
+    const filterFunctionValue = filterFunctionCheck.result.value;
+    if (filterFunctionValue.activeCategory !== "Creative" || !filterFunctionValue.visible || !filterFunctionValue.meta.includes("Creative")) {
+      throw new Error(`${name} category filter did not produce a Creative idea.`);
     }
 
     checks.push({
@@ -249,7 +246,7 @@ try {
       resultScreenshot,
       canvas: canvasValue,
       result: resultValue,
-      quickModeFunction: quickModeFunctionValue,
+      filterFunction: filterFunctionValue,
       layout: layoutCheck.result.value,
     });
   }
