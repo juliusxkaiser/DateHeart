@@ -186,7 +186,7 @@ button:focus-visible {
   display: grid;
   flex: 1;
   min-height: 0;
-  grid-template-rows: auto auto minmax(220px, 1fr) auto;
+  grid-template-rows: auto minmax(220px, 1fr) auto;
   align-items: center;
   justify-items: center;
   gap: 8px;
@@ -205,38 +205,19 @@ button:focus-visible {
 
 .filter-action {
   position: relative;
-  z-index: 2;
-  display: grid;
-  width: min(360px, 94vw);
-  min-height: 62px;
-  align-content: center;
-  gap: 3px;
-  padding: 10px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.16);
-  color: #fff;
-  text-align: left;
-  box-shadow: 0 8px 22px rgba(80, 0, 28, 0.12);
-  cursor: pointer;
-  touch-action: manipulation;
 }
 
-.filter-action span,
-.filter-action small {
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 0.72rem;
-  font-weight: 850;
-  line-height: 1.1;
-}
-
-.filter-action strong {
-  min-width: 0;
-  overflow-wrap: anywhere;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 950;
-  line-height: 1.12;
+.filter-action.active::after {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  background: var(--gold);
+  box-shadow: 0 0 10px rgba(255, 213, 161, 0.75);
+  content: "";
 }
 
 .heart-wrap {
@@ -1051,13 +1032,8 @@ button:focus-visible {
   }
 
   .stage {
-    grid-template-rows: auto auto minmax(170px, 1fr) auto;
+    grid-template-rows: auto minmax(170px, 1fr) auto;
     gap: 5px;
-  }
-
-  .filter-action {
-    min-height: 56px;
-    padding: 9px 12px;
   }
 
   .heart-wrap {

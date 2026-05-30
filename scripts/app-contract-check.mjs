@@ -55,6 +55,8 @@ assert(mainSource.includes("function handleSharedLink"), "Shared idea links must
 assert(/navigator\.share\(\{[\s\S]*url:\s*shareUrl[\s\S]*\}\)/s.test(mainSource), "Native share payload must include url.");
 assert(!mainSource.includes("<small>${count}</small>"), "Filter category choices must not show idea counts.");
 assert(!mainSource.includes("filterPanelSummary.textContent = `${category} · ${count}`"), "Filter summary must not show idea counts.");
+assert(mainSource.includes('class="icon-button filter-action"'), "Filter action must stay in the top-left toolbar.");
+assert(!mainSource.includes('<button class="filter-action"'), "Filter action must not return as a large stage card.");
 assert(mainSource.includes("Capacitor.isNativePlatform()"), "Native platform detection must stay wired.");
 assert(mainSource.includes("elements.noAdsButton.hidden = IS_NATIVE_APP"), "Native builds must hide the web-only Stripe purchase action.");
 

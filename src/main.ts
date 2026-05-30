@@ -330,6 +330,12 @@ app.innerHTML = `
   <div class="app-shell">
     <header class="topbar">
       <div class="topbar-actions">
+        <button class="icon-button filter-action" id="filterActionButton" type="button" aria-label="Filters" title="Filters">
+          ${icon("sliders")}
+          <span class="sr-only" id="filterActionKicker">Category</span>
+          <strong class="sr-only" id="filterActionLabel">All</strong>
+          <small class="sr-only" id="filterActionDetail"></small>
+        </button>
         <button class="icon-button" id="historyButton" type="button" aria-label="History" title="History">
           ${icon("history")}
         </button>
@@ -355,11 +361,6 @@ app.innerHTML = `
 
     <main class="stage" aria-labelledby="stageTitle">
       <p class="counter" id="ideaCounter"></p>
-      <button class="filter-action" id="filterActionButton" type="button">
-        <span id="filterActionKicker">Category</span>
-        <strong id="filterActionLabel">All</strong>
-        <small id="filterActionDetail"></small>
-      </button>
       <h2 class="sr-only" id="stageTitle">Pull a date cue</h2>
       <div class="heart-wrap">
         <button class="heart-button" id="heartButton" type="button" aria-label="Tap the heart for a date cue">
@@ -1228,8 +1229,14 @@ function renderFilterAction() {
   elements.filterActionKicker.textContent = t.filters;
   elements.filterActionLabel.textContent = category;
   elements.filterActionDetail.textContent = extraFilters.join(" · ");
-  elements.filterActionButton.setAttribute("aria-label", `${t.filters}: ${category}`);
-  elements.filterPanelSummary.textContent = [category, ...extraFilters].join(" · ");
+  const summary = [category, ...extraFilters].join(" · ");
+  elements.filterActionButton.setAttribute("aria-label", `${t.filters}: ${summary}`);
+  elements.filterActionButton.title = `${t.filters}: ${summary}`;
+  elements.filterActionButton.classList.toggle(
+    "active",
+    filters.category !== "All" || filters.budget !== "All" || filters.duration !== "All",
+  );
+  elements.filterPanelSummary.textContent = summary;
 }
 
 function renderLibrary() {
