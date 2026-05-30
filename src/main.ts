@@ -16,10 +16,12 @@ import {
 import {
   budgetMarketFor,
   formatNoAdsPrice,
+  hasSpecificIdeaLocalization,
   labelFor,
   isLanguageCode,
   languages,
   localizeIdea,
+  noAdsPriceForMarket,
   translations,
   type LanguageCode,
 } from "./i18n";
@@ -31,20 +33,275 @@ const STORAGE_KEYS = {
   language: "dateheart:language",
   stats: "dateheart:stats",
   noAds: "dateheart:no_ads",
+  pendingCheckoutSession: "dateheart:pending_checkout_session",
+  purchaseClientId: "dateheart:purchase_client_id",
+  quickMode: "dateheart:quick_mode",
 };
 
 const APP_NAME = "DateHeart";
 const AD_EVERY_REVEALS = 7;
 const ENABLE_AD_BANNER = false;
 const ENABLE_INTERSTITIAL_AD = false;
-const HISTORY_LIMIT = 40;
+const HISTORY_LIMIT = 120;
+const FAMILY_REPEAT_WINDOW = 90;
+const staticPageUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 type PersistedStats = {
   reveals: number;
   adBreaks: number;
 };
 
-const icon = (name: "globe" | "info" | "sliders" | "history" | "heart" | "share" | "x" | "spark" | "star") => {
+type PaymentStatusKey =
+  | "paymentNote"
+  | "paymentStarting"
+  | "paymentUnavailable"
+  | "paymentFailed"
+  | "paymentVerifying"
+  | "paymentConfirmed"
+  | "paymentCanceled"
+  | "restoreStarting"
+  | "restoreConfirmed"
+  | "restoreNotFound"
+  | "restoreEmailRequired";
+
+type QuickMode = "all" | "tonight" | "free" | "home" | "out" | "ai";
+
+type ResultCopy = {
+  plan: string;
+  aiPrompt: string;
+  copyPlan: string;
+  copiedPlan: string;
+  tonight: string;
+  out: string;
+  aiPromptTemplate: string;
+};
+
+const resultCopy: Record<LanguageCode, ResultCopy> = {
+  en: {
+    plan: "Do this",
+    aiPrompt: "AI prompt",
+    copyPlan: "Copy plan",
+    copiedPlan: "Plan copied",
+    tonight: "Tonight",
+    out: "Out",
+    aiPromptTemplate:
+      "Turn this DateHeart idea into a specific plan for today. Keep the budget and duration. Idea: {title}. Details: {prompt}. Prepare: {prep}.",
+  },
+  "en-US": {
+    plan: "Do this",
+    aiPrompt: "AI prompt",
+    copyPlan: "Copy plan",
+    copiedPlan: "Plan copied",
+    tonight: "Tonight",
+    out: "Out",
+    aiPromptTemplate:
+      "Turn this DateHeart idea into a specific plan for today. Keep the budget and duration. Idea: {title}. Details: {prompt}. Prepare: {prep}.",
+  },
+  de: {
+    plan: "Macht das",
+    aiPrompt: "AI-Prompt",
+    copyPlan: "Plan kopieren",
+    copiedPlan: "Plan kopiert",
+    tonight: "Heute",
+    out: "Rausgehen",
+    aiPromptTemplate:
+      "Mach aus dieser DateHeart-Idee einen konkreten Plan für heute. Budget und Dauer beibehalten. Idee: {title}. Details: {prompt}. Vorbereitung: {prep}.",
+  },
+  pl: {
+    plan: "Zróbcie to",
+    aiPrompt: "Prompt AI",
+    copyPlan: "Kopiuj plan",
+    copiedPlan: "Plan skopiowany",
+    tonight: "Dziś",
+    out: "Wyjście",
+    aiPromptTemplate:
+      "Zamień ten pomysł DateHeart w konkretny plan na dziś. Zachowaj budżet i czas. Pomysł: {title}. Szczegóły: {prompt}. Przygotowanie: {prep}.",
+  },
+  es: {
+    plan: "Haced esto",
+    aiPrompt: "Prompt de IA",
+    copyPlan: "Copiar plan",
+    copiedPlan: "Plan copiado",
+    tonight: "Hoy",
+    out: "Salir",
+    aiPromptTemplate:
+      "Convierte esta idea de DateHeart en un plan concreto para hoy. Mantén el presupuesto y la duración. Idea: {title}. Detalles: {prompt}. Preparación: {prep}.",
+  },
+  fr: {
+    plan: "Faites ça",
+    aiPrompt: "Prompt IA",
+    copyPlan: "Copier le plan",
+    copiedPlan: "Plan copié",
+    tonight: "Ce soir",
+    out: "Sortie",
+    aiPromptTemplate:
+      "Transforme cette idée DateHeart en plan concret pour aujourd’hui. Garde le budget et la durée. Idée : {title}. Détails : {prompt}. Préparation : {prep}.",
+  },
+  it: {
+    plan: "Fate questo",
+    aiPrompt: "Prompt AI",
+    copyPlan: "Copia piano",
+    copiedPlan: "Piano copiato",
+    tonight: "Stasera",
+    out: "Fuori",
+    aiPromptTemplate:
+      "Trasforma questa idea DateHeart in un piano concreto per oggi. Mantieni budget e durata. Idea: {title}. Dettagli: {prompt}. Preparazione: {prep}.",
+  },
+  pt: {
+    plan: "Façam isto",
+    aiPrompt: "Prompt de IA",
+    copyPlan: "Copiar plano",
+    copiedPlan: "Plano copiado",
+    tonight: "Hoje",
+    out: "Sair",
+    aiPromptTemplate:
+      "Transforma esta ideia do DateHeart num plano concreto para hoje. Mantém o orçamento e a duração. Ideia: {title}. Detalhes: {prompt}. Preparação: {prep}.",
+  },
+  hi: {
+    plan: "यह करें",
+    aiPrompt: "AI प्रॉम्प्ट",
+    copyPlan: "योजना कॉपी करें",
+    copiedPlan: "योजना कॉपी हुई",
+    tonight: "आज",
+    out: "बाहर",
+    aiPromptTemplate:
+      "इस DateHeart आइडिया को आज के लिए ठोस योजना में बदलें. बजट और अवधि रखें. आइडिया: {title}. विवरण: {prompt}. तैयारी: {prep}.",
+  },
+  ar: {
+    plan: "افعلا هذا",
+    aiPrompt: "موجه الذكاء الاصطناعي",
+    copyPlan: "نسخ الخطة",
+    copiedPlan: "تم نسخ الخطة",
+    tonight: "اليوم",
+    out: "خروج",
+    aiPromptTemplate:
+      "حوّل فكرة DateHeart هذه إلى خطة محددة لهذا اليوم. حافظ على الميزانية والمدة. الفكرة: {title}. التفاصيل: {prompt}. التحضير: {prep}.",
+  },
+  ja: {
+    plan: "これを実行",
+    aiPrompt: "AIプロンプト",
+    copyPlan: "プランをコピー",
+    copiedPlan: "プランをコピーしました",
+    tonight: "今日",
+    out: "外出",
+    aiPromptTemplate:
+      "このDateHeartのアイデアを今日の具体的なプランにしてください。予算と所要時間は守ってください。アイデア: {title}。詳細: {prompt}。準備: {prep}。",
+  },
+  zh: {
+    plan: "照这样做",
+    aiPrompt: "AI 提示词",
+    copyPlan: "复制计划",
+    copiedPlan: "计划已复制",
+    tonight: "今天",
+    out: "出门",
+    aiPromptTemplate:
+      "把这个 DateHeart 想法变成今天可执行的具体计划。保持预算和时长。想法：{title}。细节：{prompt}。准备：{prep}。",
+  },
+  ru: {
+    plan: "Сделайте это",
+    aiPrompt: "Промпт для ИИ",
+    copyPlan: "Скопировать план",
+    copiedPlan: "План скопирован",
+    tonight: "Сегодня",
+    out: "Выйти",
+    aiPromptTemplate:
+      "Преврати эту идею DateHeart в конкретный план на сегодня. Сохрани бюджет и длительность. Идея: {title}. Детали: {prompt}. Подготовка: {prep}.",
+  },
+  ko: {
+    plan: "이렇게 하기",
+    aiPrompt: "AI 프롬프트",
+    copyPlan: "계획 복사",
+    copiedPlan: "계획 복사됨",
+    tonight: "오늘",
+    out: "외출",
+    aiPromptTemplate:
+      "이 DateHeart 아이디어를 오늘 실행할 구체적인 계획으로 바꿔 주세요. 예산과 시간은 유지하세요. 아이디어: {title}. 세부 내용: {prompt}. 준비: {prep}.",
+  },
+  tr: {
+    plan: "Bunu yapın",
+    aiPrompt: "AI istemi",
+    copyPlan: "Planı kopyala",
+    copiedPlan: "Plan kopyalandı",
+    tonight: "Bugün",
+    out: "Dışarı",
+    aiPromptTemplate:
+      "Bu DateHeart fikrini bugün için somut bir plana dönüştür. Bütçeyi ve süreyi koru. Fikir: {title}. Ayrıntılar: {prompt}. Hazırlık: {prep}.",
+  },
+  id: {
+    plan: "Lakukan ini",
+    aiPrompt: "Prompt AI",
+    copyPlan: "Salin rencana",
+    copiedPlan: "Rencana disalin",
+    tonight: "Hari ini",
+    out: "Keluar",
+    aiPromptTemplate:
+      "Ubah ide DateHeart ini menjadi rencana konkret untuk hari ini. Pertahankan anggaran dan durasi. Ide: {title}. Detail: {prompt}. Persiapan: {prep}.",
+  },
+  nl: {
+    plan: "Doe dit",
+    aiPrompt: "AI-prompt",
+    copyPlan: "Plan kopiëren",
+    copiedPlan: "Plan gekopieerd",
+    tonight: "Vandaag",
+    out: "Uit",
+    aiPromptTemplate:
+      "Maak van dit DateHeart-idee een concreet plan voor vandaag. Houd budget en duur aan. Idee: {title}. Details: {prompt}. Voorbereiding: {prep}.",
+  },
+  sv: {
+    plan: "Gör detta",
+    aiPrompt: "AI-prompt",
+    copyPlan: "Kopiera plan",
+    copiedPlan: "Plan kopierad",
+    tonight: "I dag",
+    out: "Ut",
+    aiPromptTemplate:
+      "Gör denna DateHeart-idé till en konkret plan för i dag. Behåll budget och längd. Idé: {title}. Detaljer: {prompt}. Förbered: {prep}.",
+  },
+  cs: {
+    plan: "Udělejte tohle",
+    aiPrompt: "AI prompt",
+    copyPlan: "Kopírovat plán",
+    copiedPlan: "Plán zkopírován",
+    tonight: "Dnes",
+    out: "Ven",
+    aiPromptTemplate:
+      "Proměň tento nápad DateHeart v konkrétní plán na dnešek. Zachovej rozpočet a délku. Nápad: {title}. Detaily: {prompt}. Příprava: {prep}.",
+  },
+  uk: {
+    plan: "Зробіть це",
+    aiPrompt: "AI-промпт",
+    copyPlan: "Скопіювати план",
+    copiedPlan: "План скопійовано",
+    tonight: "Сьогодні",
+    out: "Вийти",
+    aiPromptTemplate:
+      "Перетвори цю ідею DateHeart на конкретний план на сьогодні. Збережи бюджет і тривалість. Ідея: {title}. Деталі: {prompt}. Підготовка: {prep}.",
+  },
+  vi: {
+    plan: "Làm thế này",
+    aiPrompt: "Prompt AI",
+    copyPlan: "Sao chép kế hoạch",
+    copiedPlan: "Đã sao chép kế hoạch",
+    tonight: "Hôm nay",
+    out: "Ra ngoài",
+    aiPromptTemplate:
+      "Biến ý tưởng DateHeart này thành kế hoạch cụ thể cho hôm nay. Giữ ngân sách và thời lượng. Ý tưởng: {title}. Chi tiết: {prompt}. Chuẩn bị: {prep}.",
+  },
+  th: {
+    plan: "ทำแบบนี้",
+    aiPrompt: "พรอมป์ AI",
+    copyPlan: "คัดลอกแผน",
+    copiedPlan: "คัดลอกแผนแล้ว",
+    tonight: "วันนี้",
+    out: "ออกไป",
+    aiPromptTemplate:
+      "เปลี่ยนไอเดีย DateHeart นี้ให้เป็นแผนที่ทำได้จริงสำหรับวันนี้ รักษางบและระยะเวลาไว้ ไอเดีย: {title}. รายละเอียด: {prompt}. เตรียม: {prep}.",
+  },
+};
+
+const quickModeOrder = ["all", "tonight", "free", "home", "out", "ai"] as const satisfies readonly QuickMode[];
+
+const icon = (name: "globe" | "info" | "sliders" | "history" | "heart" | "share" | "copy" | "x" | "spark" | "star") => {
   const paths = {
     globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20"/><path d="M12 2a15 15 0 0 0 0 20"/>',
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 17v-6"/><path d="M12 8h.01"/>',
@@ -52,6 +309,7 @@ const icon = (name: "globe" | "info" | "sliders" | "history" | "heart" | "share"
     history: '<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/>',
     heart: '<path d="M20.8 5.7a5.4 5.4 0 0 0-7.6 0L12 6.9l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 22l8.8-8.7a5.4 5.4 0 0 0 0-7.6Z"/>',
     share: '<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6 12 2 8 6"/><path d="M12 2v14"/>',
+    copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
     x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
     spark: '<path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7Z"/><path d="m19 17 .7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7Z"/>',
     star: '<path d="m12 2 3.1 6.3 6.9 1-5 4.8 1.2 6.9-6.2-3.3L5.8 21 7 14.1 2 9.3l6.9-1Z"/>',
@@ -98,6 +356,7 @@ app.innerHTML = `
 
     <main class="stage" aria-labelledby="stageTitle">
       <p class="counter" id="ideaCounter"></p>
+      <div class="quick-modes" id="quickModes" role="group" aria-label="Quick filters"></div>
       <h2 class="sr-only" id="stageTitle">Pull a date cue</h2>
       <div class="heart-wrap">
         <button class="heart-button" id="heartButton" type="button" aria-label="Tap the heart for a date cue">
@@ -124,9 +383,18 @@ app.innerHTML = `
         <span id="prepLabel">Prepare</span>
         <strong id="resultPrep"></strong>
       </div>
+      <div class="plan-box">
+        <span id="planLabel">Do this</span>
+        <ol id="resultPlan"></ol>
+      </div>
+      <div class="ai-prompt-box">
+        <span id="aiPromptLabel">AI prompt</span>
+        <p id="resultAiPrompt"></p>
+      </div>
       <div class="result-actions">
         <button class="secondary-button" id="favoriteButton" type="button">${icon("heart")} Save</button>
         <button class="secondary-button" id="shareButton" type="button">${icon("share")} Share</button>
+        <button class="secondary-button span-button" id="copyPlanButton" type="button">${icon("copy")} Copy plan</button>
         <button class="primary-button" id="againButton" type="button">${icon("spark")} New cue</button>
       </div>
     </article>
@@ -185,6 +453,11 @@ app.innerHTML = `
         <span>Favorites and history</span>
         <span>Free app concept</span>
       </div>
+      <nav class="legal-links" aria-label="Legal">
+        <a href="${staticPageUrl("privacy.html")}" target="_blank" rel="noreferrer">Privacy</a>
+        <a href="${staticPageUrl("terms.html")}" target="_blank" rel="noreferrer">Terms</a>
+        <a href="${staticPageUrl("impressum.html")}" target="_blank" rel="noreferrer">Impressum</a>
+      </nav>
     </article>
   </div>
 
@@ -195,7 +468,12 @@ app.innerHTML = `
       <h2 id="purchaseTitle">DateHeart without ads</h2>
       <strong class="price-pill" id="purchasePrice"></strong>
       <p id="purchaseBody">Remove future ad placements from DateHeart with a one-time purchase.</p>
+      <p class="payment-status" id="paymentStatus" aria-live="polite"></p>
       <button class="primary-button wide" id="buyNoAdsButton" type="button">Buy</button>
+      <form class="restore-form" id="restorePurchaseForm" novalidate>
+        <input id="restoreEmailInput" type="email" autocomplete="email" inputmode="email" />
+        <button class="secondary-button" id="restorePurchaseButton" type="submit"></button>
+      </form>
     </article>
   </div>
 
@@ -219,8 +497,11 @@ const elements = {
   resultPrompt: document.querySelector<HTMLParagraphElement>("#resultPrompt")!,
   resultMeta: document.querySelector<HTMLDivElement>("#resultMeta")!,
   resultPrep: document.querySelector<HTMLElement>("#resultPrep")!,
+  resultPlan: document.querySelector<HTMLOListElement>("#resultPlan")!,
+  resultAiPrompt: document.querySelector<HTMLParagraphElement>("#resultAiPrompt")!,
   favoriteButton: document.querySelector<HTMLButtonElement>("#favoriteButton")!,
   shareButton: document.querySelector<HTMLButtonElement>("#shareButton")!,
+  copyPlanButton: document.querySelector<HTMLButtonElement>("#copyPlanButton")!,
   againButton: document.querySelector<HTMLButtonElement>("#againButton")!,
   closeResultButton: document.querySelector<HTMLButtonElement>("#closeResultButton")!,
   filterButton: document.querySelector<HTMLButtonElement>("#filterButton")!,
@@ -238,6 +519,9 @@ const elements = {
   categoryLabel: document.querySelector<HTMLElement>("#categoryLabel")!,
   budgetLabel: document.querySelector<HTMLElement>("#budgetLabel")!,
   durationLabel: document.querySelector<HTMLElement>("#durationLabel")!,
+  planLabel: document.querySelector<HTMLElement>("#planLabel")!,
+  aiPromptLabel: document.querySelector<HTMLElement>("#aiPromptLabel")!,
+  quickModes: document.querySelector<HTMLDivElement>("#quickModes")!,
   resetFiltersButton: document.querySelector<HTMLButtonElement>("#resetFiltersButton")!,
   historyButton: document.querySelector<HTMLButtonElement>("#historyButton")!,
   libraryPanel: document.querySelector<HTMLDivElement>("#libraryPanel")!,
@@ -252,7 +536,11 @@ const elements = {
   purchaseTitle: document.querySelector<HTMLHeadingElement>("#purchaseTitle")!,
   purchasePrice: document.querySelector<HTMLElement>("#purchasePrice")!,
   purchaseBody: document.querySelector<HTMLParagraphElement>("#purchaseBody")!,
+  paymentStatus: document.querySelector<HTMLParagraphElement>("#paymentStatus")!,
   buyNoAdsButton: document.querySelector<HTMLButtonElement>("#buyNoAdsButton")!,
+  restorePurchaseForm: document.querySelector<HTMLFormElement>("#restorePurchaseForm")!,
+  restoreEmailInput: document.querySelector<HTMLInputElement>("#restoreEmailInput")!,
+  restorePurchaseButton: document.querySelector<HTMLButtonElement>("#restorePurchaseButton")!,
   languagePanel: document.querySelector<HTMLDivElement>("#languagePanel")!,
   closeLanguageButton: document.querySelector<HTMLButtonElement>("#closeLanguageButton")!,
   languageTitle: document.querySelector<HTMLHeadingElement>("#languageTitle")!,
@@ -288,10 +576,18 @@ function normalizeFilters(value: IdeaFilters): IdeaFilters {
   };
 }
 
+function normalizeQuickMode(value: string | null): QuickMode {
+  return quickModeOrder.includes(value as QuickMode) ? (value as QuickMode) : "all";
+}
+
 function loadLanguage() {
   const saved = localStorage.getItem(STORAGE_KEYS.language);
   if (isLanguageCode(saved)) return saved;
   return "en";
+}
+
+function uiCopy() {
+  return resultCopy[activeLanguage] ?? resultCopy.en;
 }
 
 function activeBudgetMarket() {
@@ -306,9 +602,95 @@ function activeBudgetMarket() {
   });
 }
 
+function cleanCheckoutUrl() {
+  const url = new URL(window.location.href);
+  url.searchParams.delete("checkout");
+  url.searchParams.delete("session_id");
+  return url;
+}
+
+function purchaseClientId() {
+  const saved = localStorage.getItem(STORAGE_KEYS.purchaseClientId);
+  if (saved) return saved;
+
+  const generated = crypto.randomUUID?.() ?? `dateheart-${Date.now()}-${randomIndex(1_000_000)}`;
+  localStorage.setItem(STORAGE_KEYS.purchaseClientId, generated);
+  return generated;
+}
+
+function endpointCandidates(customEndpoint: string | undefined, paths: string[]) {
+  if (customEndpoint) return [customEndpoint];
+  return paths.map((path) => `${window.location.origin}${path}`);
+}
+
+async function jsonFromResponse(response: Response) {
+  const text = await response.text();
+  if (!text.trim()) return {};
+
+  try {
+    return JSON.parse(text) as Record<string, unknown>;
+  } catch {
+    if (text.includes("<!doctype html") || text.includes("<html")) {
+      throw Object.assign(new Error("Endpoint did not return JSON."), { retryNextEndpoint: true });
+    }
+    throw new Error("Payment endpoint returned invalid JSON.");
+  }
+}
+
+async function postJsonToFirstAvailable(endpoints: string[], body: Record<string, unknown>) {
+  let lastError: unknown;
+
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (response.status === 404) continue;
+      const payload = await jsonFromResponse(response);
+      if (!response.ok) throw new Error(String(payload.error || response.statusText));
+      return payload;
+    } catch (error) {
+      lastError = error;
+      if (!(error instanceof Error) || !(error as Error & { retryNextEndpoint?: boolean }).retryNextEndpoint) break;
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error("Payment endpoint unavailable.");
+}
+
+async function getJsonFromFirstAvailable(endpoints: string[]) {
+  let lastError: unknown;
+
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint);
+      if (response.status === 404) continue;
+      const payload = await jsonFromResponse(response);
+      if (!response.ok) throw new Error(String(payload.error || response.statusText));
+      return payload;
+    } catch (error) {
+      lastError = error;
+      if (!(error instanceof Error) || !(error as Error & { retryNextEndpoint?: boolean }).retryNextEndpoint) break;
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error("Payment endpoint unavailable.");
+}
+
+function setNoAdsPurchased() {
+  noAdsPurchased = true;
+  localStorage.setItem(STORAGE_KEYS.noAds, "true");
+  localStorage.removeItem(STORAGE_KEYS.pendingCheckoutSession);
+  elements.adBanner.hidden = true;
+}
+
 let activeLanguage = loadLanguage();
 let t = translations[activeLanguage];
 let filters = normalizeFilters(loadJson<IdeaFilters>(STORAGE_KEYS.filters, defaultFilters));
+let activeQuickMode = normalizeQuickMode(localStorage.getItem(STORAGE_KEYS.quickMode));
 let historyIds = loadJson<string[]>(STORAGE_KEYS.history, []);
 let favoriteIds = new Set(loadJson<string[]>(STORAGE_KEYS.favorites, []));
 let stats = loadJson<PersistedStats>(STORAGE_KEYS.stats, { reveals: 0, adBreaks: 0 });
@@ -316,6 +698,8 @@ let currentIdea: DateIdea | null = null;
 let activeLibraryMode: "history" | "favorites" = "history";
 let revealLocked = false;
 let noAdsPurchased = localStorage.getItem(STORAGE_KEYS.noAds) === "true";
+let paymentBusy = false;
+let paymentStatusKey: PaymentStatusKey = "paymentNote";
 
 const ideaById = new Map(dateIdeas.map((entry) => [entry.id, entry]));
 
@@ -331,6 +715,8 @@ class HeartScene {
   private heartMaterial: THREE.MeshPhysicalMaterial;
   private burstLight: THREE.PointLight;
   private pulseUntil = 0;
+  private pulseDirection: -1 | 1 = 1;
+  private nextPulseDirection: -1 | 1 = -1;
   private startedAt = performance.now();
 
   constructor(private canvas: HTMLCanvasElement) {
@@ -375,6 +761,8 @@ class HeartScene {
   }
 
   pulse() {
+    this.pulseDirection = this.nextPulseDirection;
+    this.nextPulseDirection = this.nextPulseDirection === 1 ? -1 : 1;
     this.pulseUntil = performance.now() + 1050;
   }
 
@@ -419,9 +807,10 @@ class HeartScene {
     const pulse = pulseProgress > 0 ? Math.sin((1 - pulseProgress) * Math.PI) : 0;
     const hit = pulseProgress > 0 ? Math.sin((1 - pulseProgress) * Math.PI * 3) * pulse : 0;
 
-    this.heart.rotation.y = Math.sin(elapsed * 0.9) * 0.22 + pulse * 0.56;
+    this.heart.rotation.y = Math.sin(elapsed * 0.9) * 0.22 + pulse * 0.56 * this.pulseDirection;
     this.heart.rotation.x = -0.2 + Math.sin(elapsed * 1.35) * 0.06 - pulse * 0.18 + hit * 0.1;
-    this.heart.rotation.z = Math.PI;
+    this.heart.rotation.z = Math.PI + pulse * 0.1 * this.pulseDirection;
+    this.heart.position.x = pulse * 0.18 * this.pulseDirection;
     this.heart.scale.setScalar(0.78 + pulse * 0.24 + Math.sin(elapsed * 2.1) * 0.01 + Math.max(hit, 0) * 0.03);
     this.heartMaterial.emissiveIntensity = 0.12 + pulse * 0.52;
     this.burstLight.intensity = pulse * 13;
@@ -433,27 +822,125 @@ class HeartScene {
 
 const heartScene = new HeartScene(elements.heartCanvas);
 
-function pickIdea() {
+function ideaMatchesQuickMode(idea: DateIdea) {
+  if (activeQuickMode === "all") return true;
+  if (activeQuickMode === "tonight") return idea.duration === "Evening" || idea.duration === "60-90 min";
+  if (activeQuickMode === "free") return idea.budget === "Free";
+  if (activeQuickMode === "home") return idea.category === "Home" || idea.category === "Rainy Day";
+  if (activeQuickMode === "out") return ["Outdoors", "Food", "Movement", "Mini Adventure", "Culture", "Seasonal"].includes(idea.category);
+  return idea.family.startsWith("ai-") || idea.title.startsWith("AI ");
+}
+
+function candidateIdeasForCurrentMode() {
   const filtered = filterIdeas(filters);
-  const usable = filtered.length > 0 ? filtered : dateIdeas;
+  const quickFiltered = activeQuickMode === "all" ? filtered : filtered.filter(ideaMatchesQuickMode);
+  if (quickFiltered.length > 0) return quickFiltered;
+
+  const quickOnly = activeQuickMode === "all" ? [] : dateIdeas.filter(ideaMatchesQuickMode);
+  if (quickOnly.length > 0) return quickOnly;
+
+  return filtered.length > 0 ? filtered : dateIdeas;
+}
+
+function quickModeLabel(mode: QuickMode) {
+  if (mode === "all") return t.all;
+  if (mode === "tonight") return uiCopy().tonight;
+  if (mode === "free") return labelFor("budget", "Free", activeLanguage, activeBudgetMarket());
+  if (mode === "home") return labelFor("category", "Home", activeLanguage);
+  if (mode === "out") return uiCopy().out;
+  return "AI";
+}
+
+function renderQuickModes() {
+  elements.quickModes.setAttribute("aria-label", t.filters);
+  elements.quickModes.innerHTML = quickModeOrder
+    .map(
+      (mode) => `
+        <button class="quick-mode${mode === activeQuickMode ? " active" : ""}" type="button" data-mode="${mode}" aria-pressed="${mode === activeQuickMode}">
+          ${quickModeLabel(mode)}
+        </button>
+      `,
+    )
+    .join("");
+
+  elements.quickModes.querySelectorAll<HTMLButtonElement>(".quick-mode").forEach((button) => {
+    button.addEventListener("click", () => {
+      activeQuickMode = normalizeQuickMode(button.dataset.mode ?? null);
+      localStorage.setItem(STORAGE_KEYS.quickMode, activeQuickMode);
+      renderQuickModes();
+      updateCounter();
+    });
+  });
+}
+
+function pickIdea() {
+  const usable = candidateIdeasForCurrentMode();
   const usableFamilies = new Set(usable.map((entry) => entry.family));
-  const maxFamilyBlock = Math.min(Math.max(8, Math.ceil(usableFamilies.size * 0.45)), usableFamilies.size - 1, HISTORY_LIMIT);
+  const market = activeBudgetMarket();
+  const titleKeyCache = new Map<string, string>();
+  const titleKeyFor = (entry: DateIdea) => {
+    const cached = titleKeyCache.get(entry.id);
+    if (cached !== undefined) return cached;
+
+    const key = localizeIdea(entry, activeLanguage, market)
+      .title.toLocaleLowerCase(activeLanguage)
+      .replace(/\s+/g, " ")
+      .trim();
+    titleKeyCache.set(entry.id, key);
+    return key;
+  };
+  const maxFamilyBlock = Math.min(Math.max(12, Math.ceil(usableFamilies.size * 0.82)), usableFamilies.size - 1, FAMILY_REPEAT_WINDOW);
   const recentFamilies = new Set<string>();
 
   for (const id of historyIds) {
+    if (recentFamilies.size >= maxFamilyBlock) break;
     const family = ideaById.get(id)?.family;
     if (!family || !usableFamilies.has(family)) continue;
     recentFamilies.add(family);
-    if (recentFamilies.size >= maxFamilyBlock) break;
   }
 
-  const idBlockSize = Math.min(Math.max(16, Math.ceil(usable.length * 0.08)), usable.length - 1, HISTORY_LIMIT);
+  const idBlockSize = Math.min(Math.max(24, Math.ceil(usable.length * 0.12)), usable.length - 1, HISTORY_LIMIT);
   const recentIds = new Set(historyIds.slice(0, idBlockSize));
+  const recentTitleKeys = new Set<string>();
+
+  for (const id of historyIds.slice(0, Math.min(20, HISTORY_LIMIT))) {
+    const entry = ideaById.get(id);
+    if (!entry) continue;
+    recentTitleKeys.add(titleKeyFor(entry));
+  }
+
   const familySafePool = usable.filter((entry) => !recentIds.has(entry.id) && !recentFamilies.has(entry.family));
   const idSafePool = usable.filter((entry) => !recentIds.has(entry.id));
   const notCurrentPool = currentIdea ? usable.filter((entry) => entry.id !== currentIdea?.id) : usable;
-  const source = familySafePool.length > 0 ? familySafePool : idSafePool.length > 0 ? idSafePool : notCurrentPool.length > 0 ? notCurrentPool : usable;
+  const concreteIdea = (entry: DateIdea) => hasSpecificIdeaLocalization(entry.family, activeLanguage);
+  const pickTitleSafeFrom = (pool: DateIdea[]) => {
+    if (pool.length === 0) return undefined;
 
+    const attempts = Math.min(pool.length, 96);
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      const candidate = pool[randomIndex(pool.length)];
+      if (!recentTitleKeys.has(titleKeyFor(candidate))) return candidate;
+    }
+
+    if (pool.length > 1500) return undefined;
+
+    const safePool = pool.filter((entry) => !recentTitleKeys.has(titleKeyFor(entry)));
+    return safePool.length > 0 ? safePool[randomIndex(safePool.length)] : undefined;
+  };
+
+  const concreteTitleAndFamilySafeIdea = pickTitleSafeFrom(familySafePool.filter(concreteIdea));
+  if (concreteTitleAndFamilySafeIdea) return concreteTitleAndFamilySafeIdea;
+
+  const concreteTitleSafeIdea = pickTitleSafeFrom(idSafePool.filter(concreteIdea));
+  if (concreteTitleSafeIdea) return concreteTitleSafeIdea;
+
+  const titleAndFamilySafeIdea = pickTitleSafeFrom(familySafePool);
+  if (titleAndFamilySafeIdea) return titleAndFamilySafeIdea;
+
+  const titleSafeIdea = pickTitleSafeFrom(idSafePool);
+  if (titleSafeIdea) return titleSafeIdea;
+
+  const source = familySafePool.length > 0 ? familySafePool : idSafePool.length > 0 ? idSafePool : notCurrentPool.length > 0 ? notCurrentPool : usable;
   return source[randomIndex(source.length)];
 }
 
@@ -503,12 +990,96 @@ function spawnSparks() {
   }
 }
 
+function splitPlanSentences(text: string) {
+  return text
+    .replace(/([.!?。！？।؟])\s*/gu, "$1\n")
+    .split("\n")
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+}
+
+function uniqueTexts(items: string[]) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const key = item.toLocaleLowerCase(activeLanguage).replace(/\s+/g, " ").trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function buildPlanItems(displayIdea: DateIdea) {
+  const sentences = splitPlanSentences(displayIdea.prompt);
+  const prepFallbacks = displayIdea.prep
+    .split(/[.!?。！？।؟]\s*|[,،、]\s*/u)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const actionItems = uniqueTexts(sentences).slice(0, 5);
+  if (actionItems.length >= 3) return actionItems;
+
+  return uniqueTexts([...actionItems, ...prepFallbacks]).slice(0, 5);
+}
+
+function buildAiPrompt(displayIdea: DateIdea) {
+  const copy = uiCopy();
+  return copy.aiPromptTemplate
+    .replace("{title}", displayIdea.title)
+    .replace("{prompt}", displayIdea.prompt)
+    .replace("{prep}", displayIdea.prep);
+}
+
+async function copyText(text: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "true");
+  textarea.style.position = "fixed";
+  textarea.style.top = "-999px";
+  document.body.append(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  textarea.remove();
+}
+
+function currentPlanText() {
+  if (!currentIdea) return "";
+
+  const displayIdea = localizeIdea(currentIdea, activeLanguage, activeBudgetMarket());
+  const planItems = buildPlanItems(displayIdea);
+  return [
+    `${APP_NAME}: ${displayIdea.title}`,
+    displayIdea.prompt,
+    `${t.prep}: ${displayIdea.prep}`,
+    "",
+    `${uiCopy().plan}:`,
+    ...planItems.map((item, index) => `${index + 1}. ${item}`),
+    "",
+    `${uiCopy().aiPrompt}:`,
+    buildAiPrompt(displayIdea),
+  ].join("\n");
+}
+
 function showResult(idea: DateIdea) {
   const market = activeBudgetMarket();
   const displayIdea = localizeIdea(idea, activeLanguage, market);
+  const planItems = buildPlanItems(displayIdea);
   elements.resultTitle.textContent = displayIdea.title;
   elements.resultPrompt.textContent = displayIdea.prompt;
   elements.resultPrep.textContent = displayIdea.prep;
+  elements.resultPlan.replaceChildren(
+    ...planItems.map((item) => {
+      const row = document.createElement("li");
+      row.textContent = item;
+      return row;
+    }),
+  );
+  elements.resultAiPrompt.textContent = buildAiPrompt(displayIdea);
+  elements.copyPlanButton.innerHTML = `${icon("copy")} ${uiCopy().copyPlan}`;
   elements.resultMeta.innerHTML = [
     labelFor("category", idea.category, activeLanguage),
     labelFor("budget", idea.budget, activeLanguage, market),
@@ -554,7 +1125,7 @@ async function shareCurrentIdea() {
   if (!currentIdea) return;
 
   const displayIdea = localizeIdea(currentIdea, activeLanguage, activeBudgetMarket());
-  const text = `${APP_NAME}: ${displayIdea.title}\n${displayIdea.prompt}\n${t.prep}: ${displayIdea.prep}`;
+  const text = currentPlanText() || `${APP_NAME}: ${displayIdea.title}\n${displayIdea.prompt}\n${t.prep}: ${displayIdea.prep}`;
 
   if (navigator.share) {
     await navigator.share({ title: APP_NAME, text });
@@ -565,6 +1136,16 @@ async function shareCurrentIdea() {
   elements.shareButton.textContent = t.copied;
   window.setTimeout(() => {
     elements.shareButton.innerHTML = `${icon("share")} ${t.share}`;
+  }, 1200);
+}
+
+async function copyCurrentPlan() {
+  if (!currentIdea) return;
+
+  await copyText(currentPlanText());
+  elements.copyPlanButton.textContent = uiCopy().copiedPlan;
+  window.setTimeout(() => {
+    elements.copyPlanButton.innerHTML = `${icon("copy")} ${uiCopy().copyPlan}`;
   }, 1200);
 }
 
@@ -617,13 +1198,15 @@ function saveFilters() {
 function updateCounter() {
   const market = activeBudgetMarket();
   const detail = [
+    activeQuickMode !== "all" ? quickModeLabel(activeQuickMode) : "",
     filters.category !== "All" ? labelFor("category", filters.category, activeLanguage) : "",
     filters.budget !== "All" ? labelFor("budget", filters.budget, activeLanguage, market) : "",
     filters.duration !== "All" ? labelFor("duration", filters.duration, activeLanguage) : "",
   ]
     .filter(Boolean)
     .join(" · ");
-  elements.ideaCounter.textContent = detail || t.ready;
+  const count = candidateIdeasForCurrentMode().length;
+  elements.ideaCounter.textContent = detail ? `${detail} · ${count}` : t.ready;
 }
 
 function renderLibrary() {
@@ -704,16 +1287,146 @@ function showInfo() {
 }
 
 function showPurchase() {
+  paymentStatusKey = noAdsPurchased ? "paymentConfirmed" : "paymentNote";
   applyTranslations();
   openPanel(elements.purchaseOverlay);
 }
 
-function buyNoAds() {
-  noAdsPurchased = true;
-  localStorage.setItem(STORAGE_KEYS.noAds, "true");
-  elements.adBanner.hidden = true;
+async function buyNoAds() {
+  if (noAdsPurchased || paymentBusy) return;
+
+  paymentBusy = true;
+  paymentStatusKey = "paymentStarting";
   applyTranslations();
-  window.setTimeout(() => closePanel(elements.purchaseOverlay), 360);
+
+  const market = activeBudgetMarket();
+  const price = noAdsPriceForMarket(market);
+  const returnUrl = cleanCheckoutUrl().toString();
+  const endpoints = endpointCandidates(import.meta.env.VITE_CHECKOUT_ENDPOINT, [
+    "/api/create-checkout-session",
+    "/.netlify/functions/create-checkout-session",
+  ]);
+
+  try {
+    const payload = await postJsonToFirstAvailable(endpoints, {
+      clientReferenceId: purchaseClientId(),
+      currency: price.currency,
+      language: activeLanguage,
+      locale: market.locale,
+      region: market.region ?? "",
+      returnUrl,
+    });
+
+    const url = typeof payload.url === "string" ? payload.url : "";
+    if (!url) throw new Error("Checkout URL missing.");
+
+    if (typeof payload.sessionId === "string") {
+      localStorage.setItem(STORAGE_KEYS.pendingCheckoutSession, payload.sessionId);
+    }
+
+    window.location.assign(url);
+  } catch (error) {
+    console.error(error);
+    paymentBusy = false;
+    paymentStatusKey = error instanceof Error && error.message.includes("payment_unavailable") ? "paymentUnavailable" : "paymentFailed";
+    applyTranslations();
+  }
+}
+
+async function verifyCheckoutSession(sessionId: string, showStatus: boolean) {
+  paymentBusy = true;
+  paymentStatusKey = "paymentVerifying";
+  if (showStatus) {
+    applyTranslations();
+    openPanel(elements.purchaseOverlay);
+  }
+
+  const customVerifyEndpoint = import.meta.env.VITE_VERIFY_PAYMENT_ENDPOINT;
+  const endpoints = customVerifyEndpoint
+    ? [`${customVerifyEndpoint}${customVerifyEndpoint.includes("?") ? "&" : "?"}session_id=${encodeURIComponent(sessionId)}`]
+    : [
+    `/api/verify-checkout-session?session_id=${encodeURIComponent(sessionId)}`,
+    `/.netlify/functions/verify-checkout-session?session_id=${encodeURIComponent(sessionId)}`,
+      ];
+
+  try {
+    const payload = await getJsonFromFirstAvailable(endpoints);
+    if (payload.paid === true) {
+      setNoAdsPurchased();
+      paymentStatusKey = "paymentConfirmed";
+    } else {
+      paymentStatusKey = "paymentVerifying";
+      localStorage.setItem(STORAGE_KEYS.pendingCheckoutSession, sessionId);
+    }
+  } catch (error) {
+    console.error(error);
+    paymentStatusKey = "paymentFailed";
+  } finally {
+    paymentBusy = false;
+    applyTranslations();
+  }
+}
+
+async function restoreNoAdsPurchase() {
+  if (noAdsPurchased || paymentBusy) return;
+
+  const email = elements.restoreEmailInput.value.trim();
+  if (!email) {
+    paymentStatusKey = "restoreEmailRequired";
+    applyTranslations();
+    elements.restoreEmailInput.focus();
+    return;
+  }
+
+  paymentBusy = true;
+  paymentStatusKey = "restoreStarting";
+  applyTranslations();
+
+  const endpoints = endpointCandidates(import.meta.env.VITE_RESTORE_PAYMENT_ENDPOINT, [
+    "/api/restore-purchase",
+    "/.netlify/functions/restore-purchase",
+  ]);
+
+  try {
+    const payload = await postJsonToFirstAvailable(endpoints, { email });
+    if (payload.paid === true) {
+      setNoAdsPurchased();
+      paymentStatusKey = "restoreConfirmed";
+    } else {
+      paymentStatusKey = "restoreNotFound";
+    }
+  } catch (error) {
+    console.error(error);
+    paymentStatusKey = error instanceof Error && error.message.includes("payment_unavailable") ? "paymentUnavailable" : "paymentFailed";
+  } finally {
+    paymentBusy = false;
+    applyTranslations();
+  }
+}
+
+function handleCheckoutReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const checkoutState = params.get("checkout");
+  const sessionId = params.get("session_id");
+
+  if (checkoutState === "cancelled") {
+    paymentStatusKey = "paymentCanceled";
+    window.history.replaceState(null, "", cleanCheckoutUrl());
+    applyTranslations();
+    openPanel(elements.purchaseOverlay);
+    return;
+  }
+
+  if (checkoutState === "success" && sessionId) {
+    window.history.replaceState(null, "", cleanCheckoutUrl());
+    void verifyCheckoutSession(sessionId, true);
+    return;
+  }
+
+  const pendingSessionId = localStorage.getItem(STORAGE_KEYS.pendingCheckoutSession);
+  if (pendingSessionId && !noAdsPurchased) {
+    void verifyCheckoutSession(pendingSessionId, false);
+  }
 }
 
 function renderLanguageList() {
@@ -747,7 +1460,9 @@ function renderLanguageList() {
 }
 
 function applyTranslations() {
-  const noAdsPrice = formatNoAdsPrice(activeBudgetMarket());
+  const market = activeBudgetMarket();
+  const noAdsPrice = formatNoAdsPrice(market);
+  const paymentPrice = noAdsPriceForMarket(market);
 
   document.documentElement.lang = activeLanguage;
   document.documentElement.dir = languages.find((language) => language.code === activeLanguage)?.dir ?? "ltr";
@@ -758,8 +1473,11 @@ function applyTranslations() {
   elements.tapCopy.textContent = t.tapCopy;
   elements.resultLabel.textContent = t.resultLabel;
   elements.prepLabel.textContent = t.prep;
+  elements.planLabel.textContent = uiCopy().plan;
+  elements.aiPromptLabel.textContent = uiCopy().aiPrompt;
   elements.favoriteButton.innerHTML = `${icon("heart")} ${currentIdea && favoriteIds.has(currentIdea.id) ? t.saved : t.save}`;
   elements.shareButton.innerHTML = `${icon("share")} ${t.share}`;
+  elements.copyPlanButton.innerHTML = `${icon("copy")} ${uiCopy().copyPlan}`;
   elements.againButton.innerHTML = `${icon("spark")} ${t.next}`;
   elements.filterButton.setAttribute("aria-label", t.filters);
   elements.filterButton.title = t.filters;
@@ -802,9 +1520,19 @@ function applyTranslations() {
   elements.purchaseLabel.textContent = t.removeAds;
   elements.purchaseTitle.textContent = t.removeAdsTitle;
   elements.purchasePrice.textContent = noAdsPrice;
+  elements.purchasePrice.title = paymentPrice.currency;
   elements.purchaseBody.textContent = t.removeAdsBody;
-  elements.buyNoAdsButton.textContent = noAdsPurchased ? t.noAdsPurchased : t.buyNoAds.replace("{price}", noAdsPrice);
-  elements.buyNoAdsButton.disabled = noAdsPurchased;
+  elements.paymentStatus.textContent = t[paymentStatusKey];
+  elements.buyNoAdsButton.textContent = paymentBusy
+    ? t.paymentStarting
+    : noAdsPurchased
+      ? t.noAdsPurchased
+      : t.buyNoAds.replace("{price}", noAdsPrice);
+  elements.buyNoAdsButton.disabled = noAdsPurchased || paymentBusy;
+  elements.restoreEmailInput.placeholder = t.restoreEmailPlaceholder;
+  elements.restoreEmailInput.setAttribute("aria-label", t.restoreEmailPlaceholder);
+  elements.restorePurchaseButton.textContent = paymentBusy ? t.restoreStarting : t.restoreNoAds;
+  elements.restorePurchaseButton.disabled = noAdsPurchased || paymentBusy;
   elements.adBanner.setAttribute("aria-label", t.adLabel);
   elements.adBannerLabel.textContent = t.adLabel;
   elements.adBannerText.textContent = t.adBanner;
@@ -812,6 +1540,7 @@ function applyTranslations() {
   elements.adBreakTitle.textContent = t.adBreakTitle;
   elements.adBreakBody.textContent = t.adBreakBody;
   elements.closeAdBreakButton.textContent = elements.closeAdBreakButton.disabled ? t.continueIn.replace("{seconds}", "2") : t.continue;
+  renderQuickModes();
   updateCounter();
 }
 
@@ -826,9 +1555,14 @@ elements.resultOverlay.addEventListener("click", (event) => {
 });
 elements.favoriteButton.addEventListener("click", toggleFavorite);
 elements.shareButton.addEventListener("click", () => void shareCurrentIdea());
+elements.copyPlanButton.addEventListener("click", () => void copyCurrentPlan());
 elements.filterButton.addEventListener("click", () => openPanel(elements.filterPanel));
 elements.noAdsButton.addEventListener("click", showPurchase);
 elements.buyNoAdsButton.addEventListener("click", buyNoAds);
+elements.restorePurchaseForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  void restoreNoAdsPurchase();
+});
 elements.languageButton.addEventListener("click", () => {
   renderLanguageList();
   openPanel(elements.languagePanel);
@@ -837,6 +1571,9 @@ elements.closeFilterButton.addEventListener("click", () => closePanel(elements.f
 elements.closeLanguageButton.addEventListener("click", () => closePanel(elements.languagePanel));
 elements.resetFiltersButton.addEventListener("click", () => {
   filters = defaultFilters;
+  activeQuickMode = "all";
+  localStorage.setItem(STORAGE_KEYS.quickMode, activeQuickMode);
+  renderQuickModes();
   saveFilters();
 });
 elements.historyButton.addEventListener("click", () => {
@@ -874,12 +1611,15 @@ document.addEventListener("keydown", (event) => {
 
 if (import.meta.env.PROD && "serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    void navigator.serviceWorker.register("/sw.js");
+    void navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`, {
+      scope: import.meta.env.BASE_URL,
+    });
   });
 }
 
 applyTranslations();
 renderFilters();
 renderLanguageList();
+handleCheckoutReturn();
 updateCounter();
 elements.adBanner.hidden = noAdsPurchased || !ENABLE_AD_BANNER;

@@ -1,16 +1,20 @@
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 
 const cdpBase = process.env.CDP_URL || "http://127.0.0.1:9222";
 const appUrl = process.env.APP_URL || "http://127.0.0.1:5174/";
+const screenshotDir = process.env.SCREENSHOT_DIR || "/private/tmp";
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function getTarget() {
-  const targets = await fetch(`${cdpBase}/json/list`).then((response) => response.json());
-  const appTarget = targets.find((target) => target.url?.startsWith(appUrl));
+  if (process.env.REUSE_CDP_TARGET === "true") {
+    const targets = await fetch(`${cdpBase}/json/list`).then((response) => response.json());
+    const appTarget = targets.find((target) => target.url?.startsWith(appUrl));
 
-  if (appTarget?.webSocketDebuggerUrl) {
-    return appTarget;
+    if (appTarget?.webSocketDebuggerUrl) {
+      return appTarget;
+    }
   }
 
   const newTarget = await fetch(`${cdpBase}/json/new?${encodeURIComponent(appUrl)}`, {
@@ -71,13 +75,14 @@ function connect(wsUrl) {
 }
 
 async function saveScreenshot(client, filename) {
+  await mkdir(screenshotDir, { recursive: true });
   await client.send("Page.bringToFront");
   const result = await client.send("Page.captureScreenshot", {
     format: "png",
     captureBeyondViewport: false,
-    fromSurface: false,
+    fromSurface: true,
   });
-  const path = `/private/tmp/${filename}`;
+  const path = join(screenshotDir, filename);
   await writeFile(path, Buffer.from(result.data, "base64"));
   return path;
 }
@@ -91,6 +96,9 @@ try {
   await client.send("Network.setBypassServiceWorker", { bypass: true });
   await client.send("Network.setCacheDisabled", { cacheDisabled: true });
   await client.send("Runtime.enable");
+  await client.send("Emulation.setDefaultBackgroundColorOverride", {
+    color: { r: 201, g: 4, b: 50, a: 1 },
+  });
 
   const viewports = [
     { name: "mobile", width: 390, height: 844, deviceScaleFactor: 2, mobile: true },
@@ -140,7 +148,14 @@ try {
           title: document.querySelector('#resultTitle')?.textContent || '',
           prompt: document.querySelector('#resultPrompt')?.textContent || '',
           visible: !document.querySelector('#resultOverlay')?.hidden,
-          count: document.querySelector('#ideaCounter')?.textContent || ''
+          count: document.querySelector('#ideaCounter')?.textContent || '',
+          quickModes: Array.from(document.querySelectorAll('.quick-mode')).map((node) => ({
+            text: node.textContent?.trim() || '',
+            active: node.classList.contains('active')
+          })),
+          planItems: Array.from(document.querySelectorAll('#resultPlan li')).map((node) => node.textContent?.trim() || ''),
+          aiPromptLength: document.querySelector('#resultAiPrompt')?.textContent?.trim().length || 0,
+          copyPlanLabel: document.querySelector('#copyPlanButton')?.textContent?.trim() || ''
         }))()
       `,
       returnByValue: true,
@@ -174,12 +189,67 @@ try {
       returnByValue: true,
     });
 
+    await client.send("Runtime.evaluate", {
+      expression: "document.querySelector('#closeResultButton')?.click()",
+    });
+    await wait(260);
+    await client.send("Runtime.evaluate", {
+      expression: `
+        (() => {
+          const aiMode = Array.from(document.querySelectorAll('.quick-mode')).find((node) => node.textContent?.trim() === 'AI');
+          aiMode?.click();
+          document.querySelector('#heartButton')?.click();
+        })()
+      `,
+    });
+    await wait(1300);
+    const quickModeFunctionCheck = await client.send("Runtime.evaluate", {
+      expression: `
+        (() => ({
+          activeMode: Array.from(document.querySelectorAll('.quick-mode')).find((node) => node.classList.contains('active'))?.textContent?.trim() || '',
+          title: document.querySelector('#resultTitle')?.textContent || '',
+          prompt: document.querySelector('#resultPrompt')?.textContent || '',
+          visible: !document.querySelector('#resultOverlay')?.hidden
+        }))()
+      `,
+      returnByValue: true,
+    });
+
+    const resultValue = resultCheck.result.value;
+    const canvasValue = canvasCheck.result.value;
+
+    if (!canvasValue.ok || canvasValue.width < 120 || canvasValue.height < 120) {
+      throw new Error(`${name} canvas did not initialise correctly.`);
+    }
+
+    if (!resultValue.visible || !resultValue.title || !resultValue.prompt) {
+      throw new Error(`${name} result card did not reveal an idea.`);
+    }
+
+    if (resultValue.quickModes.length < 6 || !resultValue.quickModes.some((mode) => mode.active)) {
+      throw new Error(`${name} quick modes are missing or have no active mode.`);
+    }
+
+    if (resultValue.planItems.length < 3 || resultValue.aiPromptLength < 80 || !resultValue.copyPlanLabel) {
+      throw new Error(`${name} result plan tools are incomplete.`);
+    }
+
+    const quickModeFunctionValue = quickModeFunctionCheck.result.value;
+    if (
+      quickModeFunctionValue.activeMode !== "AI" ||
+      !quickModeFunctionValue.visible ||
+      !/\bAI\b/.test(`${quickModeFunctionValue.title} ${quickModeFunctionValue.prompt}`)
+    ) {
+      throw new Error(`${name} AI quick mode did not produce an AI-driven idea.`);
+    }
+
     checks.push({
       viewport: name,
       homeScreenshot,
       resultScreenshot,
-      canvas: canvasCheck.result.value,
-      result: resultCheck.result.value,
+      canvas: canvasValue,
+      result: resultValue,
+      quickModeFunction: quickModeFunctionValue,
       layout: layoutCheck.result.value,
     });
   }

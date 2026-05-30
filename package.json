@@ -3,17 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
+    "assets:generate": "node scripts/generate-assets.mjs",
     "dev": "vite --host 127.0.0.1",
     "build": "tsc && vite build",
+    "deploy:check": "npm run assets:generate && npm run i18n:check && npm run build",
+    "deploy:doctor": "node scripts/deploy-doctor.mjs",
+    "deploy:today": "npm run launch:check && npm run deploy:doctor",
+    "deploy:vercel": "npm run launch:check && npx vercel@latest deploy --prod --yes",
+    "deploy:netlify": "npm run launch:check && npx netlify-cli@latest deploy --prod --dir=dist",
     "i18n:check": "node scripts/i18n-check.mjs",
+    "launch:check": "npm run deploy:check && node scripts/launch-check.mjs",
+    "screenshots:pwa": "SCREENSHOT_DIR=public/screenshots node scripts/cdp-check.mjs",
+    "screenshots:store": "SCREENSHOT_DIR=store/screenshots node scripts/cdp-check.mjs",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
+    "stripe": "^22.2.0",
     "three": "^0.184.0"
   },
   "devDependencies": {
     "@types/three": "^0.184.1",
+    "sharp": "^0.34.5",
     "typescript": "^6.0.3",
     "vite": "^8.0.14"
   }

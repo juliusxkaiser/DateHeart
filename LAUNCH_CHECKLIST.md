@@ -1,0 +1,27 @@
+# DateHeart Launch Checklist
+
+## Done in code
+
+- Static deploy configuration for Vercel, Netlify, GitHub Pages and Docker.
+- Stripe Checkout session creation with local one-time prices.
+- Germany/EUR price fixed at `4.99`.
+- Paid-session verification before unlocking the no-ads purchase.
+- Purchase restore by checkout email through Stripe Customer data.
+- Stripe webhook endpoint for `checkout.session.completed` and `checkout.session.async_payment_succeeded`.
+- PWA manifest and service worker adjusted for root and subpath deploys.
+- PNG app icons, Apple touch icon and social preview generated from the source SVG.
+- Store listing drafts added under `store/metadata`.
+- PWA and store screenshot scripts prepared.
+- Strict deploy doctor added via `npm run deploy:doctor`.
+- One-command deploy readiness check added via `npm run deploy:today`.
+- GitHub Actions deploy workflows added for GitHub Pages, Vercel and Netlify.
+- Legal page routes added: `privacy.html`, `terms.html`, `impressum.html`.
+
+## Needs owner action before public launch
+
+- Add real operator/contact details to the legal pages.
+- Set `STRIPE_SECRET_KEY` in the hosting provider.
+- Set `STRIPE_WEBHOOK_SECRET` after creating the Stripe webhook.
+- In Stripe, point the webhook to `/api/stripe-webhook` or `/.netlify/functions/stripe-webhook`.
+- Run live-mode payment tests for at least DE/EUR and one non-EUR market.
+- Decide whether the native iOS/Android apps use Apple IAP and Google Play Billing for the same purchase.

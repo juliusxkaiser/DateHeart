@@ -255,6 +255,282 @@ const familySteps: Record<string, string[]> = {
     "Arrive early enough to choose a comfortable spot and set up the blanket properly.",
     "Pack one quiet snack and one warm layer per person.",
   ],
+  "ai-cinema-pick": [
+    "Use only today's real showtimes and let the AI choose one film; no veto unless it is sold out.",
+    "After the film, write a two-line poster quote and give the night a fake festival award.",
+  ],
+  "ai-snack-crawl": [
+    "Ask for three snack stops within one neighborhood and buy only one small thing at each stop.",
+    "After the route, rank every stop on taste, price, surprise, and would-repeat.",
+  ],
+  "ai-bookstore-mission": [
+    "Let the AI choose a shelf, color, or first-letter rule before you enter the bookstore.",
+    "Before leaving, write a tiny dedication or prediction on a note for the other person.",
+  ],
+  "ai-playlist-walk": [
+    "Let the AI choose three song prompts and walk until each song finishes before changing direction.",
+    "At the end, make a three-photo cover for the walk like it was an album.",
+  ],
+  "supermarket-color-dinner": [
+    "Let the AI assign one color and buy ingredients that visibly match it.",
+    "Plate the result like a small menu and name it before eating.",
+  ],
+  "photo-booth-story-strip": [
+    "Choose four emotions before entering the booth and act out one emotion per frame.",
+    "Afterward, write a four-line story on the back of the strip.",
+  ],
+  "museum-caption-swap": [
+    "Each person picks one object and writes a wrong-but-plausible museum caption for it.",
+    "Read both captions outside and decide which one sounds more official.",
+  ],
+  "random-transit-mission": [
+    "Let the AI choose a number between two and six, ride that many stops, and explore the landing area.",
+    "Before returning, take one proof photo and write a mission title.",
+  ],
+  "arcade-challenge-card": [
+    "Ask the AI for three small arcade challenges and play them in order without changing the rules.",
+    "Make a winner badge from a receipt, napkin, or phone note afterward.",
+  ],
+  "cafe-character-orders": [
+    "Let the AI assign each of you a fictional character type before ordering drinks.",
+    "Write a tiny scene afterward where both characters met in that cafe.",
+  ],
+  "ai-thrift-outfit-brief": [
+    "Let the AI assign a style brief, then find one outfit detail for each other inside a fixed secondhand budget.",
+    "Take one lookbook photo and write a fake magazine caption for it.",
+  ],
+  "ai-dessert-bracket": [
+    "Let the AI build a four-dessert bracket and taste tiny portions in knockout rounds.",
+    "Crown one winner and write why it deserved the final.",
+  ],
+  "ai-board-game-remix": [
+    "Choose a familiar board or card game and let the AI add three house rules.",
+    "After one round, draw a tiny trophy or write the rule that should stay forever.",
+  ],
+  "ai-night-photo-mission": [
+    "Let the AI generate a six-shot night photo list with light, reflection, sign, shadow, color, and movement.",
+    "Caption the best three photos like a tiny exhibition.",
+  ],
+  "ai-farmers-market-basket": [
+    "Let the AI set three market constraints, then buy a small basket that follows them.",
+    "Turn the basket into a snack plate and give it a menu name.",
+  ],
+  "ai-plant-shop-adoption": [
+    "Let the AI assign a plant personality, then choose a plant or seed packet that fits.",
+    "Name it and write a tiny care passport before taking it home.",
+  ],
+  "ai-home-trailer-shoot": [
+    "Let the AI choose a film genre and three required shots, then shoot a thirty-second trailer at home.",
+    "Give the trailer an overdramatic title card.",
+  ],
+  "ai-window-shopping-brief": [
+    "Let the AI invent a fictional client, then visit three shop windows and choose items for that client.",
+    "Make a mini moodboard from three photos or notes.",
+  ],
+  "ai-kindness-errand": [
+    "Let the AI suggest a tiny kindness errand that is realistic today.",
+    "Do it together and write one thank-you note or message afterward.",
+  ],
+  "ai-mini-golf-rules": [
+    "Let the AI create one silly rule for every third hole before you start playing.",
+    "Draw a custom scorecard title for the winner.",
+  ],
+  "receipt-poem-cafe": [
+    "Buy one small drink or snack and turn the receipt words into a short poem together.",
+    "Read it once seriously and once as dramatically as possible.",
+  ],
+  "map-pin-memory-walk": [
+    "Pick three saved map pins or meaningful nearby places and walk between them in any order.",
+    "Record a twenty-second voice note at each stop.",
+  ],
+  "fake-podcast-date": [
+    "Let the AI write five interview questions and record a private five-minute fake podcast episode.",
+    "Give the episode a title and one ridiculous sponsor.",
+  ],
+  "puzzle-envelope-at-home": [
+    "Let the AI write three clue prompts, hide three envelopes at home, and solve them in order.",
+    "Put the final answer on the fridge or mirror for the night.",
+  ],
+  "street-sign-story-route": [
+    "Walk until you find an interesting street sign, then use it as the first line of a story.",
+    "Add one sentence at every corner and finish with a title.",
+  ],
+  "ai-voice-note-treasure": [
+    "Let the AI give five treasure words, then record a short voice note at each matching place you find.",
+    "End with one proof photo and a title for the treasure route.",
+  ],
+  "ai-kitchen-timer-menu": [
+    "Let the AI set three cooking constraints and start a twenty-five-minute timer.",
+    "Plate the simplest possible menu and give it a restaurant name.",
+  ],
+  "ai-cafe-table-script": [
+    "Let the AI assign two roles and one opening line before you order.",
+    "Stay lightly in character until the drinks arrive, then write the final line of the scene.",
+  ],
+  "ai-public-art-detectives": [
+    "Let the AI give three detective questions for a statue, mural, or public artwork.",
+    "Collect three evidence photos and write a case title before leaving.",
+  ],
+  "ai-movie-double-feature-home": [
+    "Let the AI choose two short films, trailers, or episodes from the same mood.",
+    "Watch both and create one fake award for each afterward.",
+  ],
+  "ai-constellation-walk": [
+    "Let the AI name six lights, signs, or shapes to photograph after dark.",
+    "Connect the photos into a fake constellation and name it.",
+  ],
+  "ai-thrift-prop-story": [
+    "Let the AI assign a genre, then find one secondhand prop that belongs in that story.",
+    "Stage three photos and write the movie title.",
+  ],
+  "ai-bakery-blind-ranking": [
+    "Let the AI create a scoring sheet for three small bakery items.",
+    "Taste them partly blind and crown the winner with a napkin badge.",
+  ],
+  "ai-home-escape-box": [
+    "Let the AI create three clue prompts using objects you already own.",
+    "Hide the clues in envelopes or a box and solve them in order.",
+  ],
+  "ai-future-postcard-drop": [
+    "Let the AI ask three future-you prompts and write a postcard to open later.",
+    "Hide it, schedule it, or seal it with a tiny rule for when it may be opened.",
+  ],
+  "ai-transit-portrait-gallery": [
+    "Ride three transit stops and let the AI assign one portrait theme for each stop.",
+    "Photograph places or details, not strangers, and make a mini gallery title.",
+  ],
+  "ai-mocktail-color-lab": [
+    "Let the AI assign a color and a mood, then mix one drink that tries to match both.",
+    "Write a tiny recipe card and rate color, taste, and name.",
+  ],
+  "ai-book-cover-redesign": [
+    "Pick a real book and let the AI swap its genre.",
+    "Redesign the cover as a quick sketch or phone collage.",
+  ],
+  "ai-weather-report-walk": [
+    "Let the AI give a playful weather-report format for a walk.",
+    "Record a one-minute forecast about the route, mood, and next stop.",
+  ],
+  "ai-neighborhood-menu-hunt": [
+    "Let the AI choose three menu words, then find them on real menus, signs, or boards nearby.",
+    "Combine the words into one imaginary tasting menu.",
+  ],
+  "ai-dance-floor-dice": [
+    "Let the AI write six tiny dance moves and number them like a die.",
+    "Roll, dance for ten minutes, and name the routine.",
+  ],
+  "ai-compliment-map": [
+    "Let the AI suggest three specific compliment prompts for each other.",
+    "Say them at three different stops and mark the route with a photo or note.",
+  ],
+  "ai-photo-alphabet-route": [
+    "Let the AI choose five letters, then photograph objects that look like those letters.",
+    "Arrange the photos into one invented word and define it.",
+  ],
+  "ai-tiny-souvenir-museum": [
+    "Let the AI invent a fake trip, then find one tiny souvenir that could prove it happened.",
+    "Write a museum label for the souvenir.",
+  ],
+  "ai-window-poetry-night": [
+    "Look out of one window and let the AI choose four words from what you can see.",
+    "Write a short poem using all four words and read it in dramatic lighting.",
+  ],
+  "ai-grocery-recipe-swap": [
+    "Let the AI give two tiny grocery baskets, then each person buys exactly three ingredients for the other.",
+    "Cook one shared plate from the six items and write the recipe name before eating.",
+  ],
+  "ai-dessert-map-stamps": [
+    "Let the AI choose three dessert stops and one rating category for each stop.",
+    "Split one small item per stop, mark the route with three stamps or symbols, and choose a winner.",
+  ],
+  "ai-home-museum-tour": [
+    "Let the AI choose a museum theme, then label five ordinary objects at home as exhibits.",
+    "Give a three-minute guided tour and choose one object for the imaginary permanent collection.",
+  ],
+  "ai-couch-quest-map": [
+    "Draw a quick map of the room, let the AI place four tiny quests on it, and complete them in order.",
+    "Stamp or initial the map after each quest and keep the finished map.",
+  ],
+  "ai-soundtrack-scene-walk": [
+    "Let the AI assign five film-scene moods for a walking route.",
+    "At each stop, play or hum a fitting song for thirty seconds and take a scene-title photo.",
+  ],
+  "ai-crosswalk-story": [
+    "Let the AI give a genre and final twist before you start walking.",
+    "At the next five corners or crossings, add exactly one sentence to the story and record the title.",
+  ],
+  "ai-park-bench-interview": [
+    "Let the AI write six interview questions, then answer one question on each bench or pause spot.",
+    "Pick the strongest answer and save it as the quote of the date.",
+  ],
+  "ai-library-spine-poem": [
+    "Let the AI choose a theme, then find six book spines whose titles can become a poem.",
+    "Arrange the titles in order, photograph the poem, and give it a dedication.",
+  ],
+  "ai-museum-color-heist": [
+    "Let the AI assign one target color and a fake heist role for each of you.",
+    "Find five objects in that color and write a three-line plan for stealing only the color, not the object.",
+  ],
+  "ai-arcade-boss-level": [
+    "Let the AI build four arcade levels: warm-up, skill, luck, and boss level.",
+    "Play them in order, record one score per level, and make a boss badge for the winner.",
+  ],
+  "ai-mini-fitness-trailer": [
+    "Let the AI choose five easy moves and a team name.",
+    "Do the moves safely, film a twenty-second sports trailer, and add a dramatic victory line.",
+  ],
+  "ai-rain-window-radio": [
+    "Let the AI name a cozy radio show and three segments: weather, song, and snack review.",
+    "Record a private three-minute episode by the window and end with tomorrow's forecast.",
+  ],
+  "ai-blanket-fort-mission-control": [
+    "Build a blanket fort, then let the AI assign a space mission with four tiny tasks.",
+    "Complete the tasks from inside the fort and write a mission log with a launch time.",
+  ],
+  "ai-seasonal-time-capsule": [
+    "Let the AI ask four questions about this season, then collect three tiny proofs from today.",
+    "Seal the answers and proofs in an envelope or note and set an opening date.",
+  ],
+  "ai-sunset-minute-checklist": [
+    "Let the AI create a five-minute sunset checklist with one thing to notice each minute.",
+    "Follow the checklist, stay quiet for the final minute, and write a postcard line afterward.",
+  ],
+  "ai-menu-trailer-voiceover": [
+    "Pick any menu, let the AI choose three dramatic words from it, and turn dinner into a trailer voiceover.",
+    "Read the voiceover before ordering and give the meal a film title afterward.",
+  ],
+  "ai-morning-micro-itinerary": [
+    "Let the AI create a four-stop morning route: drink, view, tiny errand, and photo.",
+    "Do the stops in that exact order and title the morning before you go home.",
+  ],
+  "ai-night-market-scorecard": [
+    "Let the AI create a scorecard with smell, crunch, surprise, and would-repeat.",
+    "Split one small item at three stalls, score each one immediately, and crown one stall.",
+  ],
+  "ai-home-one-table-restaurant": [
+    "Let the AI name a one-table restaurant and assign host, chef, critic, and photographer roles.",
+    "Serve one simple course, review it aloud, and write the restaurant's closing line.",
+  ],
+  "ai-photo-recreation-challenge": [
+    "Choose one old photo and let the AI name four details to recreate today.",
+    "Take the new photo, compare both images, and write a before-after caption.",
+  ],
+  "ai-coin-budget-date-log": [
+    "Let the AI turn a small budget into five spending rules before you leave.",
+    "Log each purchase or free choice, then design a tiny receipt trophy.",
+  ],
+  "ai-bookstore-trailer-voice": [
+    "Let the AI give a shelf rule and choose three books without reading reviews.",
+    "Use one line from each back cover to perform a thirty-second trailer voiceover.",
+  ],
+  "ai-station-postcard-series": [
+    "Ride four transit stops and write exactly one postcard sentence at each stop.",
+    "Combine the four sentences into a final card and give it a destination name.",
+  ],
+  "ai-kindness-bingo-route": [
+    "Let the AI make five tiny kindness bingo squares that are realistic today.",
+    "Complete three squares together and document them with a note instead of intrusive photos.",
+  ],
 };
 
 function concreteStepFor(base: ActivitySeed, twist: TwistSeed, mode: ModeSeed) {
@@ -308,6 +584,16 @@ const activitySeeds: ActivitySeed[] = [
   activity("Relationship Playlist", "Build a playlist together and explain why each song belongs there.", "Home", "Free", "60-90 min", "Music app, speaker", ["music", "deep"]),
   activity("Indoor Camp", "Build a cozy camp on the sofa, balcony, or floor and use only soft lighting.", "Home", "Free", "Evening", "Blankets, lamp", ["cozy", "adventure"]),
   activity("Breakfast At Midnight", "Make pancakes, eggs, or cereal at the wrong time of day.", "Home", "Up to 15 EUR", "60-90 min", "Breakfast ingredients", ["fun", "food"]),
+  activity("AI Movie Double Feature Home", "Let an AI choose two short films, trailers, or episodes from one mood, watch both, then invent one award for each.", "Home", "Free", "60-90 min", "AI mood prompt, screen, award notes", ["movie", "home", "creative"]),
+  activity("AI Kitchen Timer Menu", "Let an AI set three cooking constraints, start a twenty-five-minute timer, plate the simplest menu, then name the restaurant.", "Home", "Up to 40 EUR", "60-90 min", "AI constraints, timer, pantry check", ["cooking", "home", "game"]),
+  activity("AI Home Escape Box", "Let an AI create three clue prompts from objects you own, hide them in envelopes or a box, then solve them in order.", "Home", "Free", "60-90 min", "AI clue prompts, envelopes or box, household objects", ["home", "mystery", "game"]),
+  activity("AI Dance Floor Dice", "Let an AI write six tiny dance moves, number them like a die, roll for ten minutes, then name the routine.", "Home", "Free", "30 min", "AI dance prompt, die, playlist", ["music", "movement", "playful"]),
+  activity("AI Window Poetry Night", "Look out of one window, let an AI choose four words from what you can see, then write and perform a short poem.", "Home", "Free", "30 min", "Window view, AI word prompt, lamp", ["writing", "home", "romantic"]),
+  activity("AI Home Museum Tour", "Let an AI choose a museum theme, label five ordinary objects at home as exhibits, then give a three-minute guided tour.", "Home", "Free", "60-90 min", "AI museum theme, five labels, timer", ["home", "museum", "story"]),
+  activity("AI Couch Quest Map", "Draw a quick room map, let an AI place four tiny quests on it, complete them in order, then keep the stamped map.", "Home", "Free", "30 min", "Paper map, AI quest prompt, pen", ["home", "game", "playful"]),
+  activity("AI Rain Window Radio", "Let an AI name a cozy radio show with weather, song, and snack segments, then record a private three-minute episode by the window.", "Rainy Day", "Free", "30 min", "AI radio prompt, window seat, recorder", ["rain", "home", "talk"]),
+  activity("AI Blanket Fort Mission Control", "Build a blanket fort, let an AI assign a space mission with four tiny tasks, then write a launch-time mission log.", "Rainy Day", "Free", "60-90 min", "Blankets, AI mission prompt, mission log", ["cozy", "home", "game"]),
+  activity("AI Home One Table Restaurant", "Let an AI name a one-table restaurant and assign host, chef, critic, and photographer roles, then serve one simple course and write a closing line.", "Home", "Up to 40 EUR", "60-90 min", "AI restaurant prompt, one table, simple course", ["home", "food", "creative"]),
 
   activity("Coin Flip Walk", "At every intersection, flip a coin to decide your direction.", "Outdoors", "Free", "60-90 min", "Coin, comfortable shoes", ["random", "walk"]),
   activity("Park Bench Coffee", "Bring coffee in cups and find the best bench in a park.", "Outdoors", "Up to 15 EUR", "60-90 min", "Coffee, jacket", ["park", "slow"]),
@@ -319,6 +605,19 @@ const activitySeeds: ActivitySeed[] = [
   activity("Favorite Places Tour", "Each person leads the other to one place that means something personal.", "Outdoors", "Free", "2-3 hours", "Two places", ["personal", "story"]),
   activity("Architecture Bingo", "Look for doors, balconies, signs, windows, and facades from a short bingo list.", "Outdoors", "Free", "60-90 min", "Bingo list", ["city", "design"]),
   activity("Sunrise Coffee", "Meet early for coffee and one quiet walk before the day starts.", "Outdoors", "Up to 15 EUR", "60-90 min", "Alarm, coffee", ["morning", "slow"]),
+  activity("AI Playlist Walk", "Let an AI choose three song prompts, walk one direction per song, then make a three-photo album cover for the route.", "Outdoors", "Free", "60-90 min", "AI song prompts, playlist, camera", ["music", "walk", "photo"]),
+  activity("AI Voice Note Treasure", "Let an AI give five treasure words, record a short voice note at each matching place, then finish with a route title.", "Outdoors", "Free", "60-90 min", "AI treasure words, voice recorder, walking route", ["walk", "story", "memory"]),
+  activity("AI Constellation Walk", "Let an AI name six lights, signs, or shapes to photograph after dark, then connect them into a fake constellation.", "Outdoors", "Free", "60-90 min", "AI photo list, safe night route, camera", ["night", "photo", "city"]),
+  activity("AI Weather Report Walk", "Let an AI give a playful weather-report format, walk a short route, then record a one-minute forecast about the date.", "Outdoors", "Free", "60-90 min", "AI forecast prompt, safe route, voice recorder", ["walk", "talk", "playful"]),
+  activity("AI Compliment Map", "Let an AI suggest three specific compliment prompts, say them at three different stops, then mark the route with notes.", "Outdoors", "Free", "60-90 min", "AI compliment prompts, route, notes", ["walk", "relationship", "care"]),
+  activity("AI Photo Alphabet Route", "Let an AI choose five letters, photograph objects shaped like those letters, then arrange them into an invented word.", "Outdoors", "Free", "60-90 min", "AI letters, camera, walking route", ["photo", "city", "creative"]),
+  activity("AI Soundtrack Scene Walk", "Let an AI assign five film-scene moods for a route, add a matching song or hum at each stop, then take scene-title photos.", "Outdoors", "Free", "60-90 min", "AI scene moods, route, camera", ["walk", "music", "photo"]),
+  activity("AI Crosswalk Story", "Let an AI give a genre and final twist, add exactly one sentence at the next five corners, then record the story title.", "Outdoors", "Free", "60-90 min", "AI genre prompt, walking route, notes", ["walk", "story", "writing"]),
+  activity("AI Park Bench Interview", "Let an AI write six interview questions, answer one at each bench or pause spot, then save the strongest quote.", "Outdoors", "Free", "60-90 min", "AI questions, bench route, notes", ["talk", "walk", "memory"]),
+  activity("AI Morning Micro Itinerary", "Let an AI create a four-stop morning route: drink, view, tiny errand, and photo, then follow the stops in exact order and title the morning.", "Outdoors", "Up to 15 EUR", "60-90 min", "AI route prompt, morning time, camera", ["morning", "walk", "photo"]),
+  activity("AI Station Postcard Series", "Ride four transit stops, write exactly one postcard sentence at each stop, then combine the four sentences into one final card.", "Mini Adventure", "Up to 15 EUR", "60-90 min", "Transit ticket, AI route prompt, postcard note", ["random", "writing", "city"]),
+  activity("AI Kindness Bingo Route", "Let an AI make five tiny kindness bingo squares, complete three together, then document them with a note instead of intrusive photos.", "Mini Adventure", "Free", "60-90 min", "AI kindness bingo, route, notes", ["kindness", "walk", "care"]),
+  activity("AI Sunset Minute Checklist", "Let an AI create a five-minute sunset checklist, notice one thing per minute, stay quiet at the end, then write a postcard line.", "Seasonal", "Free", "30 min", "AI checklist, sunset time, postcard note", ["sunset", "romantic", "seasonal"]),
 
   activity("New Cuisine Night", "Cook a dish from a cuisine you rarely choose together.", "Food", "Up to 40 EUR", "2-3 hours", "Recipe, groceries", ["cooking", "discover"]),
   activity("Dessert First", "Make dessert the main plan and split two sweet options.", "Food", "Up to 15 EUR", "60-90 min", "Dessert idea", ["sweet", "fun"]),
@@ -330,7 +629,16 @@ const activitySeeds: ActivitySeed[] = [
   activity("Tapas Table", "Make many small plates instead of one big meal.", "Food", "Up to 40 EUR", "2-3 hours", "Small plates, groceries", ["sharing", "taste"]),
   activity("Chef's Table", "Book a special tasting menu or restaurant you would not choose on an ordinary night.", "Food", "Unlimited", "Evening", "Reservation, outfit", ["premium", "dinner"]),
   activity("Mocktail Lab", "Mix two drinks and pair each one with a small snack.", "Food", "Up to 15 EUR", "30 min", "Drinks, snack", ["drink", "playful"]),
-
+  activity("AI Dessert Bracket", "Let an AI create a four-dessert knockout bracket, taste small portions, crown one winner, then write a tiny final review.", "Food", "Up to 40 EUR", "60-90 min", "AI bracket prompt, dessert options, notes", ["sweet", "taste", "game"]),
+  activity("AI Farmers Market Basket", "Let an AI set three market constraints, buy a small matching basket, then turn it into a snack plate with a menu name.", "Food", "Up to 40 EUR", "2-3 hours", "AI market rules, market hours, small budget", ["market", "food", "game"]),
+  activity("AI Bakery Blind Ranking", "Let an AI create a scoring sheet for three small bakery items, taste them partly blind, then crown a winner.", "Food", "Up to 15 EUR", "60-90 min", "AI score sheet, bakery route, napkin badge", ["sweet", "taste", "game"]),
+  activity("AI Cafe Table Script", "Let an AI assign two roles and one opening line, order lightly in character, then write the closing line after the drinks arrive.", "Food", "Up to 15 EUR", "60-90 min", "AI role prompt, cafe table, notes", ["cafe", "story", "playful"]),
+  activity("AI Neighborhood Menu Hunt", "Let an AI choose three menu words, find them on nearby menus or signs, then combine them into an imaginary tasting menu.", "Food", "Free", "60-90 min", "AI menu words, neighborhood route, notes", ["food", "city", "writing"]),
+  activity("AI Mocktail Color Lab", "Let an AI assign a color and mood, mix one drink to match both, then write a recipe card and score it.", "Food", "Up to 15 EUR", "30 min", "AI color prompt, drink ingredients, recipe card", ["drink", "creative", "playful"]),
+  activity("AI Grocery Recipe Swap", "Let an AI give two tiny grocery baskets, each buy exactly three ingredients for the other, then cook one shared plate and name the recipe.", "Food", "Up to 40 EUR", "2-3 hours", "AI basket prompt, grocery store, recipe note", ["cooking", "food", "game"]),
+  activity("AI Dessert Map Stamps", "Let an AI choose three dessert stops and one rating category per stop, split one small item each, then stamp the route and pick a winner.", "Food", "Up to 40 EUR", "2-3 hours", "AI dessert route, small budget, stamp symbols", ["sweet", "taste", "city"]),
+  activity("AI Menu Trailer Voiceover", "Pick a menu, let an AI choose three dramatic words, turn dinner into a trailer voiceover, then give the meal a film title.", "Food", "Up to 40 EUR", "60-90 min", "Menu, AI word prompt, notes", ["food", "movie", "playful"]),
+  activity("AI Night Market Scorecard", "Let an AI create a scorecard with smell, crunch, surprise, and would-repeat, split one small item at three stalls, then crown one stall.", "Food", "Up to 40 EUR", "2-3 hours", "AI scorecard, market route, small budget", ["market", "streetfood", "taste"]),
   activity("Tiny Portrait Session", "Draw each other in ten minutes and keep both drawings.", "Creative", "Free", "30 min", "Paper, pens", ["art", "fun"]),
   activity("Ceramic Keepsake", "Paint or shape a small item you can actually use later.", "Creative", "Up to 100 EUR", "2-3 hours", "Studio or materials", ["craft", "memory"]),
   activity("Couple Collage", "Collect images, words, and colors that fit your next season together.", "Creative", "Up to 15 EUR", "2-3 hours", "Paper or tablet", ["future", "design"]),
@@ -341,6 +649,15 @@ const activitySeeds: ActivitySeed[] = [
   activity("Photo Emotion Set", "Take photos for six emotions: calm, wild, warm, new, strange, familiar.", "Creative", "Free", "2-3 hours", "Camera", ["photo", "creative"]),
   activity("Window Art", "Draw temporary symbols on a window or mirror and photograph them before cleaning.", "Creative", "Up to 15 EUR", "30 min", "Window markers", ["art", "home"]),
   activity("Make A Date Jar", "Write future date ideas on slips and decorate a jar together.", "Creative", "Up to 15 EUR", "60-90 min", "Jar, paper, pens", ["planning", "craft"]),
+  activity("AI Board Game Remix", "Let an AI add three house rules to a familiar game, play one round, then draw a tiny trophy for the rule that should stay.", "Creative", "Free", "60-90 min", "Game, AI rules prompt, paper", ["game", "creative", "playful"]),
+  activity("AI Home Trailer Shoot", "Let an AI choose a film genre and three required shots, shoot a thirty-second trailer at home, then add a dramatic title card.", "Creative", "Free", "60-90 min", "AI genre prompt, phone camera, title card", ["film", "home", "fun"]),
+  activity("Fake Podcast Date", "Let an AI write five interview questions, record a private five-minute fake podcast, then name the episode and its silly sponsor.", "Creative", "Free", "60-90 min", "AI questions, voice recorder, quiet corner", ["talk", "writing", "fun"]),
+  activity("Puzzle Envelope At Home", "Let an AI write three clue prompts, hide three envelopes at home, solve them in order, then place the final answer somewhere visible.", "Creative", "Free", "60-90 min", "AI clue prompts, envelopes, pen", ["home", "mystery", "game"]),
+  activity("AI Thrift Prop Story", "Let an AI assign a genre, find one secondhand prop for that story, then stage three photos and write the movie title.", "Creative", "Up to 15 EUR", "60-90 min", "AI genre prompt, secondhand stop, camera", ["story", "photo", "playful"]),
+  activity("AI Future Postcard Drop", "Let an AI ask three future-you prompts, write a postcard to open later, then hide or schedule it with a rule.", "Creative", "Up to 15 EUR", "60-90 min", "AI prompts, postcard, envelope", ["future", "writing", "memory"]),
+  activity("AI Book Cover Redesign", "Pick a real book, let an AI swap its genre, then redesign the cover as a quick sketch or phone collage.", "Creative", "Free", "60-90 min", "Book, AI genre prompt, paper or phone", ["books", "design", "creative"]),
+  activity("AI Photo Recreation Challenge", "Choose one old photo, let an AI name four details to recreate today, take the new photo, then write a before-after caption.", "Creative", "Free", "60-90 min", "Old photo, AI detail prompt, camera", ["photo", "memory", "creative"]),
+  activity("AI Library Spine Poem", "Let an AI choose a theme, find six book spines whose titles can become a poem, arrange them, then photograph the result.", "Culture", "Free", "60-90 min", "AI theme, library or bookshelf, camera", ["books", "writing", "quiet"]),
 
   activity("Kitchen Dance Break", "Choose three songs and dance in the kitchen without rating the moves.", "Movement", "Free", "30 min", "Playlist", ["music", "movement"]),
   activity("Park Badminton", "Play casually in a park and count longest rallies, not points.", "Movement", "Up to 15 EUR", "60-90 min", "Rackets, shuttle", ["park", "game"]),
@@ -363,10 +680,21 @@ const activitySeeds: ActivitySeed[] = [
   activity("Star Spot", "Go to a darker place and stay long enough to look up properly.", "Mini Adventure", "Free", "Evening", "Blanket, weather check", ["night", "romantic"]),
   activity("Street Name Quest", "Choose a street name on the map that sounds interesting and walk there.", "Mini Adventure", "Free", "60-90 min", "Map", ["random", "walk"]),
   activity("Fixed Budget Challenge", "Set one shared spending limit and see how much afternoon you can create from it.", "Mini Adventure", "Up to 40 EUR", "Half day", "Cash or card", ["budget", "playful"]),
+  activity("AI Thrift Outfit Brief", "Let an AI assign a style brief, find one secondhand outfit detail for each other, then take a lookbook photo with a fake magazine caption.", "Mini Adventure", "Up to 40 EUR", "2-3 hours", "AI style brief, secondhand store, camera", ["style", "playful", "photo"]),
+  activity("AI Window Shopping Brief", "Let an AI invent a fictional client, visit three shop windows, choose items for that client, then make a tiny moodboard.", "Mini Adventure", "Free", "60-90 min", "AI client prompt, shop windows, camera", ["design", "city", "story"]),
+  activity("AI Kindness Errand", "Let an AI suggest one tiny kindness errand that is realistic today, do it together, then write a thank-you note or message.", "Mini Adventure", "Free", "60-90 min", "AI kindness prompt, note or message", ["kindness", "easy", "care"]),
+  activity("Map Pin Memory Walk", "Pick three saved map pins or meaningful nearby places, walk between them, and record a twenty-second voice note at each stop.", "Mini Adventure", "Free", "2-3 hours", "Saved map pins, voice recorder", ["walk", "memory", "story"]),
+  activity("Street Sign Story Route", "Walk until you find an interesting street sign, use it as the first line of a story, and add one sentence at every corner.", "Mini Adventure", "Free", "60-90 min", "Walking route, notes app", ["walk", "city", "writing"]),
+  activity("AI Public Art Detectives", "Let an AI give three detective questions for a statue, mural, or public artwork, then collect evidence photos and a case title.", "Mini Adventure", "Free", "60-90 min", "AI detective prompt, public art route, camera", ["art", "city", "story"]),
+  activity("AI Transit Portrait Gallery", "Ride three transit stops, let an AI assign one place-portrait theme per stop, then make a mini gallery title.", "Mini Adventure", "Up to 15 EUR", "60-90 min", "Transit ticket, AI themes, camera", ["random", "city", "photo"]),
+  activity("AI Tiny Souvenir Museum", "Let an AI invent a fake trip, find one tiny souvenir that could prove it happened, then write a museum label.", "Mini Adventure", "Up to 15 EUR", "60-90 min", "AI fake trip, tiny budget, note", ["gift", "story", "museum"]),
+  activity("AI Museum Color Heist", "Let an AI assign one target color and a fake heist role each, find five matching objects, then write a three-line heist plan.", "Culture", "Up to 40 EUR", "60-90 min", "AI color prompt, museum or gallery, notes", ["museum", "art", "game"]),
+  activity("AI Coin Budget Date Log", "Let an AI turn a small budget into five spending rules, log each purchase or free choice, then design a tiny receipt trophy.", "Mini Adventure", "Up to 15 EUR", "60-90 min", "AI budget rules, coins or card, receipt log", ["budget", "game", "city"]),
 
   activity("Small Gallery Hop", "Visit a small gallery and decide which work you would take home.", "Culture", "Free", "60-90 min", "Gallery times", ["art", "city"]),
   activity("Bookstore Pick", "Choose one book you think the other person should read.", "Culture", "Free", "60-90 min", "Bookstore", ["books", "quiet"]),
   activity("Blind Cinema", "Pick a movie you know almost nothing about and talk about the feeling after.", "Culture", "Up to 40 EUR", "Evening", "Movie times", ["film", "surprise"]),
+  activity("AI Cinema Pick", "Go to a real cinema, feed an AI today's local showtimes, let it choose the film, then create a two-line poster quote afterward.", "Culture", "Up to 40 EUR", "Evening", "Cinema showtimes, AI prompt, tickets", ["film", "surprise", "creative"]),
   activity("Small Stage Night", "Try a local theater, poetry night, comedy room, or open mic.", "Culture", "Up to 40 EUR", "Evening", "Event calendar", ["stage", "night"]),
   activity("Live Music Find", "Go to a small concert or live session instead of a big event.", "Culture", "Up to 40 EUR", "Evening", "Tickets or calendar", ["music", "culture"]),
   activity("Historic Spot Walk", "Visit a historic place nearby and read a few lines about what happened there.", "Culture", "Free", "60-90 min", "Map, short article", ["history", "walk"]),
@@ -374,6 +702,9 @@ const activitySeeds: ActivitySeed[] = [
   activity("Opera Or Big Stage", "If budget is open, plan a full culture night with strong seats and dinner.", "Culture", "Unlimited", "Evening", "Tickets, reservation", ["premium", "culture"]),
   activity("Record Store Browse", "Listen to music you would normally not choose.", "Culture", "Free", "60-90 min", "Record store", ["music", "discover"]),
   activity("Short Film Night", "Watch three short films and rate each with one sentence.", "Culture", "Free", "60-90 min", "Short film source", ["film", "home"]),
+  activity("AI Bookstore Mission", "Go to a bookstore or library, let an AI choose a shelf rule, find one book for each other, then write a tiny dedication.", "Culture", "Free", "60-90 min", "Bookstore or library, AI shelf prompt, note", ["books", "surprise", "writing"]),
+  activity("Museum Caption Swap", "Visit a museum, each pick one object, write a wrong-but-plausible caption, then read both captions outside.", "Culture", "Up to 40 EUR", "2-3 hours", "Museum times, notes app", ["museum", "art", "writing"]),
+  activity("AI Night Photo Mission", "Let an AI generate a six-shot night photo list, take the photos together, then caption the best three like a tiny exhibition.", "Culture", "Free", "60-90 min", "AI shot list, safe night route, camera", ["night", "photo", "city"]),
 
   activity("One Good Question Walk", "Walk slowly and answer one meaningful question without rushing.", "Deep Talk", "Free", "60-90 min", "One question", ["talk", "outdoors"]),
   activity("Gratitude Round", "Name five specific things you appreciated about each other recently.", "Deep Talk", "Free", "30 min", "Quiet place", ["appreciation", "close"]),
@@ -440,6 +771,10 @@ const activitySeeds: ActivitySeed[] = [
   activity("Picnic Charcuterie Board", "Build a small cheese, fruit, bread, and dip board and eat it outside.", "Food", "Up to 40 EUR", "60-90 min", "Board ingredients, blanket", ["picnic", "sharing"]),
   activity("Midnight Fries Run", "Go out late for fries, kebab, tacos, or noodles and make it the whole date.", "Food", "Up to 15 EUR", "30 min", "Open late spot", ["streetfood", "night"]),
   activity("Blind Menu Pick", "At a trusted restaurant, each person orders one dish for the other person.", "Food", "Up to 100 EUR", "Evening", "Reservation, allergy check", ["restaurant", "surprise"]),
+  activity("AI Snack Crawl", "Ask an AI for a three-stop snack route in one neighborhood, eat one small thing per stop, then rank the route on a receipt.", "Food", "Up to 40 EUR", "2-3 hours", "AI prompt, neighborhood, small budget", ["streetfood", "random", "taste"]),
+  activity("Supermarket Color Dinner", "Let an AI assign one color, shop ingredients that match it, cook a simple dinner, then design a tiny menu card.", "Food", "Up to 40 EUR", "2-3 hours", "AI color, grocery list, paper for menu", ["cooking", "game", "creative"]),
+  activity("Cafe Character Orders", "Let an AI assign each of you a fictional character type, order drinks in that mood, then write a tiny cafe scene together.", "Food", "Up to 15 EUR", "60-90 min", "Cafe, AI character prompt, notes app", ["cafe", "playful", "writing"]),
+  activity("Receipt Poem Cafe", "Buy one small drink or snack, turn the receipt words into a short poem, then read it once seriously and once dramatically.", "Food", "Up to 15 EUR", "30 min", "Cafe or kiosk, receipt, pen", ["cafe", "writing", "playful"]),
 
   activity("Escape Room", "Book an escape room and choose one that fits your experience level.", "Mini Adventure", "Up to 100 EUR", "60-90 min", "Escape room booking", ["puzzle", "team"]),
   activity("Arcade Token Night", "Set a token budget and play air hockey, racing, claw machines, and one silly game.", "Mini Adventure", "Up to 40 EUR", "60-90 min", "Arcade, token budget", ["arcade", "playful"]),
@@ -462,6 +797,7 @@ const activitySeeds: ActivitySeed[] = [
   activity("Library Treasure Hunt", "Go to a library and each finds one book, one quote, and one cover for the other.", "Culture", "Free", "60-90 min", "Library card if needed", ["books", "quiet"]),
   activity("Street Art Route", "Walk a street art route and rate murals by color, story, and photo potential.", "Culture", "Free", "2-3 hours", "Route, camera", ["streetart", "walk"]),
   activity("Drive-In Cinema", "Go to a drive-in cinema or outdoor screening and bring a blanket and snacks.", "Culture", "Up to 40 EUR", "Evening", "Tickets, blanket, snacks", ["film", "outdoors"]),
+  activity("AI Bookstore Trailer Voice", "Let an AI give a shelf rule, choose three books without reviews, then use one back-cover line from each for a thirty-second trailer voiceover.", "Culture", "Free", "60-90 min", "AI shelf rule, bookstore or library, notes", ["books", "writing", "playful"]),
 
   activity("Flea Market Mission", "Go to a flea market and buy the best tiny object for each other under a fixed price.", "Mini Adventure", "Up to 15 EUR", "2-3 hours", "Cash, market hours", ["market", "gift"]),
   activity("IKEA Showroom Date", "Walk through a furniture showroom and design a fake apartment for your future selves.", "Mini Adventure", "Free", "60-90 min", "Store route, snack stop", ["design", "future"]),
@@ -473,6 +809,13 @@ const activitySeeds: ActivitySeed[] = [
   activity("Photo Booth Hunt", "Find an old photo booth and take one serious strip and one ridiculous strip.", "Mini Adventure", "Up to 15 EUR", "60-90 min", "Photo booth location, coins", ["photo", "playful"]),
   activity("Record Store Challenge", "Each person picks one record cover for the other without listening first.", "Mini Adventure", "Free", "60-90 min", "Record store", ["music", "design"]),
   activity("Night Market Snack Route", "Visit a night market or food hall and split three small dishes from different stands.", "Mini Adventure", "Up to 40 EUR", "2-3 hours", "Market hours, budget", ["market", "streetfood"]),
+  activity("Random Transit Mission", "Let an AI choose a number from two to six, ride that many public transit stops, explore there, then make a mission title.", "Mini Adventure", "Up to 15 EUR", "2-3 hours", "Transit ticket, AI number prompt, return route", ["random", "city", "story"]),
+  activity("Photo Booth Story Strip", "Find a photo booth, act out four planned emotions, then write a four-line story on the back of the strip.", "Mini Adventure", "Up to 15 EUR", "60-90 min", "Photo booth location, coins, pen", ["photo", "story", "playful"]),
+  activity("Arcade Challenge Card", "Ask an AI for three arcade challenges, play them in order, then make a winner badge from the receipt or a note.", "Mini Adventure", "Up to 40 EUR", "60-90 min", "Arcade, AI challenge prompt, token budget", ["arcade", "game", "creative"]),
+  activity("AI Arcade Boss Level", "Let an AI build four arcade levels, play warm-up, skill, luck, and boss level in order, then make a winner badge.", "Mini Adventure", "Up to 40 EUR", "60-90 min", "AI level prompt, arcade tokens, score note", ["arcade", "game", "playful"]),
+  activity("AI Plant Shop Adoption", "Let an AI assign a plant personality, choose a plant or seed packet that fits, then write a tiny care passport.", "Mini Adventure", "Up to 40 EUR", "60-90 min", "AI plant prompt, plant shop, note", ["plant", "care", "creative"]),
+  activity("AI Mini Golf Rules", "Let an AI create one silly rule for every third mini-golf hole before you play, then draw a custom scorecard title for the winner.", "Movement", "Up to 40 EUR", "60-90 min", "AI rule prompt, mini-golf booking, scorecard", ["minigolf", "game", "playful"]),
+  activity("AI Mini Fitness Trailer", "Let an AI choose five easy moves and a team name, do the moves safely, then film a twenty-second sports trailer.", "Movement", "Free", "30 min", "AI move prompt, clear floor, camera", ["movement", "sport", "playful"]),
 
   activity("Indoor Picnic With Kinetic Sand", "Make an indoor picnic and build tiny landscapes from kinetic sand between courses.", "Rainy Day", "Up to 15 EUR", "60-90 min", "Kinetic sand, tray, picnic food", ["hands-on", "home"]),
   activity("Puzzle Race", "Buy two small puzzles with the same piece count and race for twenty minutes.", "Rainy Day", "Up to 15 EUR", "60-90 min", "Two puzzles, timer", ["puzzle", "playful"]),
@@ -489,6 +832,7 @@ const activitySeeds: ActivitySeed[] = [
   activity("Outdoor Cinema Blanket Night", "Go to an outdoor cinema and bring a blanket, snacks, and one backup layer.", "Seasonal", "Up to 40 EUR", "Evening", "Tickets, blanket, snacks", ["film", "summer"]),
   activity("Flower Field Photos", "Visit a flower field or public garden and take three non-cringey couple photos.", "Seasonal", "Up to 15 EUR", "60-90 min", "Field location, camera", ["flowers", "photo"]),
   activity("Lake Swim Morning", "Go to a lake early, swim or sit with feet in the water, and bring breakfast.", "Seasonal", "Up to 15 EUR", "60-90 min", "Swimwear, towel, breakfast", ["summer", "water"]),
+  activity("AI Seasonal Time Capsule", "Let an AI ask four questions about this season, collect three tiny proofs from today, then seal them with an opening date.", "Seasonal", "Free", "60-90 min", "AI questions, envelope, three proofs", ["seasonal", "future", "memory"]),
 ];
 
 const twistSeeds: TwistSeed[] = [
