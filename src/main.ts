@@ -408,17 +408,19 @@ app.innerHTML = `
         <button class="close-button" id="closeFilterButton" type="button" aria-label="Close" title="Close">${icon("x")}</button>
       </div>
       <p class="filter-summary" id="filterPanelSummary"></p>
-      <div class="filter-group">
-        <h3 id="categoryLabel">Category</h3>
-        <div class="choice-list" id="categoryChips"></div>
-      </div>
-      <div class="filter-group">
-        <h3 id="budgetLabel">Budget</h3>
-        <div class="choice-grid" id="budgetChips"></div>
-      </div>
-      <div class="filter-group">
-        <h3 id="durationLabel">Duration</h3>
-        <div class="choice-grid" id="durationChips"></div>
+      <div class="filter-options">
+        <div class="filter-group">
+          <h3 id="categoryLabel">Category</h3>
+          <div class="choice-list" id="categoryChips"></div>
+        </div>
+        <div class="filter-group">
+          <h3 id="budgetLabel">Budget</h3>
+          <div class="choice-grid" id="budgetChips"></div>
+        </div>
+        <div class="filter-group">
+          <h3 id="durationLabel">Duration</h3>
+          <div class="choice-grid" id="durationChips"></div>
+        </div>
       </div>
       <button class="primary-button wide" id="resetFiltersButton" type="button">Allow all ideas</button>
     </section>

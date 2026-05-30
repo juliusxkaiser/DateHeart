@@ -1,4 +1,4 @@
-const CACHE_NAME = "dateheart-v3";
+const CACHE_NAME = "dateheart-v4";
 const SCOPE_URL = self.registration.scope;
 const CORE_ASSETS = [
   "./",
@@ -14,8 +14,10 @@ const CORE_ASSETS = [
   "icons/maskable-512.png",
   "screenshots/dateheart-cdp-mobile-home.png",
   "screenshots/dateheart-cdp-mobile-result.png",
+  "screenshots/dateheart-cdp-mobile-filter.png",
   "screenshots/dateheart-cdp-desktop-home.png",
   "screenshots/dateheart-cdp-desktop-result.png",
+  "screenshots/dateheart-cdp-desktop-filter.png",
   "privacy.html",
   "terms.html",
   "impressum.html",

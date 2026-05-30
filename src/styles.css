@@ -697,7 +697,13 @@ button:focus-visible {
 }
 
 .filter-card {
+  display: grid;
+  height: min(860px, calc(100svh - 28px));
+  max-height: calc(100svh - 28px);
   width: min(420px, calc(100vw - 28px));
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 10px;
+  overflow: hidden;
 }
 
 .panel.visible .panel-card {
@@ -718,17 +724,25 @@ button:focus-visible {
 
 .filter-summary {
   min-height: 24px;
-  margin: 4px 0 2px;
+  margin: 0;
   color: var(--muted);
   font-size: 0.82rem;
   font-weight: 780;
   line-height: 1.25;
 }
 
+.filter-options {
+  display: grid;
+  min-height: 0;
+  gap: 14px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
 .filter-group {
   display: grid;
   gap: 8px;
-  margin: 14px 0;
+  margin: 0;
 }
 
 .filter-group h3 {
@@ -744,6 +758,10 @@ button:focus-visible {
   gap: 8px;
 }
 
+.choice-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .choice-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -751,7 +769,7 @@ button:focus-visible {
 .choice-button {
   display: flex;
   width: 100%;
-  min-height: 48px;
+  min-height: 50px;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
@@ -780,7 +798,7 @@ button:focus-visible {
 .choice-copy strong {
   min-width: 0;
   overflow-wrap: anywhere;
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   font-weight: 880;
   line-height: 1.15;
 }

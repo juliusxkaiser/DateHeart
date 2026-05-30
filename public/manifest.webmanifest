@@ -47,6 +47,13 @@
       "label": "DateHeart date idea result"
     },
     {
+      "src": "screenshots/dateheart-cdp-mobile-filter.png",
+      "sizes": "780x1688",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DateHeart category filter"
+    },
+    {
       "src": "screenshots/dateheart-cdp-desktop-home.png",
       "sizes": "1280x900",
       "type": "image/png",
@@ -59,6 +66,13 @@
       "type": "image/png",
       "form_factor": "wide",
       "label": "DateHeart desktop result"
+    },
+    {
+      "src": "screenshots/dateheart-cdp-desktop-filter.png",
+      "sizes": "1280x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "DateHeart desktop category filter"
     }
   ]
 }
