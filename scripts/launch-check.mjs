@@ -37,6 +37,7 @@ const requiredFiles = [
   "netlify/functions/verify-checkout-session.mjs",
   "scripts/idea-repeat-check.mjs",
   "scripts/api-smoke.mjs",
+  "scripts/app-contract-check.mjs",
   "scripts/payment-doctor.mjs",
   "scripts/live-check.mjs",
   "docs/STRIPE_SECRETS.md",

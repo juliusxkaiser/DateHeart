@@ -65,8 +65,6 @@ type PaymentStatusKey =
   | "restoreNotFound"
   | "restoreEmailRequired";
 
-type QuickMode = "all" | "tonight" | "free" | "home" | "out" | "ai";
-
 type ResultCopy = {
   plan: string;
   aiPrompt: string;
@@ -299,8 +297,6 @@ const resultCopy: Record<LanguageCode, ResultCopy> = {
       "เปลี่ยนไอเดีย DateHeart นี้ให้เป็นแผนที่ทำได้จริงสำหรับวันนี้ รักษางบและระยะเวลาไว้ ไอเดีย: {title}. รายละเอียด: {prompt}. เตรียม: {prep}.",
   },
 };
-
-const quickModeOrder = ["all", "tonight", "free", "home", "out", "ai"] as const satisfies readonly QuickMode[];
 
 const icon = (
   name: "globe" | "info" | "sliders" | "history" | "heart" | "share" | "copy" | "x" | "spark" | "star" | "check",
@@ -585,10 +581,6 @@ function normalizeFilters(value: IdeaFilters): IdeaFilters {
   };
 }
 
-function normalizeQuickMode(value: string | null): QuickMode {
-  return quickModeOrder.includes(value as QuickMode) ? (value as QuickMode) : "all";
-}
-
 function loadLanguage() {
   const saved = localStorage.getItem(STORAGE_KEYS.language);
   if (isLanguageCode(saved)) return saved;
@@ -705,7 +697,6 @@ function setNoAdsPurchased() {
 let activeLanguage = loadLanguage();
 let t = translations[activeLanguage];
 let filters = normalizeFilters(loadJson<IdeaFilters>(STORAGE_KEYS.filters, defaultFilters));
-let activeQuickMode: QuickMode = "all";
 let historyIds = loadJson<string[]>(STORAGE_KEYS.history, []);
 let favoriteIds = new Set(loadJson<string[]>(STORAGE_KEYS.favorites, []));
 let stats = loadJson<PersistedStats>(STORAGE_KEYS.stats, { reveals: 0, adBreaks: 0 });
@@ -837,33 +828,9 @@ class HeartScene {
 
 const heartScene = new HeartScene(elements.heartCanvas);
 
-function ideaMatchesQuickMode(idea: DateIdea) {
-  if (activeQuickMode === "all") return true;
-  if (activeQuickMode === "tonight") return idea.duration === "Evening" || idea.duration === "60-90 min";
-  if (activeQuickMode === "free") return idea.budget === "Free";
-  if (activeQuickMode === "home") return idea.category === "Home" || idea.category === "Rainy Day";
-  if (activeQuickMode === "out") return ["Outdoors", "Food", "Movement", "Mini Adventure", "Culture", "Seasonal"].includes(idea.category);
-  return idea.family.startsWith("ai-") || idea.title.startsWith("AI ");
-}
-
 function candidateIdeasForCurrentMode() {
   const filtered = filterIdeas(filters);
-  const quickFiltered = activeQuickMode === "all" ? filtered : filtered.filter(ideaMatchesQuickMode);
-  if (quickFiltered.length > 0) return quickFiltered;
-
-  const quickOnly = activeQuickMode === "all" ? [] : dateIdeas.filter(ideaMatchesQuickMode);
-  if (quickOnly.length > 0) return quickOnly;
-
   return filtered.length > 0 ? filtered : dateIdeas;
-}
-
-function quickModeLabel(mode: QuickMode) {
-  if (mode === "all") return t.all;
-  if (mode === "tonight") return uiCopy().tonight;
-  if (mode === "free") return labelFor("budget", "Free", activeLanguage, activeBudgetMarket());
-  if (mode === "home") return labelFor("category", "Home", activeLanguage);
-  if (mode === "out") return uiCopy().out;
-  return "AI";
 }
 
 function pickIdea() {
@@ -1222,7 +1189,6 @@ function saveFilters() {
 function updateCounter() {
   const market = activeBudgetMarket();
   const detail = [
-    activeQuickMode !== "all" ? quickModeLabel(activeQuickMode) : "",
     filters.category !== "All" ? labelFor("category", filters.category, activeLanguage) : "",
     filters.budget !== "All" ? labelFor("budget", filters.budget, activeLanguage, market) : "",
     filters.duration !== "All" ? labelFor("duration", filters.duration, activeLanguage) : "",
@@ -1611,7 +1577,6 @@ elements.closeFilterButton.addEventListener("click", () => closePanel(elements.f
 elements.closeLanguageButton.addEventListener("click", () => closePanel(elements.languagePanel));
 elements.resetFiltersButton.addEventListener("click", () => {
   filters = defaultFilters;
-  activeQuickMode = "all";
   saveFilters();
 });
 elements.historyButton.addEventListener("click", () => {

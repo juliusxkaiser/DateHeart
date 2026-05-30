@@ -9,9 +9,10 @@
   "scripts": {
     "assets:generate": "node scripts/generate-assets.mjs",
     "api:smoke": "node scripts/api-smoke.mjs",
+    "app:check": "node scripts/app-contract-check.mjs",
     "dev": "vite --host 127.0.0.1",
     "build": "tsc && vite build",
-    "deploy:check": "npm run assets:generate && npm run ideas:check && npm run i18n:check && npm run build",
+    "deploy:check": "npm run assets:generate && npm run ideas:check && npm run i18n:check && npm run app:check && npm run build",
     "deploy:doctor": "node scripts/deploy-doctor.mjs",
     "deploy:github-pages": "node scripts/deploy-github-pages-artifact.mjs",
     "deploy:today": "npm run launch:check && npm run payment:doctor && npm run deploy:doctor",
