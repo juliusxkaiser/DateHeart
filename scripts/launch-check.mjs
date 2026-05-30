@@ -1,4 +1,5 @@
 import { access, readFile } from "node:fs/promises";
+import sharp from "sharp";
 
 const requiredFiles = [
   "public/apple-touch-icon.png",
@@ -45,6 +46,32 @@ const requiredFiles = [
 
 const errors = [];
 
+function manifestSize(value) {
+  const match = /^(\d+)x(\d+)$/.exec(value ?? "");
+  if (!match) return undefined;
+  return { width: Number(match[1]), height: Number(match[2]) };
+}
+
+async function assertManifestAsset(asset, label) {
+  const path = `public/${asset.src}`;
+  try {
+    await access(path);
+  } catch {
+    errors.push(`${label} missing: ${asset.src}`);
+    return;
+  }
+
+  const expectedSize = manifestSize(asset.sizes);
+  if (!expectedSize || asset.type === "image/svg+xml") return;
+
+  const metadata = await sharp(path).metadata();
+  if (metadata.width !== expectedSize.width || metadata.height !== expectedSize.height) {
+    errors.push(
+      `${label} size mismatch: ${asset.src} declares ${asset.sizes}, actual ${metadata.width}x${metadata.height}`,
+    );
+  }
+}
+
 for (const file of requiredFiles) {
   try {
     await access(file);
@@ -55,19 +82,11 @@ for (const file of requiredFiles) {
 
 const manifest = JSON.parse(await readFile("public/manifest.webmanifest", "utf8"));
 for (const icon of manifest.icons ?? []) {
-  try {
-    await access(`public/${icon.src}`);
-  } catch {
-    errors.push(`Manifest icon missing: ${icon.src}`);
-  }
+  await assertManifestAsset(icon, "Manifest icon");
 }
 
 for (const screenshot of manifest.screenshots ?? []) {
-  try {
-    await access(`public/${screenshot.src}`);
-  } catch {
-    errors.push(`Manifest screenshot missing: ${screenshot.src}`);
-  }
+  await assertManifestAsset(screenshot, "Manifest screenshot");
 }
 
 const envExample = await readFile(".env.example", "utf8");

@@ -658,7 +658,7 @@ async function postJsonToFirstAvailable(endpoints: string[], body: Record<string
     }
   }
 
-  throw lastError instanceof Error ? lastError : new Error("Payment endpoint unavailable.");
+  throw lastError instanceof Error ? lastError : new Error("payment_unavailable");
 }
 
 async function getJsonFromFirstAvailable(endpoints: string[]) {
@@ -677,7 +677,7 @@ async function getJsonFromFirstAvailable(endpoints: string[]) {
     }
   }
 
-  throw lastError instanceof Error ? lastError : new Error("Payment endpoint unavailable.");
+  throw lastError instanceof Error ? lastError : new Error("payment_unavailable");
 }
 
 function setNoAdsPurchased() {
@@ -1031,8 +1031,12 @@ function buildAiPrompt(displayIdea: DateIdea) {
 
 async function copyText(text: string) {
   if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text);
-    return;
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch {
+      // Some browsers expose Clipboard API but reject it outside a trusted context.
+    }
   }
 
   const textarea = document.createElement("textarea");
@@ -1042,8 +1046,9 @@ async function copyText(text: string) {
   textarea.style.top = "-999px";
   document.body.append(textarea);
   textarea.select();
-  document.execCommand("copy");
+  const copied = document.execCommand("copy");
   textarea.remove();
+  if (!copied) throw new Error("Clipboard copy failed.");
 }
 
 function currentPlanText() {
@@ -1128,25 +1133,37 @@ async function shareCurrentIdea() {
   const text = currentPlanText() || `${APP_NAME}: ${displayIdea.title}\n${displayIdea.prompt}\n${t.prep}: ${displayIdea.prep}`;
 
   if (navigator.share) {
-    await navigator.share({ title: APP_NAME, text });
-    return;
+    try {
+      await navigator.share({ title: APP_NAME, text });
+      return;
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+    }
   }
 
-  await navigator.clipboard.writeText(text);
-  elements.shareButton.textContent = t.copied;
-  window.setTimeout(() => {
-    elements.shareButton.innerHTML = `${icon("share")} ${t.share}`;
-  }, 1200);
+  try {
+    await copyText(text);
+    elements.shareButton.textContent = t.copied;
+    window.setTimeout(() => {
+      elements.shareButton.innerHTML = `${icon("share")} ${t.share}`;
+    }, 1200);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function copyCurrentPlan() {
   if (!currentIdea) return;
 
-  await copyText(currentPlanText());
-  elements.copyPlanButton.textContent = uiCopy().copiedPlan;
-  window.setTimeout(() => {
-    elements.copyPlanButton.innerHTML = `${icon("copy")} ${uiCopy().copyPlan}`;
-  }, 1200);
+  try {
+    await copyText(currentPlanText());
+    elements.copyPlanButton.textContent = uiCopy().copiedPlan;
+    window.setTimeout(() => {
+      elements.copyPlanButton.innerHTML = `${icon("copy")} ${uiCopy().copyPlan}`;
+    }, 1200);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function renderFilterGroup<T extends string>(

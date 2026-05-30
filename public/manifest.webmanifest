@@ -40,14 +40,14 @@
   "screenshots": [
     {
       "src": "screenshots/dateheart-cdp-mobile-home.png",
-      "sizes": "390x844",
+      "sizes": "780x1688",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "DateHeart home screen"
     },
     {
       "src": "screenshots/dateheart-cdp-mobile-result.png",
-      "sizes": "390x844",
+      "sizes": "780x1688",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "DateHeart date idea result"

@@ -1,4 +1,4 @@
-const CACHE_NAME = "dateheart-v2";
+const CACHE_NAME = "dateheart-v3";
 const SCOPE_URL = self.registration.scope;
 const CORE_ASSETS = [
   "./",
