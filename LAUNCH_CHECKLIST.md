@@ -15,6 +15,7 @@
 - Strict deploy doctor added via `npm run deploy:doctor`.
 - One-command deploy readiness check added via `npm run deploy:today`.
 - GitHub Actions deploy workflows added for GitHub Pages, Vercel and Netlify.
+- Public GitHub Pages artifact deploy is live at `https://czarletsgo.github.io/dateheart-web/`.
 - Legal page routes added: `privacy.html`, `terms.html`, `impressum.html`.
 
 ## Needs owner action before public launch

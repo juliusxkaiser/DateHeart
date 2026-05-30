@@ -54,7 +54,13 @@ npm run deploy:vercel
 npm run deploy:netlify
 ```
 
-Fuer GitHub Pages ist ein Workflow unter `.github/workflows/deploy-pages.yml` vorbereitet. Er baut automatisch mit `VITE_BASE_PATH=/<repo-name>/`, damit Assets, Manifest und Service Worker auch unter einer Repo-Unterseite funktionieren.
+Fuer GitHub Pages ist ein Workflow unter `.github/workflows/deploy-pages.yml` vorbereitet. Er baut mit `VITE_BASE_PATH=/<repo-name>/`, damit Assets, Manifest und Service Worker auch unter einer Repo-Unterseite funktionieren. Wenn das Source-Repo privat ist und der GitHub-Plan Pages fuer private Repos nicht erlaubt, kann stattdessen ein oeffentliches Artefakt-Repo nur mit `dist/` verwendet werden.
+
+Aktueller Web-Deploy:
+
+```text
+https://czarletsgo.github.io/dateheart-web/
+```
 
 Weitere manuelle GitHub Actions liegen unter:
 
