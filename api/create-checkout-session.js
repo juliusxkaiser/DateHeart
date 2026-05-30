@@ -1,11 +1,31 @@
-import { createCheckoutSession, corsHeaders, errorPayload, hostOriginFromHeaders, originFromHeaders } from "../server/stripe-checkout.mjs";
+import {
+  JSON_BODY_LIMIT_BYTES,
+  clientIpFromHeaders,
+  createCheckoutSession,
+  corsHeaders,
+  errorPayload,
+  hostOriginFromHeaders,
+  originFromHeaders,
+  requestTooLargeError,
+} from "../server/stripe-checkout.mjs";
 
 async function readBody(request) {
-  if (request.body && typeof request.body === "object") return request.body;
-  if (typeof request.body === "string") return JSON.parse(request.body || "{}");
+  if (request.body && typeof request.body === "object") {
+    if (Buffer.byteLength(JSON.stringify(request.body)) > JSON_BODY_LIMIT_BYTES) throw requestTooLargeError();
+    return request.body;
+  }
+  if (typeof request.body === "string") {
+    if (Buffer.byteLength(request.body) > JSON_BODY_LIMIT_BYTES) throw requestTooLargeError();
+    return JSON.parse(request.body || "{}");
+  }
 
   const chunks = [];
-  for await (const chunk of request) chunks.push(chunk);
+  let size = 0;
+  for await (const chunk of request) {
+    size += chunk.length;
+    if (size > JSON_BODY_LIMIT_BYTES) throw requestTooLargeError();
+    chunks.push(chunk);
+  }
   const text = Buffer.concat(chunks).toString("utf8");
   return text ? JSON.parse(text) : {};
 }
@@ -29,7 +49,7 @@ export default async function handler(request, response) {
 
   try {
     const body = await readBody(request);
-    const payload = await createCheckoutSession(body, { origin, hostOrigin });
+    const payload = await createCheckoutSession(body, { origin, hostOrigin, clientIp: clientIpFromHeaders(request.headers) });
     response.status(200).json(payload);
   } catch (error) {
     response.status(error.statusCode || 500).json(errorPayload(error));

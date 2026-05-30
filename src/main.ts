@@ -931,11 +931,11 @@ function pickIdea() {
   const concreteTitleAndFamilySafeIdea = pickTitleSafeFrom(familySafePool.filter(concreteIdea));
   if (concreteTitleAndFamilySafeIdea) return concreteTitleAndFamilySafeIdea;
 
-  const concreteTitleSafeIdea = pickTitleSafeFrom(idSafePool.filter(concreteIdea));
-  if (concreteTitleSafeIdea) return concreteTitleSafeIdea;
-
   const titleAndFamilySafeIdea = pickTitleSafeFrom(familySafePool);
   if (titleAndFamilySafeIdea) return titleAndFamilySafeIdea;
+
+  const concreteTitleSafeIdea = pickTitleSafeFrom(idSafePool.filter(concreteIdea));
+  if (concreteTitleSafeIdea) return concreteTitleSafeIdea;
 
   const titleSafeIdea = pickTitleSafeFrom(idSafePool);
   if (titleSafeIdea) return titleSafeIdea;

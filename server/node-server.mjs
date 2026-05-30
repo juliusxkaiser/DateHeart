@@ -3,11 +3,15 @@ import { stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
 import {
+  JSON_BODY_LIMIT_BYTES,
+  WEBHOOK_BODY_LIMIT_BYTES,
+  clientIpFromHeaders,
   corsHeaders,
   createCheckoutSession,
   errorPayload,
   handleStripeWebhook,
   paymentEnvironmentStatus,
+  requestTooLargeError,
   restorePurchaseByEmail,
   verifyCheckoutSession,
 } from "./stripe-checkout.mjs";
@@ -40,14 +44,24 @@ function sendJson(response, statusCode, payload, extraHeaders = {}) {
 
 async function readJson(request) {
   const chunks = [];
-  for await (const chunk of request) chunks.push(chunk);
+  let size = 0;
+  for await (const chunk of request) {
+    size += chunk.length;
+    if (size > JSON_BODY_LIMIT_BYTES) throw requestTooLargeError();
+    chunks.push(chunk);
+  }
   const text = Buffer.concat(chunks).toString("utf8");
   return text ? JSON.parse(text) : {};
 }
 
 async function readRaw(request) {
   const chunks = [];
-  for await (const chunk of request) chunks.push(chunk);
+  let size = 0;
+  for await (const chunk of request) {
+    size += chunk.length;
+    if (size > WEBHOOK_BODY_LIMIT_BYTES) throw requestTooLargeError();
+    chunks.push(chunk);
+  }
   return Buffer.concat(chunks);
 }
 
@@ -59,6 +73,7 @@ function hostOrigin(request) {
 
 async function handleApi(request, response, url) {
   const context = {
+    clientIp: clientIpFromHeaders(request.headers),
     hostOrigin: hostOrigin(request),
     origin: request.headers.origin,
   };
@@ -76,12 +91,12 @@ async function handleApi(request, response, url) {
     }
 
     if (url.pathname === "/api/verify-checkout-session" && request.method === "GET") {
-      sendJson(response, 200, await verifyCheckoutSession(url.searchParams.get("session_id")), headers);
+      sendJson(response, 200, await verifyCheckoutSession(url.searchParams.get("session_id"), context), headers);
       return true;
     }
 
     if (url.pathname === "/api/restore-purchase" && request.method === "POST") {
-      sendJson(response, 200, await restorePurchaseByEmail((await readJson(request)).email), headers);
+      sendJson(response, 200, await restorePurchaseByEmail((await readJson(request)).email, context), headers);
       return true;
     }
 

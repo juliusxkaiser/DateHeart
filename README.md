@@ -43,7 +43,8 @@ npm ci
 npm run deploy:today
 ```
 
-`deploy:today` baut Assets, prueft alle Sprachen, baut Production, validiert Launch-Dateien und zeigt mit `deploy:doctor`, welcher Deploy-Pfad gerade nutzbar ist.
+`deploy:today` baut Assets, simuliert 20er-Ideensessions gegen harte Wiederholungen, prueft alle Sprachen, baut Production, validiert Launch-Dateien und zeigt mit `deploy:doctor`, welcher Deploy-Pfad gerade nutzbar ist.
+Zusaetzlich prueft `payment:doctor`, ob Stripe-Secrets, Payment-URLs und lokale Preise formal deploybar sind. Ohne echte Secrets bleibt der Check gruen, meldet aber klar, dass Live-Payments noch deaktiviert sind.
 
 DateHeart ist als statische Vite-App deploybar. Vercel und Netlify nutzen die mitgelieferten Dateien `vercel.json` und `netlify.toml`; als Output-Verzeichnis gilt jeweils `dist`. Fuer echte Payments sind Vercel oder Netlify der bessere Web-Deploy, weil dort die Serverless-Endpunkte mit ausgerollt werden.
 
@@ -127,6 +128,15 @@ STRIPE_SECRET_KEY=sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
+Vor dem echten Deploy pruefen:
+
+```bash
+npm run payment:doctor
+REQUIRE_CONFIGURED_PAYMENT=true npm run payment:doctor
+```
+
+Der erste Befehl ist fuer lokalen Fortschritt ohne Secrets gedacht. Der zweite muss erst dann gruen sein, wenn die echten Stripe-Secrets im Hosting gesetzt wurden. Platzhalter wie `sk_test_replace_me` oder falsche Prefixes werden bewusst nicht als konfiguriertes Payment akzeptiert.
+
 Optional:
 
 ```bash
@@ -140,6 +150,8 @@ VITE_RESTORE_PAYMENT_ENDPOINT=https://dein-backend.example/api/restore-purchase
 Vercel nutzt `/api/create-checkout-session`, `/api/verify-checkout-session`, `/api/restore-purchase` und `/api/stripe-webhook`. Netlify nutzt die entsprechenden Funktionen unter `/.netlify/functions/...`. GitHub Pages braucht wegen fehlender Serverless-Funktionen ein externes Backend ueber die `VITE_*_ENDPOINT` Variablen.
 
 Der Webhook sollte in Stripe auf `checkout.session.completed` und `checkout.session.async_payment_succeeded` zeigen. Nach erfolgreichem Kauf wird der Stripe-Kunde mit `dateheart_no_ads=true` markiert; dadurch kann ein Kauf spaeter per Checkout-E-Mail wiederhergestellt werden.
+
+Der genaue Stripe-Setup-Ablauf liegt in `docs/STRIPE_SECRETS.md`.
 
 Die rechtlichen Seiten liegen als auslieferbare Platzhalter in `public/privacy.html`, `public/terms.html` und `public/impressum.html`. Vor oeffentlichem Launch muessen dort echte Betreiber- und Kontaktdaten rein. Die verbleibenden Owner-Schritte stehen in `LAUNCH_CHECKLIST.md`.
 

@@ -1,4 +1,4 @@
-import { corsHeaders, errorPayload, hostOriginFromHeaders, originFromHeaders, verifyCheckoutSession } from "../server/stripe-checkout.mjs";
+import { clientIpFromHeaders, corsHeaders, errorPayload, hostOriginFromHeaders, originFromHeaders, verifyCheckoutSession } from "../server/stripe-checkout.mjs";
 
 export default async function handler(request, response) {
   const origin = originFromHeaders(request.headers);
@@ -19,7 +19,7 @@ export default async function handler(request, response) {
 
   try {
     const url = new URL(request.url ?? "", hostOrigin);
-    const payload = await verifyCheckoutSession(url.searchParams.get("session_id"));
+    const payload = await verifyCheckoutSession(url.searchParams.get("session_id"), { origin, hostOrigin, clientIp: clientIpFromHeaders(request.headers) });
     response.status(200).json(payload);
   } catch (error) {
     response.status(error.statusCode || 500).json(errorPayload(error));

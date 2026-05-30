@@ -133,13 +133,21 @@ if (status) {
 
 ensurePagesEnabled();
 const page = await waitForPagesBuilt();
+const deployedUrl = page.html_url || liveUrl;
+
+run("npm", ["run", "live:check"], {
+  env: {
+    ...process.env,
+    APP_URL: deployedUrl,
+  },
+});
 
 console.log(
   JSON.stringify(
     {
       deployed: true,
       repo: deployRepo,
-      url: page.html_url || liveUrl,
+      url: deployedUrl,
       basePath,
       status: page.status,
     },

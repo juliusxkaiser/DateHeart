@@ -18,6 +18,7 @@ const requiredFiles = [
   "netlify/functions/verify-checkout-session.mjs",
   "netlify/functions/restore-purchase.mjs",
   "netlify/functions/stripe-webhook.mjs",
+  "scripts/idea-repeat-check.mjs",
   "public/manifest.webmanifest",
   "public/sw.js",
   "public/404.html",
@@ -31,6 +32,9 @@ const requiredFiles = [
   "store/screenshots/dateheart-cdp-mobile-home.png",
   "store/screenshots/dateheart-cdp-mobile-result.png",
   "scripts/api-smoke.mjs",
+  "scripts/payment-doctor.mjs",
+  "scripts/live-check.mjs",
+  "docs/STRIPE_SECRETS.md",
 ];
 
 const legalFiles = ["public/privacy.html", "public/terms.html", "public/impressum.html"];
@@ -61,6 +65,14 @@ function envPresent(name) {
   return Boolean(process.env[name]?.trim());
 }
 
+function secretStatus(name, prefix) {
+  const raw = process.env[name]?.trim() ?? "";
+  if (!raw) return "missing";
+  if (raw.includes("replace_me")) return "placeholder";
+  if (!raw.startsWith(prefix)) return "invalid_prefix";
+  return "present";
+}
+
 const missingFiles = [];
 for (const file of requiredFiles) {
   if (!(await exists(file))) missingFiles.push(file);
@@ -80,6 +92,8 @@ const ghAuth = commandExists("gh") ? run("gh", ["auth", "status"]) : { status: 1
 const artifactDeployRepo = process.env.DEPLOY_REPO || "czarletsgo/dateheart-web";
 const artifactRepoCheck = commandExists("gh") ? run("gh", ["repo", "view", artifactDeployRepo, "--json", "name"], { capture: true, allowFailure: true }) : { status: 127 };
 const artifactPagesCheck = commandExists("gh") ? run("gh", ["api", `repos/${artifactDeployRepo}/pages`], { capture: true, allowFailure: true }) : { status: 127 };
+const stripeSecretStatus = secretStatus("STRIPE_SECRET_KEY", "sk_");
+const webhookSecretStatus = secretStatus("STRIPE_WEBHOOK_SECRET", "whsec_");
 
 const deployPaths = [
   {
@@ -117,13 +131,13 @@ const deployPaths = [
 
 const publicLaunchBlockers = [
   ...legalPlaceholders.map((file) => `${file} still contains launch placeholders/noindex`),
-  ...(!envPresent("STRIPE_SECRET_KEY") ? ["STRIPE_SECRET_KEY missing in current shell"] : []),
-  ...(!envPresent("STRIPE_WEBHOOK_SECRET") ? ["STRIPE_WEBHOOK_SECRET missing in current shell"] : []),
+  ...(stripeSecretStatus !== "present" ? [`STRIPE_SECRET_KEY is ${stripeSecretStatus} in current shell`] : []),
+  ...(webhookSecretStatus !== "present" ? [`STRIPE_WEBHOOK_SECRET is ${webhookSecretStatus} in current shell`] : []),
 ];
 
 const warnings = [];
 if (gitStatus.stdout.trim()) warnings.push("Working tree has uncommitted changes.");
-if (!envPresent("STRIPE_SECRET_KEY") || !envPresent("STRIPE_WEBHOOK_SECRET")) {
+if (stripeSecretStatus !== "present" || webhookSecretStatus !== "present") {
   warnings.push("Payment endpoints will return controlled 503 responses until Stripe secrets are set in the host.");
 }
 if (legalPlaceholders.length > 0) {
@@ -139,8 +153,8 @@ const result = {
   env: {
     VERCEL_TOKEN: envPresent("VERCEL_TOKEN") ? "present" : "missing",
     NETLIFY_AUTH_TOKEN: envPresent("NETLIFY_AUTH_TOKEN") ? "present" : "missing",
-    STRIPE_SECRET_KEY: envPresent("STRIPE_SECRET_KEY") ? "present" : "missing",
-    STRIPE_WEBHOOK_SECRET: envPresent("STRIPE_WEBHOOK_SECRET") ? "present" : "missing",
+    STRIPE_SECRET_KEY: stripeSecretStatus,
+    STRIPE_WEBHOOK_SECRET: webhookSecretStatus,
   },
   publicLaunchBlockers,
   warnings,

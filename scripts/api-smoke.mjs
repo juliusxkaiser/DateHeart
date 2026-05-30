@@ -33,12 +33,14 @@ await check("health", async () => {
   assert(body.ok === true, "health did not return ok=true");
 
   if (requireConfiguredPayment) {
+    assert(body.paymentReady === true, "paymentReady is not true in target environment.");
     assert(body.stripeConfigured === true, "STRIPE_SECRET_KEY is not configured in target environment.");
     assert(body.webhookConfigured === true, "STRIPE_WEBHOOK_SECRET is not configured in target environment.");
   }
 
   return {
     status: response.status,
+    paymentReady: body.paymentReady,
     stripeConfigured: body.stripeConfigured,
     webhookConfigured: body.webhookConfigured,
   };
@@ -72,6 +74,25 @@ await check("checkout_without_or_with_secrets", async () => {
     error: body.error ?? null,
     hasUrl: typeof body.url === "string",
   };
+});
+
+await check("checkout_body_limit", async () => {
+  const response = await fetch(endpoint("/api/create-checkout-session"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: new URL(appUrl).origin,
+    },
+    body: JSON.stringify({
+      currency: "EUR",
+      returnUrl: appUrl,
+      clientReferenceId: "x".repeat(20_000),
+    }),
+  });
+  const body = await json(response);
+  assert(response.status === 413, `checkout large body expected 413, got ${response.status}`);
+  assert(body.error === "request_too_large", "checkout large body did not return request_too_large");
+  return { status: response.status, error: body.error };
 });
 
 await check("verify_validation", async () => {

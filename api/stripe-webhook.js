@@ -1,12 +1,27 @@
-import { errorPayload, handleStripeWebhook } from "../server/stripe-checkout.mjs";
+import { WEBHOOK_BODY_LIMIT_BYTES, errorPayload, handleStripeWebhook, requestTooLargeError } from "../server/stripe-checkout.mjs";
 
 async function readRawBody(request) {
-  if (Buffer.isBuffer(request.body)) return request.body;
-  if (typeof request.body === "string") return Buffer.from(request.body);
-  if (request.body && typeof request.body === "object") return Buffer.from(JSON.stringify(request.body));
+  if (Buffer.isBuffer(request.body)) {
+    if (request.body.length > WEBHOOK_BODY_LIMIT_BYTES) throw requestTooLargeError();
+    return request.body;
+  }
+  if (typeof request.body === "string") {
+    if (Buffer.byteLength(request.body) > WEBHOOK_BODY_LIMIT_BYTES) throw requestTooLargeError();
+    return Buffer.from(request.body);
+  }
+  if (request.body && typeof request.body === "object") {
+    const text = JSON.stringify(request.body);
+    if (Buffer.byteLength(text) > WEBHOOK_BODY_LIMIT_BYTES) throw requestTooLargeError();
+    return Buffer.from(text);
+  }
 
   const chunks = [];
-  for await (const chunk of request) chunks.push(chunk);
+  let size = 0;
+  for await (const chunk of request) {
+    size += chunk.length;
+    if (size > WEBHOOK_BODY_LIMIT_BYTES) throw requestTooLargeError();
+    chunks.push(chunk);
+  }
   return Buffer.concat(chunks);
 }
 

@@ -1,30 +1,51 @@
 import Stripe from "stripe";
 import { PRODUCT_ID, PRODUCT_NAME, stripeUnitAmountForCurrency } from "./pricing.mjs";
 
+export const JSON_BODY_LIMIT_BYTES = 16 * 1024;
+export const WEBHOOK_BODY_LIMIT_BYTES = 1024 * 1024;
+
 let stripeClient;
+const rateBuckets = new Map();
+const rateLimits = {
+  checkout: { max: 20, windowMs: 5 * 60 * 1000 },
+  restore: { max: 8, windowMs: 10 * 60 * 1000 },
+  verify: { max: 80, windowMs: 10 * 60 * 1000 },
+};
+
+function configuredSecret(name, prefix) {
+  const value = process.env[name]?.trim();
+  if (!value || value.includes("replace_me") || !value.startsWith(prefix)) return undefined;
+  return value;
+}
 
 function stripe() {
-  if (!process.env.STRIPE_SECRET_KEY) {
+  const secretKey = configuredSecret("STRIPE_SECRET_KEY", "sk_");
+  if (!secretKey) {
     throw Object.assign(new Error("STRIPE_SECRET_KEY is missing."), { statusCode: 503, publicCode: "payment_unavailable" });
   }
 
-  stripeClient ??= new Stripe(process.env.STRIPE_SECRET_KEY);
+  stripeClient ??= new Stripe(secretKey);
   return stripeClient;
 }
 
 function webhookSecret() {
-  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+  const secret = configuredSecret("STRIPE_WEBHOOK_SECRET", "whsec_");
+  if (!secret) {
     throw Object.assign(new Error("STRIPE_WEBHOOK_SECRET is missing."), { statusCode: 503, publicCode: "webhook_unavailable" });
   }
 
-  return process.env.STRIPE_WEBHOOK_SECRET;
+  return secret;
 }
 
 export function paymentEnvironmentStatus() {
+  const stripeConfigured = Boolean(configuredSecret("STRIPE_SECRET_KEY", "sk_"));
+  const webhookConfigured = Boolean(configuredSecret("STRIPE_WEBHOOK_SECRET", "whsec_"));
+
   return {
     ok: true,
-    stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY),
-    webhookConfigured: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
+    paymentReady: stripeConfigured && webhookConfigured,
+    stripeConfigured,
+    webhookConfigured,
     automaticTax: process.env.STRIPE_AUTOMATIC_TAX === "true",
     allowedOriginsConfigured: configuredAllowedOrigins().length,
   };
@@ -46,6 +67,16 @@ export function hostOriginFromHeaders(headers = {}) {
 
 export function originFromHeaders(headers = {}) {
   return headers.origin || headers.Origin;
+}
+
+export function clientIpFromHeaders(headers = {}) {
+  const forwarded = headers["x-forwarded-for"] || headers["X-Forwarded-For"];
+  if (typeof forwarded === "string" && forwarded.trim()) return forwarded.split(",")[0].trim();
+  return headers["x-real-ip"] || headers["X-Real-IP"] || headers["cf-connecting-ip"] || headers["CF-Connecting-IP"] || undefined;
+}
+
+export function requestTooLargeError() {
+  return Object.assign(new Error("Request body is too large."), { statusCode: 413, publicCode: "request_too_large" });
 }
 
 function isOriginAllowed(origin, hostOrigin) {
@@ -79,6 +110,32 @@ function assertOriginAllowed(origin, hostOrigin) {
   }
 }
 
+function cleanupRateBuckets(now = Date.now()) {
+  for (const [key, bucket] of rateBuckets) {
+    if (bucket.resetAt <= now) rateBuckets.delete(key);
+  }
+}
+
+function assertRateLimit(context, action) {
+  const limit = rateLimits[action];
+  if (!limit) return;
+
+  const now = Date.now();
+  const actor = context.clientIp || context.origin || context.hostOrigin || "anonymous";
+  const key = `${action}:${actor}`;
+  const bucket = rateBuckets.get(key);
+
+  if (!bucket || bucket.resetAt <= now) {
+    rateBuckets.set(key, { count: 1, resetAt: now + limit.windowMs });
+  } else if (bucket.count >= limit.max) {
+    throw Object.assign(new Error("Too many payment requests."), { statusCode: 429, publicCode: "rate_limited" });
+  } else {
+    bucket.count += 1;
+  }
+
+  if (rateBuckets.size > 5000) cleanupRateBuckets(now);
+}
+
 function cleanReturnUrl(value, origin, hostOrigin) {
   const fallback = origin ?? hostOrigin;
   if (!fallback) {
@@ -100,6 +157,7 @@ function appendCheckoutParams(url, params) {
 export async function createCheckoutSession(body = {}, context = {}) {
   const { origin, hostOrigin } = context;
   assertOriginAllowed(origin, hostOrigin);
+  assertRateLimit(context, "checkout");
 
   const price = stripeUnitAmountForCurrency(body.currency);
   const returnUrl = cleanReturnUrl(body.returnUrl, origin, hostOrigin);
@@ -170,10 +228,12 @@ async function markPaidCustomer(session) {
   return true;
 }
 
-export async function verifyCheckoutSession(sessionId) {
+export async function verifyCheckoutSession(sessionId, context = {}) {
   if (!sessionId || typeof sessionId !== "string" || !sessionId.startsWith("cs_")) {
     throw Object.assign(new Error("Invalid Checkout Session ID."), { statusCode: 400, publicCode: "bad_session_id" });
   }
+
+  assertRateLimit(context, "verify");
 
   const session = await stripe().checkout.sessions.retrieve(sessionId);
   const isDateHeartPurchase = session.metadata?.product === PRODUCT_ID;
@@ -198,11 +258,13 @@ async function checkoutSessionsForCustomer(customerId) {
   return sessions.data;
 }
 
-export async function restorePurchaseByEmail(emailInput) {
+export async function restorePurchaseByEmail(emailInput, context = {}) {
   const email = normalizeEmail(emailInput);
   if (!email) {
     throw Object.assign(new Error("A valid email is required."), { statusCode: 400, publicCode: "bad_email" });
   }
+
+  assertRateLimit(context, "restore");
 
   const customers = await stripe().customers.list({ email, limit: 10 });
 

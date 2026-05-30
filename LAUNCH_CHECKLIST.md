@@ -12,7 +12,9 @@
 - PNG app icons, Apple touch icon and social preview generated from the source SVG.
 - Store listing drafts added under `store/metadata`.
 - PWA and store screenshot scripts prepared.
+- 20-card repeat simulation added via `npm run ideas:check`.
 - Strict deploy doctor added via `npm run deploy:doctor`.
+- Payment configuration doctor added via `npm run payment:doctor`.
 - One-command deploy readiness check added via `npm run deploy:today`.
 - GitHub Actions deploy workflows added for GitHub Pages, Vercel and Netlify.
 - CI workflow added for launch checks and API smoke tests.
@@ -28,6 +30,7 @@
 - Set `STRIPE_SECRET_KEY` in the hosting provider.
 - Set `STRIPE_WEBHOOK_SECRET` after creating the Stripe webhook.
 - In Stripe, point the webhook to `/api/stripe-webhook` or `/.netlify/functions/stripe-webhook`.
+- Run `REQUIRE_CONFIGURED_PAYMENT=true npm run payment:doctor` after the hosting secrets are set.
 - Run live-mode payment tests for at least DE/EUR and one non-EUR market.
 - Run `APP_URL=https://your-production-domain REQUIRE_CONFIGURED_PAYMENT=true npm run api:smoke` after Stripe secrets are configured.
 - Decide whether the native iOS/Android apps use Apple IAP and Google Play Billing for the same purchase.
