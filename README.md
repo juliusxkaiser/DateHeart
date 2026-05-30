@@ -114,6 +114,8 @@ APP_URL=https://deine-domain.example/ REQUIRE_CONFIGURED_PAYMENT=true npm run ap
 
 Der Smoke-Test prueft `/api/health`, Checkout-Start, Session-Validation und Restore-Validation. Ohne Stripe-Secrets ist ein kontrolliertes `payment_unavailable` korrekt; mit `REQUIRE_CONFIGURED_PAYMENT=true` muss Checkout eine Stripe-URL liefern.
 
+Hinweis: Das private Source-Repo kann je nach GitHub-Plan/Runner-Verfuegbarkeit keine automatischen Push-Actions ausfuehren. Darum ist die CI-Workflow-Datei auf manuellen `workflow_dispatch` gestellt; die verbindlichen Checks laufen lokal ueber `npm run deploy:today` und `npm run api:smoke`.
+
 ## Zahlung
 
 Der einmalige Kauf `DateHeart ohne Werbung` laeuft ueber Stripe Checkout. Deutschland/EUR ist auf `4,99 EUR` gesetzt; fuer wichtige Maerkte gibt es eigene lokale Preise, z. B. USD, GBP, PLN, INR, JPY, KRW, SEK, CZK, UAH, VND und THB. Nicht konfigurierte Waehrungen fallen sicher auf EUR zurueck.
