@@ -27,6 +27,7 @@ Keep `noindex` on those pages until the placeholders are replaced and the text i
 - Distribution certificate and provisioning access
 - Privacy details answers
 - Support URL and marketing URL
+- Copy the prepared answers from `docs/STORE_COMPLIANCE.md` if the submitted build is still the free native release without ads, analytics, login or native payments
 
 ## Google Play
 
@@ -36,6 +37,7 @@ Keep `noindex` on those pages until the placeholders are replaced and the text i
 - Data Safety answers
 - Content rating questionnaire
 - Support email and privacy policy URL
+- Copy the prepared answers from `docs/STORE_COMPLIANCE.md` if the submitted build is still the free native release without ads, analytics, login or native payments
 
 ## Recommended First Store Release
 

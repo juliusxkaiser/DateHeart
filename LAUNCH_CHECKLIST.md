@@ -31,6 +31,9 @@
 - iOS App Store archive helper added via `npm run ios:archive`.
 - Store screenshot generator added via `npm run screenshots:stores`.
 - Native builds hide the web-only Stripe no-ads purchase until store billing is implemented.
+- Native compliance check added via `npm run native:compliance`.
+- iOS app Privacy Manifest added at `ios/App/App/PrivacyInfo.xcprivacy`.
+- Apple App Privacy and Google Play Data Safety draft answers added at `docs/STORE_COMPLIANCE.md`.
 
 ## Needs owner action before public launch
 
@@ -47,4 +50,5 @@
 - Create Google Play Console and Apple Developer/App Store Connect app records.
 - Add Android Play upload signing via `android/key.properties`.
 - Add iOS signing with Apple team, bundle id, certificate and provisioning profile.
+- Transfer the prepared Apple/Google privacy answers from `docs/STORE_COMPLIANCE.md` into the store consoles.
 - Implement Apple IAP and Google Play Billing before selling the no-ads unlock in native apps.
