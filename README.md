@@ -50,6 +50,7 @@ DateHeart ist als statische Vite-App deploybar. Vercel und Netlify nutzen die mi
 Direkte Deploy-Kommandos:
 
 ```bash
+npm run deploy:github-pages
 npm run deploy:vercel
 npm run deploy:netlify
 ```
@@ -60,6 +61,19 @@ Aktueller Web-Deploy:
 
 ```text
 https://czarletsgo.github.io/dateheart-web/
+```
+
+Der aktuelle Web-Deploy ist als Ein-Kommando-Artefaktdeploy automatisiert:
+
+```bash
+npm run deploy:github-pages
+```
+
+Standardwerte:
+
+```text
+DEPLOY_REPO=czarletsgo/dateheart-web
+DEPLOY_BASE_PATH=/dateheart-web/
 ```
 
 Weitere manuelle GitHub Actions liegen unter:

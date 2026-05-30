@@ -12,6 +12,7 @@
     "build": "tsc && vite build",
     "deploy:check": "npm run assets:generate && npm run i18n:check && npm run build",
     "deploy:doctor": "node scripts/deploy-doctor.mjs",
+    "deploy:github-pages": "node scripts/deploy-github-pages-artifact.mjs",
     "deploy:today": "npm run launch:check && npm run deploy:doctor",
     "deploy:vercel": "npm run launch:check && npx vercel@latest deploy --prod --yes",
     "deploy:netlify": "npm run launch:check && npx netlify-cli@latest deploy --prod --dir=dist",

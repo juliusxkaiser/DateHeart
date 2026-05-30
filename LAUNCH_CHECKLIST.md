@@ -16,6 +16,7 @@
 - One-command deploy readiness check added via `npm run deploy:today`.
 - GitHub Actions deploy workflows added for GitHub Pages, Vercel and Netlify.
 - Public GitHub Pages artifact deploy is live at `https://czarletsgo.github.io/dateheart-web/`.
+- Public GitHub Pages artifact deploy can be refreshed with `npm run deploy:github-pages`.
 - Legal page routes added: `privacy.html`, `terms.html`, `impressum.html`.
 
 ## Needs owner action before public launch

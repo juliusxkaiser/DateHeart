@@ -38,10 +38,10 @@ async function exists(path) {
   }
 }
 
-function run(command, args) {
+function run(command, args, options = {}) {
   return spawnSync(command, args, {
     encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
+    stdio: options.capture === false ? "inherit" : ["ignore", "pipe", "pipe"],
   });
 }
 
@@ -70,12 +70,26 @@ const gitRemote = run("git", ["remote", "get-url", "origin"]);
 const gitStatus = run("git", ["status", "--porcelain=v1"]);
 const gitBranch = run("git", ["branch", "--show-current"]);
 const ghAuth = commandExists("gh") ? run("gh", ["auth", "status"]) : { status: 127 };
+const artifactDeployRepo = process.env.DEPLOY_REPO || "czarletsgo/dateheart-web";
+const artifactRepoCheck = commandExists("gh") ? run("gh", ["repo", "view", artifactDeployRepo, "--json", "name"], { capture: true, allowFailure: true }) : { status: 127 };
+const artifactPagesCheck = commandExists("gh") ? run("gh", ["api", `repos/${artifactDeployRepo}/pages`], { capture: true, allowFailure: true }) : { status: 127 };
 
 const deployPaths = [
   {
-    provider: "github-pages",
-    ready: ghAuth.status === 0 && gitRemote.status === 0,
-    reason: ghAuth.status === 0 ? "gh authenticated; workflow can deploy after push" : "gh auth missing",
+    provider: "github-pages-artifact",
+    ready: ghAuth.status === 0 && artifactRepoCheck.status === 0,
+    reason:
+      ghAuth.status !== 0
+        ? "gh auth missing"
+        : artifactRepoCheck.status === 0
+          ? `${artifactDeployRepo} exists; run npm run deploy:github-pages`
+          : `${artifactDeployRepo} does not exist yet; deploy script can create it if permitted`,
+    pages: artifactPagesCheck.status === 0 ? "enabled" : "not_enabled_yet",
+  },
+  {
+    provider: "github-pages-source-repo",
+    ready: false,
+    reason: "source repo is private; GitHub Pages may be blocked by the current GitHub plan",
   },
   {
     provider: "vercel",
