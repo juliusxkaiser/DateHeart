@@ -27,10 +27,13 @@
 ## Needs owner action before public launch
 
 - Add real operator/contact details to the legal pages.
+- Choose the production host: Vercel/Netlify with serverless payments, or GitHub Pages plus an external payment backend.
+- Set the selected host deploy credentials (`VERCEL_TOKEN`/project IDs or `NETLIFY_AUTH_TOKEN`/site ID).
 - Set `STRIPE_SECRET_KEY` in the hosting provider.
 - Set `STRIPE_WEBHOOK_SECRET` after creating the Stripe webhook.
 - In Stripe, point the webhook to `/api/stripe-webhook` or `/.netlify/functions/stripe-webhook`.
 - Run `REQUIRE_CONFIGURED_PAYMENT=true npm run payment:doctor` after the hosting secrets are set.
 - Run live-mode payment tests for at least DE/EUR and one non-EUR market.
 - Run `APP_URL=https://your-production-domain REQUIRE_CONFIGURED_PAYMENT=true npm run api:smoke` after Stripe secrets are configured.
+- Resolve the GitHub Actions billing/spending-limit blocker so manual CI/deploy workflows can start.
 - Decide whether the native iOS/Android apps use Apple IAP and Google Play Billing for the same purchase.
