@@ -2,7 +2,15 @@ import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
-import { corsHeaders, createCheckoutSession, errorPayload, handleStripeWebhook, restorePurchaseByEmail, verifyCheckoutSession } from "./stripe-checkout.mjs";
+import {
+  corsHeaders,
+  createCheckoutSession,
+  errorPayload,
+  handleStripeWebhook,
+  paymentEnvironmentStatus,
+  restorePurchaseByEmail,
+  verifyCheckoutSession,
+} from "./stripe-checkout.mjs";
 
 const PORT = Number(process.env.PORT || 8080);
 const DIST_DIR = new URL("../dist/", import.meta.url).pathname;
@@ -12,8 +20,11 @@ const contentTypes = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".png": "image/png",
   ".svg": "image/svg+xml",
+  ".txt": "text/plain; charset=utf-8",
   ".webmanifest": "application/manifest+json; charset=utf-8",
+  ".xml": "application/xml; charset=utf-8",
 };
 
 function sendJson(response, statusCode, payload, extraHeaders = {}) {
@@ -56,6 +67,11 @@ async function handleApi(request, response, url) {
   try {
     if (url.pathname === "/api/create-checkout-session" && request.method === "POST") {
       sendJson(response, 200, await createCheckoutSession(await readJson(request), context), headers);
+      return true;
+    }
+
+    if (url.pathname === "/api/health" && request.method === "GET") {
+      sendJson(response, 200, paymentEnvironmentStatus(), headers);
       return true;
     }
 

@@ -15,8 +15,11 @@
 - Strict deploy doctor added via `npm run deploy:doctor`.
 - One-command deploy readiness check added via `npm run deploy:today`.
 - GitHub Actions deploy workflows added for GitHub Pages, Vercel and Netlify.
+- CI workflow added for launch checks and API smoke tests.
 - Public GitHub Pages artifact deploy is live at `https://czarletsgo.github.io/dateheart-web/`.
 - Public GitHub Pages artifact deploy can be refreshed with `npm run deploy:github-pages`.
+- Backend health endpoint added at `/api/health` and `/.netlify/functions/health`.
+- Static launch files added: `robots.txt`, `sitemap.xml` and `404.html`.
 - Legal page routes added: `privacy.html`, `terms.html`, `impressum.html`.
 
 ## Needs owner action before public launch
@@ -26,4 +29,5 @@
 - Set `STRIPE_WEBHOOK_SECRET` after creating the Stripe webhook.
 - In Stripe, point the webhook to `/api/stripe-webhook` or `/.netlify/functions/stripe-webhook`.
 - Run live-mode payment tests for at least DE/EUR and one non-EUR market.
+- Run `APP_URL=https://your-production-domain REQUIRE_CONFIGURED_PAYMENT=true npm run api:smoke` after Stripe secrets are configured.
 - Decide whether the native iOS/Android apps use Apple IAP and Google Play Billing for the same purchase.

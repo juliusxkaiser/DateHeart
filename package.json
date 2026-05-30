@@ -8,6 +8,7 @@
   },
   "scripts": {
     "assets:generate": "node scripts/generate-assets.mjs",
+    "api:smoke": "node scripts/api-smoke.mjs",
     "dev": "vite --host 127.0.0.1",
     "build": "tsc && vite build",
     "deploy:check": "npm run assets:generate && npm run i18n:check && npm run build",

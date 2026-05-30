@@ -20,6 +20,16 @@ function webhookSecret() {
   return process.env.STRIPE_WEBHOOK_SECRET;
 }
 
+export function paymentEnvironmentStatus() {
+  return {
+    ok: true,
+    stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY),
+    webhookConfigured: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
+    automaticTax: process.env.STRIPE_AUTOMATIC_TAX === "true",
+    allowedOriginsConfigured: configuredAllowedOrigins().length,
+  };
+}
+
 function configuredAllowedOrigins() {
   return (process.env.PAYMENT_ALLOWED_ORIGINS ?? "")
     .split(",")

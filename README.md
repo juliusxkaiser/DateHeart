@@ -96,6 +96,24 @@ docker build -t dateheart .
 docker run --rm -p 8080:80 dateheart
 ```
 
+## Production Checks
+
+Lokaler Server plus API-Smoke-Test:
+
+```bash
+npm run launch:check
+PORT=4180 node server/node-server.mjs
+APP_URL=http://127.0.0.1:4180/ npm run api:smoke
+```
+
+Auf einem echten Vercel-/Netlify-Backend mit gesetzten Stripe-Secrets:
+
+```bash
+APP_URL=https://deine-domain.example/ REQUIRE_CONFIGURED_PAYMENT=true npm run api:smoke
+```
+
+Der Smoke-Test prueft `/api/health`, Checkout-Start, Session-Validation und Restore-Validation. Ohne Stripe-Secrets ist ein kontrolliertes `payment_unavailable` korrekt; mit `REQUIRE_CONFIGURED_PAYMENT=true` muss Checkout eine Stripe-URL liefern.
+
 ## Zahlung
 
 Der einmalige Kauf `DateHeart ohne Werbung` laeuft ueber Stripe Checkout. Deutschland/EUR ist auf `4,99 EUR` gesetzt; fuer wichtige Maerkte gibt es eigene lokale Preise, z. B. USD, GBP, PLN, INR, JPY, KRW, SEK, CZK, UAH, VND und THB. Nicht konfigurierte Waehrungen fallen sicher auf EUR zurueck.
