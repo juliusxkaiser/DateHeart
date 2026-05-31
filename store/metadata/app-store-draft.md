@@ -24,6 +24,8 @@ date,dates,couples,love,relationship,ideas,planner,romance,activities
 ### Review Notes
 DateHeart is a free date idea generator for couples. No account is required. The native iOS build does not expose the web-only Stripe no-ads purchase; any future native digital unlock will use Apple In-App Purchase.
 
+Support contact: support@dateheart.app
+
 ### Age Rating Notes
 No user-generated public content, gambling, explicit content or unrestricted web browsing. Users choose which suggested activities are safe and appropriate for their situation.
 
@@ -50,6 +52,8 @@ date,dates,paare,liebe,beziehung,ideen,planung,romantik,aktivitaeten
 
 ### Review Notes
 DateHeart ist eine kostenlose Date-Ideen-App fuer Paare. Es ist kein Account erforderlich. Der native iOS-Build zeigt den web-only Stripe-Kauf nicht an; ein spaeterer nativer digitaler Unlock wird Apple In-App Purchase nutzen.
+
+Support-Kontakt: support@dateheart.app
 
 ### Age Rating Notes
 Keine oeffentlichen nutzergenerierten Inhalte, kein Gluecksspiel, keine expliziten Inhalte und kein freies Web-Browsing. Nutzer entscheiden selbst, welche vorgeschlagenen Aktivitaeten sicher und passend sind.

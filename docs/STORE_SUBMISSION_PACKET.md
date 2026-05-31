@@ -7,6 +7,7 @@ Use this as the transfer checklist for App Store Connect and Google Play Console
 - App name: DateHeart
 - iOS bundle id: `com.czarletsgo.dateheart`
 - Android package name: `com.czarletsgo.dateheart`
+- Support email: `support@dateheart.app`
 - First native release: free app, no native purchase, no ads, no analytics, no login
 
 ## Required Repo Files
@@ -65,7 +66,6 @@ The iOS archive requires Apple Team ID, bundle-id registration and local Xcode s
 ## Still Waiting On Owner Data
 
 - Final legal/operator address from Leipzig address provider
-- Support email
 - Apple Developer Team ID
 - App Store Connect app record
 - Google Play Console app record

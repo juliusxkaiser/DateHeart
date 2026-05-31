@@ -23,6 +23,8 @@ Dating, Lifestyle, Relationships, Planning
 ### Review Notes
 DateHeart is a free practical date idea app. No login is required. The native Android build does not expose the web-only Stripe no-ads purchase; any future native digital unlock will use Google Play Billing.
 
+Support contact: support@dateheart.app
+
 ### Data Safety Draft
 - Location: not collected.
 - Personal info: no account required; no email collection in the first free native release.
@@ -52,6 +54,8 @@ Dating, Lifestyle, Beziehungen, Planung
 
 ### Review Notes
 DateHeart ist eine kostenlose praktische Date-Ideen-App. Es ist kein Login erforderlich. Der native Android-Build zeigt den web-only Stripe-Kauf nicht an; ein spaeterer nativer digitaler Unlock wird Google Play Billing nutzen.
+
+Support-Kontakt: support@dateheart.app
 
 ### Data Safety Draft
 - Standort: wird nicht erhoben.

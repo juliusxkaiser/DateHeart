@@ -8,7 +8,7 @@ These values must come from the app owner before final App Store and Google Play
 - Street and house number
 - Postal code and city
 - Country
-- Support email
+- Support email: `support@dateheart.app`
 - Responsible person for the German Impressum
 - VAT ID or business register details, if applicable
 
@@ -26,6 +26,7 @@ Keep `noindex` on those pages until the placeholders are replaced and the text i
 - App Store Connect app record for bundle id `com.czarletsgo.dateheart`
 - Distribution certificate and provisioning access
 - Privacy details answers
+- Support email: `support@dateheart.app`
 - Support URL and marketing URL
 - Copy the prepared answers from `docs/STORE_COMPLIANCE.md` if the submitted build is still the free native release without ads, analytics, login or native payments
 
@@ -36,7 +37,8 @@ Keep `noindex` on those pages until the placeholders are replaced and the text i
 - Upload key stored outside Git
 - Data Safety answers
 - Content rating questionnaire
-- Support email and privacy policy URL
+- Support email: `support@dateheart.app`
+- Privacy policy URL
 - Copy the prepared answers from `docs/STORE_COMPLIANCE.md` if the submitted build is still the free native release without ads, analytics, login or native payments
 
 ## Recommended First Store Release
