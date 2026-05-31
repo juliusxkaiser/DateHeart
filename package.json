@@ -22,7 +22,7 @@
     "i18n:check": "node scripts/i18n-check.mjs",
     "launch:check": "npm run deploy:check && node scripts/launch-check.mjs",
     "live:check": "node scripts/live-check.mjs",
-    "native:assets": "npm run native:prepare-assets && npx capacitor-assets generate --ios --android --assetPath resources --iconBackgroundColor '#c90432' --iconBackgroundColorDark '#7a001c' --splashBackgroundColor '#c90432' --splashBackgroundColorDark '#7a001c'",
+    "native:assets": "npm run native:prepare-assets && node scripts/generate-native-assets.mjs",
     "native:build": "npm run native:sync && npm run native:assets && npm run native:compliance",
     "native:compliance": "node scripts/native-compliance-check.mjs",
     "native:prepare-assets": "node scripts/prepare-native-assets.mjs",
@@ -48,7 +48,6 @@
   },
   "devDependencies": {
     "@capacitor/android": "^8.3.4",
-    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.3.4",
     "@capacitor/ios": "^8.3.4",
     "@types/three": "^0.184.1",
