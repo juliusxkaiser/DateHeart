@@ -12,13 +12,13 @@ These values must come from the app owner before final App Store and Google Play
 - Responsible person for the German Impressum
 - VAT ID or business register details, if applicable
 
-The public files that need these values are:
+The public files currently contain a temporary private operator address and should be updated once the business address is available:
 
 - `public/privacy.html`
 - `public/terms.html`
 - `public/impressum.html`
 
-Keep `noindex` on those pages until the placeholders are replaced and the text is reviewed.
+Keep `noindex` on those pages until the final business address is in place and the text is reviewed.
 
 ## Apple
 
