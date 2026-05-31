@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Capacitor } from "@capacitor/core";
 import "./styles.css";
-import { canShowAdPrivacyOptions, canUseNativeAds, initializeAds, showAdPrivacyOptions, showInterstitialAd } from "./ads";
+import { canShowAdPrivacyOptions, canUseNativeAds, hideBannerAd, initializeAds, showAdPrivacyOptions, showBannerAd, showInterstitialAd } from "./ads";
 import {
   budgets,
   categories,
@@ -786,6 +786,7 @@ function setNoAdsPurchased() {
   localStorage.setItem(STORAGE_KEYS.noAds, "true");
   localStorage.removeItem(STORAGE_KEYS.pendingCheckoutSession);
   elements.adBanner.hidden = true;
+  void hideBannerAd();
   setRestoreOpen(false);
 }
 
@@ -1415,6 +1416,21 @@ function showPurchase() {
   openPanel(elements.purchaseOverlay);
 }
 
+async function syncBannerAd() {
+  if (!canUseNativeAds()) {
+    elements.adBanner.hidden = noAdsPurchased || !ENABLE_AD_BANNER;
+    return;
+  }
+
+  elements.adBanner.hidden = true;
+  if (noAdsPurchased) {
+    await hideBannerAd();
+    return;
+  }
+
+  await showBannerAd();
+}
+
 async function buyNoAds() {
   if (IS_NATIVE_APP || noAdsPurchased || paymentBusy) return;
 
@@ -1765,7 +1781,10 @@ elements.closeInfoButton.addEventListener("click", () => {
 });
 elements.adPrivacyButton.addEventListener("click", () => {
   setSupportDropdown(false);
-  void showAdPrivacyOptions().finally(applyTranslations);
+  void showAdPrivacyOptions().finally(() => {
+    applyTranslations();
+    void syncBannerAd();
+  });
 });
 elements.infoOverlay.addEventListener("click", (event) => {
   if (event.target === elements.infoOverlay) {
@@ -1816,5 +1835,7 @@ renderLanguageList();
 handleCheckoutReturn();
 handleSharedLink();
 updateCounter();
-elements.adBanner.hidden = noAdsPurchased || !ENABLE_AD_BANNER;
-void initializeAds().finally(applyTranslations);
+void initializeAds().finally(() => {
+  applyTranslations();
+  void syncBannerAd();
+});

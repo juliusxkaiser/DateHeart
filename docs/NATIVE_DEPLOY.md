@@ -25,13 +25,21 @@ The native AdMob app IDs are stored in the platform projects:
 - iOS: `ios/App/App/Info.plist`
   - `ca-app-pub-5889615344998591~7633631365`
 
-The Android interstitial ad unit ID is configured in `src/ads.ts`:
+The interstitial ad unit IDs are configured in `src/ads.ts`:
 
 - Android interstitial: `ca-app-pub-5889615344998591/3985193642`
+- iOS interstitial: `ca-app-pub-5889615344998591/7179848568`
 
-iOS still falls back to Google's test interstitial until the iOS AdMob ad unit ID exists. Any ad unit can be overridden through Vite build variables:
+Banner ads are implemented at the native bottom position, but use Google's test banner IDs until production banner ad units exist:
+
+- Android banner: pending
+- iOS banner: pending
+
+Any ad unit can be overridden through Vite build variables:
 
 ```bash
+VITE_ADMOB_ANDROID_BANNER_ID=ca-app-pub-5889615344998591/ANDROID_BANNER_ID \
+VITE_ADMOB_IOS_BANNER_ID=ca-app-pub-5889615344998591/IOS_BANNER_ID \
 VITE_ADMOB_ANDROID_INTERSTITIAL_ID=ca-app-pub-5889615344998591/ANDROID_INTERSTITIAL_ID \
 VITE_ADMOB_IOS_INTERSTITIAL_ID=ca-app-pub-5889615344998591/IOS_INTERSTITIAL_ID \
 VITE_ADMOB_TEST_MODE=false \
