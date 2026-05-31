@@ -28,14 +28,16 @@ Support URL: https://czarletsgo.github.io/dateheart-web/support.html
 Privacy Policy URL: https://czarletsgo.github.io/dateheart-web/privacy.html
 
 ### Data Safety Draft
-- Location: not collected.
+- Location: DateHeart does not request device location; Google Mobile Ads can use IP address to estimate approximate location.
 - Personal info: no account required; no email collection in the first free native release.
 - Payment info: not collected in the first free native release.
 - App activity: favorites, history, filters and language are stored locally on the device.
 - Ads: Google AdMob is integrated for ads. The app should be marked as containing ads.
-- Device or other IDs: Google Mobile Ads can process advertising identifiers and related ad delivery data.
-- App activity: ad interactions can be processed by Google for ad delivery, measurement, frequency capping and fraud prevention.
-- Analytics: no separate third-party analytics SDK is integrated.
+- Approximate location: Google Mobile Ads can use IP address to estimate general location.
+- Device or other IDs: Google Mobile Ads can process Android advertising ID, app set ID and related identifiers.
+- App activity: Google Mobile Ads can process user product interactions and ad interactions for ad delivery, measurement, frequency capping and fraud prevention.
+- App info and performance: Google Mobile Ads can process diagnostic and performance data.
+- Analytics: no separate third-party analytics SDK is integrated, but Google Mobile Ads uses ad-related data for measurement and analytics.
 
 ## Locale: de-DE
 
@@ -65,11 +67,13 @@ Support-URL: https://czarletsgo.github.io/dateheart-web/support.html
 Datenschutz-URL: https://czarletsgo.github.io/dateheart-web/privacy.html
 
 ### Data Safety Draft
-- Standort: wird nicht erhoben.
+- Standort: DateHeart fragt keinen Geraetestandort ab; Google Mobile Ads kann die IP-Adresse nutzen, um einen ungefaehren Standort abzuschaetzen.
 - Personenbezogene Daten: kein Account erforderlich; im ersten kostenlosen nativen Release keine E-Mail-Erhebung.
 - Zahlungsdaten: im ersten kostenlosen nativen Release nicht erhoben.
 - App-Aktivitaet: Favoriten, History, Filter und Sprache werden lokal auf dem Geraet gespeichert.
 - Werbung: Google AdMob ist fuer Werbung integriert. Die App muss als werbehaltig markiert werden.
-- Geraete- oder andere IDs: Google Mobile Ads kann Werbe-IDs und zugehoerige Daten fuer die Werbeauslieferung verarbeiten.
-- App-Aktivitaet: Anzeigeninteraktionen koennen durch Google fuer Auslieferung, Messung, Frequency Capping und Betrugsschutz verarbeitet werden.
-- Analytics: kein separates Drittanbieter-Analytics-SDK integriert.
+- Ungefaehre Standortdaten: Google Mobile Ads kann die IP-Adresse nutzen, um einen allgemeinen Standort abzuschaetzen.
+- Geraete- oder andere IDs: Google Mobile Ads kann Android-Werbe-ID, App-Set-ID und zugehoerige Kennungen verarbeiten.
+- App-Aktivitaet: Google Mobile Ads kann Produktinteraktionen und Anzeigeninteraktionen fuer Auslieferung, Messung, Frequency Capping und Betrugsschutz verarbeiten.
+- App-Informationen und Leistung: Google Mobile Ads kann Diagnose- und Leistungsdaten verarbeiten.
+- Analytics: kein separates Drittanbieter-Analytics-SDK integriert; Google Mobile Ads nutzt werbebezogene Daten fuer Messung und Analysen.

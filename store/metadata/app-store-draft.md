@@ -33,8 +33,10 @@ No user-generated public content, gambling, explicit content or unrestricted web
 
 ### Privacy Labels Draft
 - Third-party advertising: Google AdMob is integrated for ads.
-- Identifiers: advertising identifiers can be processed by Google Mobile Ads.
-- Usage data: ad interaction data can be processed for ad delivery, measurement, frequency capping and fraud prevention.
+- Approximate location: Google Mobile Ads can use IP address to estimate general location.
+- Identifiers: device identifiers and advertising identifiers can be processed by Google Mobile Ads.
+- Usage data: product interactions and ad interaction data can be processed for ad delivery, measurement, frequency capping and fraud prevention.
+- Diagnostics: crash and performance data can be processed by Google Mobile Ads.
 - Tracking: the current app code does not request App Tracking Transparency permission.
 
 ## Locale: de-DE
@@ -70,6 +72,8 @@ Keine oeffentlichen nutzergenerierten Inhalte, kein Gluecksspiel, keine explizit
 
 ### Privacy Labels Draft
 - Drittanbieter-Werbung: Google AdMob ist fuer Werbung integriert.
-- Identifikatoren: Werbe-IDs koennen durch Google Mobile Ads verarbeitet werden.
-- Nutzungsdaten: Anzeigeninteraktionen koennen fuer Auslieferung, Messung, Frequency Capping und Betrugsschutz verarbeitet werden.
+- Ungefaehre Standortdaten: Google Mobile Ads kann die IP-Adresse nutzen, um einen allgemeinen Standort abzuschaetzen.
+- Identifikatoren: Geraete-IDs und Werbe-IDs koennen durch Google Mobile Ads verarbeitet werden.
+- Nutzungsdaten: Produktinteraktionen und Anzeigeninteraktionen koennen fuer Auslieferung, Messung, Frequency Capping und Betrugsschutz verarbeitet werden.
+- Diagnosen: Absturz- und Leistungsdaten koennen durch Google Mobile Ads verarbeitet werden.
 - Tracking: der aktuelle App-Code fordert keine App-Tracking-Transparency-Erlaubnis an.

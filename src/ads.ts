@@ -16,6 +16,10 @@ const TEST_INTERSTITIAL_IDS: Record<NativePlatform, string> = {
   ios: "ca-app-pub-3940256099942544/4411468910",
 };
 
+const REAL_INTERSTITIAL_IDS: Partial<Record<NativePlatform, string>> = {
+  android: "ca-app-pub-5889615344998591/3985193642",
+};
+
 const state: AdState = {
   initialized: false,
   canRequestAds: false,
@@ -45,20 +49,20 @@ function envFlag(value: string | undefined, fallback: boolean) {
   return ["1", "true", "yes", "on"].includes(value.toLowerCase());
 }
 
-function interstitialAdId(platform: NativePlatform) {
+function configuredInterstitialAdId(platform: NativePlatform) {
   const override =
     platform === "android" ? import.meta.env.VITE_ADMOB_ANDROID_INTERSTITIAL_ID : import.meta.env.VITE_ADMOB_IOS_INTERSTITIAL_ID;
 
-  return override?.trim() || TEST_INTERSTITIAL_IDS[platform];
+  return override?.trim() || REAL_INTERSTITIAL_IDS[platform]?.trim() || "";
+}
+
+function interstitialAdId(platform: NativePlatform) {
+  return configuredInterstitialAdId(platform) || TEST_INTERSTITIAL_IDS[platform];
 }
 
 function isTestMode(platform: NativePlatform) {
-  const hasRealUnit =
-    platform === "android"
-      ? Boolean(import.meta.env.VITE_ADMOB_ANDROID_INTERSTITIAL_ID?.trim())
-      : Boolean(import.meta.env.VITE_ADMOB_IOS_INTERSTITIAL_ID?.trim());
-
-  return envFlag(import.meta.env.VITE_ADMOB_TEST_MODE, !hasRealUnit);
+  if (!configuredInterstitialAdId(platform)) return true;
+  return envFlag(import.meta.env.VITE_ADMOB_TEST_MODE, false);
 }
 
 function consentDebugGeography(module: AdMobModule) {

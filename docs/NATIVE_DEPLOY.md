@@ -16,6 +16,30 @@ DateHeart native builds use Capacitor with the app id `com.czarletsgo.dateheart`
 npm run native:build
 ```
 
+## AdMob Release Configuration
+
+The native AdMob app IDs are stored in the platform projects:
+
+- Android: `android/app/src/main/res/values/strings.xml`
+  - `ca-app-pub-5889615344998591~1866143838`
+- iOS: `ios/App/App/Info.plist`
+  - `ca-app-pub-5889615344998591~7633631365`
+
+The Android interstitial ad unit ID is configured in `src/ads.ts`:
+
+- Android interstitial: `ca-app-pub-5889615344998591/3985193642`
+
+iOS still falls back to Google's test interstitial until the iOS AdMob ad unit ID exists. Any ad unit can be overridden through Vite build variables:
+
+```bash
+VITE_ADMOB_ANDROID_INTERSTITIAL_ID=ca-app-pub-5889615344998591/ANDROID_INTERSTITIAL_ID \
+VITE_ADMOB_IOS_INTERSTITIAL_ID=ca-app-pub-5889615344998591/IOS_INTERSTITIAL_ID \
+VITE_ADMOB_TEST_MODE=false \
+npm run native:build
+```
+
+Do not click real ads during local validation. Set `VITE_ADMOB_TEST_MODE=true` for dev/test builds.
+
 Native store-compliance check:
 
 ```bash

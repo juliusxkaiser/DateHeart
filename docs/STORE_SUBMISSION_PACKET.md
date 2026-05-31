@@ -11,7 +11,7 @@ Use this as the transfer checklist for App Store Connect and Google Play Console
 - Support URL: `https://czarletsgo.github.io/dateheart-web/support.html`
 - Privacy Policy URL: `https://czarletsgo.github.io/dateheart-web/privacy.html`
 - Marketing URL: `https://czarletsgo.github.io/dateheart-web/`
-- First native release: free app, no native purchase, no ads, no analytics, no login
+- First native release: free app, no native purchase, Google AdMob ads, no separate analytics, no login
 
 ## Required Repo Files
 
