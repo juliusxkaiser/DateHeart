@@ -42,6 +42,8 @@ const STORAGE_KEYS = {
 };
 
 const APP_NAME = "DateHeart";
+const SUPPORT_EMAIL = "support@dateheart.app";
+const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=DateHeart%20Support`;
 const AD_EVERY_REVEALS = 7;
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
 const ENABLE_AD_BANNER = false;
@@ -326,6 +328,19 @@ const adPrivacyCopy: Partial<Record<LanguageCode, string>> = {
   th: "ความเป็นส่วนตัวโฆษณา",
 };
 
+const supportEmailCopy: Partial<Record<LanguageCode, string>> = {
+  en: "Write support email",
+  "en-US": "Write support email",
+  de: "Support-Mail schreiben",
+  pl: "Napisz do supportu",
+  es: "Escribir a soporte",
+  fr: "Ecrire au support",
+  it: "Scrivi al supporto",
+  pt: "Escrever ao suporte",
+  nl: "Supportmail schrijven",
+  sv: "Skriv till support",
+};
+
 const icon = (
   name:
     | "globe"
@@ -499,20 +514,22 @@ app.innerHTML = `
         <span>Favorites and history</span>
         <span>Free app concept</span>
       </div>
-      <a class="support-link" href="mailto:support@dateheart.app?subject=DateHeart%20Support">
-        ${icon("mail")}
-        <span>support@dateheart.app</span>
-      </a>
       <button class="support-link ad-privacy-button" id="adPrivacyButton" type="button" hidden>
         ${icon("sliders")}
         <span>Ad privacy choices</span>
       </button>
       <nav class="legal-links" aria-label="Legal">
-        <a href="${staticPageUrl("support.html")}" target="_blank" rel="noreferrer">Support</a>
+        <button class="legal-link-button" id="supportMenuButton" type="button" aria-expanded="false" aria-controls="supportDropdown">Support</button>
         <a href="${staticPageUrl("privacy.html")}" target="_blank" rel="noreferrer">Privacy</a>
         <a href="${staticPageUrl("terms.html")}" target="_blank" rel="noreferrer">Terms</a>
         <a href="${staticPageUrl("impressum.html")}" target="_blank" rel="noreferrer">Impressum</a>
       </nav>
+      <div class="support-dropdown" id="supportDropdown" hidden>
+        <a class="support-link" id="supportEmailLink" href="${SUPPORT_MAILTO}">
+          ${icon("mail")}
+          <span>Write support email</span>
+        </a>
+      </div>
     </article>
   </div>
 
@@ -525,7 +542,8 @@ app.innerHTML = `
       <p id="purchaseBody">Remove future ad placements from DateHeart with a one-time purchase.</p>
       <p class="payment-status" id="paymentStatus" aria-live="polite"></p>
       <button class="primary-button wide" id="buyNoAdsButton" type="button">Buy</button>
-      <form class="restore-form" id="restorePurchaseForm" novalidate>
+      <button class="secondary-button wide restore-toggle" id="restoreToggleButton" type="button" aria-expanded="false" aria-controls="restorePurchaseForm">Restore purchase</button>
+      <form class="restore-form" id="restorePurchaseForm" novalidate hidden>
         <input id="restoreEmailInput" type="email" autocomplete="email" inputmode="email" />
         <button class="secondary-button" id="restorePurchaseButton" type="submit"></button>
       </form>
@@ -588,6 +606,9 @@ const elements = {
   infoButton: document.querySelector<HTMLButtonElement>("#infoButton")!,
   infoOverlay: document.querySelector<HTMLDivElement>("#infoOverlay")!,
   closeInfoButton: document.querySelector<HTMLButtonElement>("#closeInfoButton")!,
+  supportMenuButton: document.querySelector<HTMLButtonElement>("#supportMenuButton")!,
+  supportDropdown: document.querySelector<HTMLDivElement>("#supportDropdown")!,
+  supportEmailLink: document.querySelector<HTMLAnchorElement>("#supportEmailLink")!,
   adPrivacyButton: document.querySelector<HTMLButtonElement>("#adPrivacyButton")!,
   purchaseOverlay: document.querySelector<HTMLDivElement>("#purchaseOverlay")!,
   closePurchaseButton: document.querySelector<HTMLButtonElement>("#closePurchaseButton")!,
@@ -597,6 +618,7 @@ const elements = {
   purchaseBody: document.querySelector<HTMLParagraphElement>("#purchaseBody")!,
   paymentStatus: document.querySelector<HTMLParagraphElement>("#paymentStatus")!,
   buyNoAdsButton: document.querySelector<HTMLButtonElement>("#buyNoAdsButton")!,
+  restoreToggleButton: document.querySelector<HTMLButtonElement>("#restoreToggleButton")!,
   restorePurchaseForm: document.querySelector<HTMLFormElement>("#restorePurchaseForm")!,
   restoreEmailInput: document.querySelector<HTMLInputElement>("#restoreEmailInput")!,
   restorePurchaseButton: document.querySelector<HTMLButtonElement>("#restorePurchaseButton")!,
@@ -764,6 +786,7 @@ function setNoAdsPurchased() {
   localStorage.setItem(STORAGE_KEYS.noAds, "true");
   localStorage.removeItem(STORAGE_KEYS.pendingCheckoutSession);
   elements.adBanner.hidden = true;
+  setRestoreOpen(false);
 }
 
 let activeLanguage = loadLanguage();
@@ -778,6 +801,7 @@ let revealLocked = false;
 let noAdsPurchased = localStorage.getItem(STORAGE_KEYS.noAds) === "true";
 let paymentBusy = false;
 let paymentStatusKey: PaymentStatusKey = "paymentNote";
+let restoreOpen = false;
 
 const ideaById = new Map(dateIdeas.map((entry) => [entry.id, entry]));
 
@@ -1339,6 +1363,17 @@ function closePanel(panel: HTMLElement) {
   }, 170);
 }
 
+function setSupportDropdown(open: boolean) {
+  elements.supportDropdown.hidden = !open;
+  elements.supportMenuButton.setAttribute("aria-expanded", String(open));
+}
+
+function setRestoreOpen(open: boolean) {
+  restoreOpen = open;
+  elements.restorePurchaseForm.hidden = !open;
+  elements.restoreToggleButton.setAttribute("aria-expanded", String(open));
+}
+
 async function showAdBreak() {
   stats = { ...stats, adBreaks: stats.adBreaks + 1 };
   saveJson(STORAGE_KEYS.stats, stats);
@@ -1367,12 +1402,14 @@ async function showAdBreak() {
 }
 
 function showInfo() {
+  setSupportDropdown(false);
   applyTranslations();
   openPanel(elements.infoOverlay);
 }
 
 function showPurchase() {
   if (IS_NATIVE_APP) return;
+  setRestoreOpen(false);
   paymentStatusKey = noAdsPurchased ? "paymentConfirmed" : "paymentNote";
   applyTranslations();
   openPanel(elements.purchaseOverlay);
@@ -1621,6 +1658,7 @@ function applyTranslations() {
   elements.infoButton.title = t.about;
   elements.adPrivacyButton.hidden = !canShowAdPrivacyOptions();
   elements.adPrivacyButton.querySelector("span")!.textContent = adPrivacyCopy[activeLanguage] ?? adPrivacyCopy.en!;
+  elements.supportEmailLink.querySelector("span")!.textContent = supportEmailCopy[activeLanguage] ?? supportEmailCopy.en!;
   elements.languageButton.setAttribute("aria-label", t.language);
   elements.languageButton.title = t.language;
   [
@@ -1660,6 +1698,8 @@ function applyTranslations() {
       ? t.noAdsPurchased
       : t.buyNoAds.replace("{price}", noAdsPrice);
   elements.buyNoAdsButton.disabled = noAdsPurchased || paymentBusy;
+  elements.restoreToggleButton.textContent = t.restoreNoAds;
+  elements.restoreToggleButton.disabled = noAdsPurchased || paymentBusy;
   elements.restoreEmailInput.placeholder = t.restoreEmailPlaceholder;
   elements.restoreEmailInput.setAttribute("aria-label", t.restoreEmailPlaceholder);
   elements.restorePurchaseButton.textContent = paymentBusy ? t.restoreStarting : t.restoreNoAds;
@@ -1690,6 +1730,7 @@ elements.copyPlanButton.addEventListener("click", () => void copyCurrentPlan());
 elements.filterActionButton.addEventListener("click", () => openPanel(elements.filterPanel));
 elements.noAdsButton.addEventListener("click", showPurchase);
 elements.buyNoAdsButton.addEventListener("click", buyNoAds);
+elements.restoreToggleButton.addEventListener("click", () => setRestoreOpen(!restoreOpen));
 elements.restorePurchaseForm.addEventListener("submit", (event) => {
   event.preventDefault();
   void restoreNoAdsPurchase();
@@ -1716,16 +1757,31 @@ elements.favoritesButton.addEventListener("click", () => {
 });
 elements.closeLibraryButton.addEventListener("click", () => closePanel(elements.libraryPanel));
 elements.infoButton.addEventListener("click", showInfo);
-elements.closeInfoButton.addEventListener("click", () => closePanel(elements.infoOverlay));
+elements.supportMenuButton.addEventListener("click", () => setSupportDropdown(elements.supportDropdown.hasAttribute("hidden")));
+elements.supportEmailLink.addEventListener("click", () => setSupportDropdown(false));
+elements.closeInfoButton.addEventListener("click", () => {
+  setSupportDropdown(false);
+  closePanel(elements.infoOverlay);
+});
 elements.adPrivacyButton.addEventListener("click", () => {
+  setSupportDropdown(false);
   void showAdPrivacyOptions().finally(applyTranslations);
 });
 elements.infoOverlay.addEventListener("click", (event) => {
-  if (event.target === elements.infoOverlay) closePanel(elements.infoOverlay);
+  if (event.target === elements.infoOverlay) {
+    setSupportDropdown(false);
+    closePanel(elements.infoOverlay);
+  }
 });
-elements.closePurchaseButton.addEventListener("click", () => closePanel(elements.purchaseOverlay));
+elements.closePurchaseButton.addEventListener("click", () => {
+  setRestoreOpen(false);
+  closePanel(elements.purchaseOverlay);
+});
 elements.purchaseOverlay.addEventListener("click", (event) => {
-  if (event.target === elements.purchaseOverlay) closePanel(elements.purchaseOverlay);
+  if (event.target === elements.purchaseOverlay) {
+    setRestoreOpen(false);
+    closePanel(elements.purchaseOverlay);
+  }
 });
 elements.closeAdBreakButton.addEventListener("click", () => closePanel(elements.adBreak));
 
@@ -1735,8 +1791,14 @@ document.addEventListener("keydown", (event) => {
   if (!elements.filterPanel.hidden) closePanel(elements.filterPanel);
   if (!elements.languagePanel.hidden) closePanel(elements.languagePanel);
   if (!elements.libraryPanel.hidden) closePanel(elements.libraryPanel);
-  if (!elements.infoOverlay.hidden) closePanel(elements.infoOverlay);
-  if (!elements.purchaseOverlay.hidden) closePanel(elements.purchaseOverlay);
+  if (!elements.infoOverlay.hidden) {
+    setSupportDropdown(false);
+    closePanel(elements.infoOverlay);
+  }
+  if (!elements.purchaseOverlay.hidden) {
+    setRestoreOpen(false);
+    closePanel(elements.purchaseOverlay);
+  }
   if (!elements.adBreak.hidden && !elements.closeAdBreakButton.disabled) closePanel(elements.adBreak);
 });
 

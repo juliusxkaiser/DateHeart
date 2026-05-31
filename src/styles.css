@@ -414,6 +414,10 @@ button:focus-visible {
   gap: 8px;
 }
 
+.restore-form[hidden] {
+  display: none;
+}
+
 .restore-form input {
   min-width: 0;
   height: 42px;
@@ -486,15 +490,38 @@ button:focus-visible {
   gap: 8px;
 }
 
-.legal-links a {
+.legal-links a,
+.legal-link-button {
   min-height: 36px;
   padding: 9px 11px;
   border: 1px solid rgba(196, 0, 53, 0.12);
   border-radius: 8px;
+  background: #fff;
   color: #651a2c;
+  cursor: pointer;
+  font: inherit;
   font-size: 0.82rem;
   font-weight: 850;
   text-decoration: none;
+}
+
+.legal-link-button[aria-expanded="true"] {
+  border-color: rgba(196, 0, 53, 0.24);
+  background: #fff4f7;
+  color: #9c1235;
+}
+
+.support-dropdown {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(196, 0, 53, 0.12);
+  border-radius: 8px;
+  background: #fff8fa;
+}
+
+.support-dropdown[hidden] {
+  display: none;
 }
 
 .result-card {
