@@ -81,12 +81,12 @@ button:focus-visible {
 .topbar h1 {
   margin: 0;
   color: white;
-  font-size: 1.12rem;
+  font-size: 1.18rem;
   font-weight: 950;
   letter-spacing: 0;
   line-height: 1;
   text-align: center;
-  text-shadow: 0 2px 14px rgba(89, 0, 26, 0.28);
+  text-shadow: 0 1px 1px rgba(82, 0, 27, 0.38);
 }
 
 .topbar-actions {
@@ -110,28 +110,48 @@ button:focus-visible {
 .brand-title {
   position: relative;
   display: inline-grid;
-  height: 36px;
+  height: 38px;
   min-width: 0;
   align-items: center;
   justify-content: center;
   isolation: isolate;
   line-height: 1;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 8px 18px rgba(83, 0, 28, 0.12);
   white-space: nowrap;
+}
+
+.brand-title::after {
+  position: absolute;
+  right: 13px;
+  bottom: 6px;
+  left: 13px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.74), transparent);
+  content: "";
+  pointer-events: none;
 }
 
 .brand-word {
   position: relative;
   z-index: 1;
   display: block;
-  background: linear-gradient(135deg, #fff 0%, #ffe9ed 38%, #ffc0cb 72%, #ff738b 100%);
-  background-clip: text;
+  color: #fffdfd;
   font-family: "Avenir Next", "SF Pro Rounded", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   font-weight: 950;
   letter-spacing: 0;
   line-height: 1;
-  filter: drop-shadow(0 2px 7px rgba(91, 0, 28, 0.3));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  text-rendering: geometricPrecision;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.22),
+    0 2px 2px rgba(78, 0, 25, 0.34);
+  -webkit-font-smoothing: antialiased;
 }
 
 .icon-button,
@@ -1033,6 +1053,7 @@ button:focus-visible {
 
   .brand-title {
     height: 32px;
+    padding: 0 8px;
   }
 
   .icon-button,
