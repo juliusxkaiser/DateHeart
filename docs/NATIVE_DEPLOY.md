@@ -30,10 +30,10 @@ The interstitial ad unit IDs are configured in `src/ads.ts`:
 - Android interstitial: `ca-app-pub-5889615344998591/3985193642`
 - iOS interstitial: `ca-app-pub-5889615344998591/7179848568`
 
-Banner ads are implemented at the native bottom position. iOS still uses Google's test banner ID until the production banner ad unit exists:
+Banner ads are implemented at the native bottom position:
 
 - Android banner: `ca-app-pub-5889615344998591/3027335192`
-- iOS banner: pending
+- iOS banner: `ca-app-pub-5889615344998591/7951828587`
 
 Any ad unit can be overridden through Vite build variables:
 
