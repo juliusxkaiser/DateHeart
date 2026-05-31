@@ -189,7 +189,7 @@ Der Webhook sollte in Stripe auf `checkout.session.completed` und `checkout.sess
 
 Der genaue Stripe-Setup-Ablauf liegt in `docs/STRIPE_SECRETS.md`.
 
-Die rechtlichen Seiten liegen als auslieferbare Platzhalter in `public/privacy.html`, `public/terms.html` und `public/impressum.html`. Vor oeffentlichem Launch muessen dort echte Betreiber- und Kontaktdaten rein. Die verbleibenden Owner-Schritte stehen in `LAUNCH_CHECKLIST.md`.
+Die Support- und rechtlichen Seiten liegen in `public/support.html`, `public/privacy.html`, `public/terms.html` und `public/impressum.html`. Vor oeffentlichem Launch muessen in den Legal-Seiten echte Betreiber- und Adressdaten rein. Die verbleibenden Owner-Schritte stehen in `LAUNCH_CHECKLIST.md`.
 
 ## Sprachprüfung
 

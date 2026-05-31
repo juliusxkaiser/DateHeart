@@ -22,7 +22,7 @@
 - Public GitHub Pages artifact deploy can be refreshed with `npm run deploy:github-pages`.
 - Backend health endpoint added at `/api/health` and `/.netlify/functions/health`.
 - Static launch files added: `robots.txt`, `sitemap.xml` and `404.html`.
-- Legal page routes added: `privacy.html`, `terms.html`, `impressum.html`.
+- Support and legal page routes added: `support.html`, `privacy.html`, `terms.html`, `impressum.html`.
 - Share links generate app deep links with idea, language and active filters.
 - Capacitor native projects added for iOS and Android with DateHeart app icon/splash assets.
 - Android debug APK and release AAB build commands added.

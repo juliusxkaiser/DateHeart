@@ -10,6 +10,7 @@ const requiredFiles = [
   "store/metadata/app-store-draft.md",
   "store/metadata/google-play-draft.md",
   "store/metadata/web-listing.md",
+  "public/support.html",
   "docs/STORE_COMPLIANCE.md",
   "docs/STORE_RELEASE_INPUTS.md",
   "ios/App/App/PrivacyInfo.xcprivacy",

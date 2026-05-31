@@ -24,6 +24,8 @@ Dating, Lifestyle, Relationships, Planning
 DateHeart is a free practical date idea app. No login is required. The native Android build does not expose the web-only Stripe no-ads purchase; any future native digital unlock will use Google Play Billing.
 
 Support contact: support@dateheart.app
+Support URL: https://czarletsgo.github.io/dateheart-web/support.html
+Privacy Policy URL: https://czarletsgo.github.io/dateheart-web/privacy.html
 
 ### Data Safety Draft
 - Location: not collected.
@@ -56,6 +58,8 @@ Dating, Lifestyle, Beziehungen, Planung
 DateHeart ist eine kostenlose praktische Date-Ideen-App. Es ist kein Login erforderlich. Der native Android-Build zeigt den web-only Stripe-Kauf nicht an; ein spaeterer nativer digitaler Unlock wird Google Play Billing nutzen.
 
 Support-Kontakt: support@dateheart.app
+Support-URL: https://czarletsgo.github.io/dateheart-web/support.html
+Datenschutz-URL: https://czarletsgo.github.io/dateheart-web/privacy.html
 
 ### Data Safety Draft
 - Standort: wird nicht erhoben.

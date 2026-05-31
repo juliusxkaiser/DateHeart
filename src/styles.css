@@ -429,6 +429,32 @@ button:focus-visible {
   font-weight: 850;
 }
 
+.support-link {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(196, 0, 53, 0.15);
+  border-radius: 8px;
+  background: #fff;
+  color: #651a2c;
+  font-size: 0.88rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.support-link svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
 .legal-links {
   display: flex;
   flex-wrap: wrap;

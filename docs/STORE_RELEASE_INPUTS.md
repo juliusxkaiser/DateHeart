@@ -27,7 +27,9 @@ Keep `noindex` on those pages until the placeholders are replaced and the text i
 - Distribution certificate and provisioning access
 - Privacy details answers
 - Support email: `support@dateheart.app`
-- Support URL and marketing URL
+- Support URL: `https://czarletsgo.github.io/dateheart-web/support.html`
+- Privacy Policy URL: `https://czarletsgo.github.io/dateheart-web/privacy.html`
+- Marketing URL: `https://czarletsgo.github.io/dateheart-web/`
 - Copy the prepared answers from `docs/STORE_COMPLIANCE.md` if the submitted build is still the free native release without ads, analytics, login or native payments
 
 ## Google Play
@@ -38,7 +40,8 @@ Keep `noindex` on those pages until the placeholders are replaced and the text i
 - Data Safety answers
 - Content rating questionnaire
 - Support email: `support@dateheart.app`
-- Privacy policy URL
+- Support URL: `https://czarletsgo.github.io/dateheart-web/support.html`
+- Privacy policy URL: `https://czarletsgo.github.io/dateheart-web/privacy.html`
 - Copy the prepared answers from `docs/STORE_COMPLIANCE.md` if the submitted build is still the free native release without ads, analytics, login or native payments
 
 ## Recommended First Store Release

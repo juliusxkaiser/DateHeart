@@ -76,6 +76,7 @@ const requiredStaticFiles = [
   { path: "robots.txt", type: /text\/plain/ },
   { path: "sitemap.xml", type: /xml/ },
   { path: "404.html", type: /html/ },
+  { path: "support.html", type: /html/ },
   { path: "privacy.html", type: /html/ },
   { path: "terms.html", type: /html/ },
   { path: "impressum.html", type: /html/ },

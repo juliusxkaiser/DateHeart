@@ -16,6 +16,7 @@ const requiredFiles = [
   "public/screenshots/dateheart-cdp-desktop-home.png",
   "public/screenshots/dateheart-cdp-desktop-result.png",
   "public/screenshots/dateheart-cdp-desktop-filter.png",
+  "public/support.html",
   "public/privacy.html",
   "public/terms.html",
   "public/impressum.html",

@@ -24,6 +24,7 @@ const requiredFiles = [
   "public/404.html",
   "public/robots.txt",
   "public/sitemap.xml",
+  "public/support.html",
   "public/privacy.html",
   "public/terms.html",
   "public/impressum.html",

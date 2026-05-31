@@ -301,7 +301,19 @@ const resultCopy: Record<LanguageCode, ResultCopy> = {
 };
 
 const icon = (
-  name: "globe" | "info" | "sliders" | "history" | "heart" | "share" | "copy" | "x" | "spark" | "star" | "check",
+  name:
+    | "globe"
+    | "info"
+    | "sliders"
+    | "history"
+    | "heart"
+    | "share"
+    | "copy"
+    | "x"
+    | "spark"
+    | "star"
+    | "check"
+    | "mail",
 ) => {
   const paths = {
     globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20"/><path d="M12 2a15 15 0 0 0 0 20"/>',
@@ -315,6 +327,7 @@ const icon = (
     spark: '<path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7Z"/><path d="m19 17 .7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7Z"/>',
     star: '<path d="m12 2 3.1 6.3 6.9 1-5 4.8 1.2 6.9-6.2-3.3L5.8 21 7 14.1 2 9.3l6.9-1Z"/>',
     check: '<path d="m5 13 4 4L19 7"/>',
+    mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
   } satisfies Record<string, string>;
 
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[name]}</svg>`;
@@ -460,7 +473,12 @@ app.innerHTML = `
         <span>Favorites and history</span>
         <span>Free app concept</span>
       </div>
+      <a class="support-link" href="mailto:support@dateheart.app?subject=DateHeart%20Support">
+        ${icon("mail")}
+        <span>support@dateheart.app</span>
+      </a>
       <nav class="legal-links" aria-label="Legal">
+        <a href="${staticPageUrl("support.html")}" target="_blank" rel="noreferrer">Support</a>
         <a href="${staticPageUrl("privacy.html")}" target="_blank" rel="noreferrer">Privacy</a>
         <a href="${staticPageUrl("terms.html")}" target="_blank" rel="noreferrer">Terms</a>
         <a href="${staticPageUrl("impressum.html")}" target="_blank" rel="noreferrer">Impressum</a>

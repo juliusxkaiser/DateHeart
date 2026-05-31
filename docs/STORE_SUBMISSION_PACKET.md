@@ -8,6 +8,9 @@ Use this as the transfer checklist for App Store Connect and Google Play Console
 - iOS bundle id: `com.czarletsgo.dateheart`
 - Android package name: `com.czarletsgo.dateheart`
 - Support email: `support@dateheart.app`
+- Support URL: `https://czarletsgo.github.io/dateheart-web/support.html`
+- Privacy Policy URL: `https://czarletsgo.github.io/dateheart-web/privacy.html`
+- Marketing URL: `https://czarletsgo.github.io/dateheart-web/`
 - First native release: free app, no native purchase, no ads, no analytics, no login
 
 ## Required Repo Files
@@ -15,6 +18,7 @@ Use this as the transfer checklist for App Store Connect and Google Play Console
 - App icon: `store/assets/app-icon-1024.png`
 - App Store listing: `store/metadata/app-store-draft.md`
 - Google Play listing: `store/metadata/google-play-draft.md`
+- Support page: `public/support.html`
 - Store privacy/data-safety answers: `docs/STORE_COMPLIANCE.md`
 - Owner input checklist: `docs/STORE_RELEASE_INPUTS.md`
 - iOS Privacy Manifest: `ios/App/App/PrivacyInfo.xcprivacy`
