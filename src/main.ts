@@ -521,7 +521,7 @@ app.innerHTML = `
       <nav class="legal-links" aria-label="Legal">
         <button class="legal-link-button" id="supportMenuButton" type="button" aria-expanded="false" aria-controls="supportDropdown">Support</button>
         <a href="${staticPageUrl("privacy.html")}" target="_blank" rel="noreferrer">Privacy</a>
-        <a href="${staticPageUrl("terms.html")}" target="_blank" rel="noreferrer">Terms</a>
+        <a href="${staticPageUrl("terms.html")}" target="_blank" rel="noreferrer">AGB</a>
         <a href="${staticPageUrl("impressum.html")}" target="_blank" rel="noreferrer">Impressum</a>
       </nav>
       <div class="support-dropdown" id="supportDropdown" hidden>
