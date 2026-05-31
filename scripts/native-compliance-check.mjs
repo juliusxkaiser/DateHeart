@@ -27,6 +27,10 @@ if (!existsSync(resolve(root, androidManifestPath))) {
     fail("Android INTERNET permission is missing");
   }
 
+  if (!manifest.includes('android:name="com.google.android.gms.ads.APPLICATION_ID"')) {
+    fail("Android AdMob application id metadata is missing");
+  }
+
   if (unexpectedPermissions.length > 0) {
     fail(`Unexpected Android permissions: ${unexpectedPermissions.join(", ")}`);
   }
@@ -49,6 +53,14 @@ if (!existsSync(resolve(root, infoPlistPath))) {
 
   if (presentUsageKeys.length > 0) {
     fail(`Unexpected iOS sensitive usage keys: ${presentUsageKeys.join(", ")}`);
+  }
+
+  if (!infoPlist.includes("<key>GADApplicationIdentifier</key>")) {
+    fail("iOS GADApplicationIdentifier is missing");
+  }
+
+  if (!infoPlist.includes("<key>SKAdNetworkItems</key>")) {
+    fail("iOS SKAdNetworkItems is missing");
   }
 }
 

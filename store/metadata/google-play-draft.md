@@ -15,13 +15,13 @@ Tap the animated heart and get a concrete date idea with budget, duration, prepa
 
 DateHeart is designed for quick planning: open the app, tap once, and get an idea you can actually use.
 
-No account is required for the core app. The first native release is free and does not include the web-only Stripe no-ads purchase.
+No account is required for the core app. The first native release is free, ad-supported and does not include the web-only Stripe no-ads purchase.
 
 ### Tags
 Dating, Lifestyle, Relationships, Planning
 
 ### Review Notes
-DateHeart is a free practical date idea app. No login is required. The native Android build does not expose the web-only Stripe no-ads purchase; any future native digital unlock will use Google Play Billing.
+DateHeart is a free practical date idea app. No login is required. The native Android build uses Google AdMob for ads and does not expose the web-only Stripe no-ads purchase; any future native digital unlock will use Google Play Billing.
 
 Support contact: support@dateheart.app
 Support URL: https://czarletsgo.github.io/dateheart-web/support.html
@@ -32,7 +32,10 @@ Privacy Policy URL: https://czarletsgo.github.io/dateheart-web/privacy.html
 - Personal info: no account required; no email collection in the first free native release.
 - Payment info: not collected in the first free native release.
 - App activity: favorites, history, filters and language are stored locally on the device.
-- Analytics/ads: no third-party analytics or ad SDK is loaded in the current native release.
+- Ads: Google AdMob is integrated for ads. The app should be marked as containing ads.
+- Device or other IDs: Google Mobile Ads can process advertising identifiers and related ad delivery data.
+- App activity: ad interactions can be processed by Google for ad delivery, measurement, frequency capping and fraud prevention.
+- Analytics: no separate third-party analytics SDK is integrated.
 
 ## Locale: de-DE
 
@@ -49,13 +52,13 @@ Tippe auf das animierte Herz und erhalte eine konkrete Date-Idee mit Budget, Dau
 
 DateHeart ist fuer schnelle Planung gemacht: App oeffnen, einmal tippen und eine Idee bekommen, die ihr direkt nutzen koennt.
 
-Fuer die Kernfunktionen ist kein Account erforderlich. Der erste native Release ist kostenlos und enthaelt keinen Web-Stripe-Kauf.
+Fuer die Kernfunktionen ist kein Account erforderlich. Der erste native Release ist kostenlos, werbefinanziert und enthaelt keinen Web-Stripe-Kauf.
 
 ### Tags
 Dating, Lifestyle, Beziehungen, Planung
 
 ### Review Notes
-DateHeart ist eine kostenlose praktische Date-Ideen-App. Es ist kein Login erforderlich. Der native Android-Build zeigt den web-only Stripe-Kauf nicht an; ein spaeterer nativer digitaler Unlock wird Google Play Billing nutzen.
+DateHeart ist eine kostenlose praktische Date-Ideen-App. Es ist kein Login erforderlich. Der native Android-Build nutzt Google AdMob fuer Werbung und zeigt den web-only Stripe-Kauf nicht an; ein spaeterer nativer digitaler Unlock wird Google Play Billing nutzen.
 
 Support-Kontakt: support@dateheart.app
 Support-URL: https://czarletsgo.github.io/dateheart-web/support.html
@@ -66,4 +69,7 @@ Datenschutz-URL: https://czarletsgo.github.io/dateheart-web/privacy.html
 - Personenbezogene Daten: kein Account erforderlich; im ersten kostenlosen nativen Release keine E-Mail-Erhebung.
 - Zahlungsdaten: im ersten kostenlosen nativen Release nicht erhoben.
 - App-Aktivitaet: Favoriten, History, Filter und Sprache werden lokal auf dem Geraet gespeichert.
-- Analytics/Werbung: im aktuellen nativen Release wird kein Drittanbieter-Analytics- oder Werbe-SDK geladen.
+- Werbung: Google AdMob ist fuer Werbung integriert. Die App muss als werbehaltig markiert werden.
+- Geraete- oder andere IDs: Google Mobile Ads kann Werbe-IDs und zugehoerige Daten fuer die Werbeauslieferung verarbeiten.
+- App-Aktivitaet: Anzeigeninteraktionen koennen durch Google fuer Auslieferung, Messung, Frequency Capping und Betrugsschutz verarbeitet werden.
+- Analytics: kein separates Drittanbieter-Analytics-SDK integriert.

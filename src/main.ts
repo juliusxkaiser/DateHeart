@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { Capacitor } from "@capacitor/core";
 import "./styles.css";
+import { canShowAdPrivacyOptions, canUseNativeAds, initializeAds, showAdPrivacyOptions, showInterstitialAd } from "./ads";
 import {
   budgets,
   categories,
@@ -42,11 +43,11 @@ const STORAGE_KEYS = {
 
 const APP_NAME = "DateHeart";
 const AD_EVERY_REVEALS = 7;
+const IS_NATIVE_APP = Capacitor.isNativePlatform();
 const ENABLE_AD_BANNER = false;
-const ENABLE_INTERSTITIAL_AD = false;
+const ENABLE_INTERSTITIAL_AD = IS_NATIVE_APP || import.meta.env.VITE_ENABLE_WEB_AD_PLACEHOLDER === "true";
 const HISTORY_LIMIT = 120;
 const FAMILY_REPEAT_WINDOW = 90;
-const IS_NATIVE_APP = Capacitor.isNativePlatform();
 const staticPageUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 type PersistedStats = {
@@ -300,6 +301,31 @@ const resultCopy: Record<LanguageCode, ResultCopy> = {
   },
 };
 
+const adPrivacyCopy: Partial<Record<LanguageCode, string>> = {
+  en: "Ad privacy choices",
+  "en-US": "Ad privacy choices",
+  de: "Werbe-Datenschutz",
+  pl: "Prywatnosc reklam",
+  es: "Privacidad de anuncios",
+  fr: "Confidentialite publicitaire",
+  it: "Privacy annunci",
+  pt: "Privacidade dos anuncios",
+  hi: "विज्ञापन गोपनीयता",
+  ar: "خصوصية الإعلانات",
+  ja: "広告プライバシー",
+  zh: "广告隐私设置",
+  ru: "Конфиденциальность рекламы",
+  ko: "광고 개인 정보",
+  tr: "Reklam gizliligi",
+  id: "Privasi iklan",
+  nl: "Advertentieprivacy",
+  sv: "Annonsintegritet",
+  cs: "Soukromi reklam",
+  uk: "Конфіденційність реклами",
+  vi: "Quyen rieng tu quang cao",
+  th: "ความเป็นส่วนตัวโฆษณา",
+};
+
 const icon = (
   name:
     | "globe"
@@ -477,6 +503,10 @@ app.innerHTML = `
         ${icon("mail")}
         <span>support@dateheart.app</span>
       </a>
+      <button class="support-link ad-privacy-button" id="adPrivacyButton" type="button" hidden>
+        ${icon("sliders")}
+        <span>Ad privacy choices</span>
+      </button>
       <nav class="legal-links" aria-label="Legal">
         <a href="${staticPageUrl("support.html")}" target="_blank" rel="noreferrer">Support</a>
         <a href="${staticPageUrl("privacy.html")}" target="_blank" rel="noreferrer">Privacy</a>
@@ -558,6 +588,7 @@ const elements = {
   infoButton: document.querySelector<HTMLButtonElement>("#infoButton")!,
   infoOverlay: document.querySelector<HTMLDivElement>("#infoOverlay")!,
   closeInfoButton: document.querySelector<HTMLButtonElement>("#closeInfoButton")!,
+  adPrivacyButton: document.querySelector<HTMLButtonElement>("#adPrivacyButton")!,
   purchaseOverlay: document.querySelector<HTMLDivElement>("#purchaseOverlay")!,
   closePurchaseButton: document.querySelector<HTMLButtonElement>("#closePurchaseButton")!,
   purchaseLabel: document.querySelector<HTMLElement>("#purchaseLabel")!,
@@ -744,7 +775,7 @@ let stats = loadJson<PersistedStats>(STORAGE_KEYS.stats, { reveals: 0, adBreaks:
 let currentIdea: DateIdea | null = null;
 let activeLibraryMode: "history" | "favorites" = "history";
 let revealLocked = false;
-let noAdsPurchased = IS_NATIVE_APP || localStorage.getItem(STORAGE_KEYS.noAds) === "true";
+let noAdsPurchased = localStorage.getItem(STORAGE_KEYS.noAds) === "true";
 let paymentBusy = false;
 let paymentStatusKey: PaymentStatusKey = "paymentNote";
 
@@ -970,7 +1001,7 @@ function revealIdea() {
     revealLocked = false;
 
     if (!noAdsPurchased && ENABLE_INTERSTITIAL_AD && stats.reveals > 0 && stats.reveals % AD_EVERY_REVEALS === 0) {
-      window.setTimeout(showAdBreak, 700);
+      window.setTimeout(() => void showAdBreak(), 700);
     }
   }, 620);
 }
@@ -1308,9 +1339,15 @@ function closePanel(panel: HTMLElement) {
   }, 170);
 }
 
-function showAdBreak() {
+async function showAdBreak() {
   stats = { ...stats, adBreaks: stats.adBreaks + 1 };
   saveJson(STORAGE_KEYS.stats, stats);
+
+  if (canUseNativeAds()) {
+    await showInterstitialAd();
+    return;
+  }
+
   elements.closeAdBreakButton.disabled = true;
   elements.closeAdBreakButton.textContent = t.continueIn.replace("{seconds}", "2");
   elements.adBreak.hidden = false;
@@ -1582,6 +1619,8 @@ function applyTranslations() {
   elements.historyButton.title = t.history;
   elements.infoButton.setAttribute("aria-label", t.about);
   elements.infoButton.title = t.about;
+  elements.adPrivacyButton.hidden = !canShowAdPrivacyOptions();
+  elements.adPrivacyButton.querySelector("span")!.textContent = adPrivacyCopy[activeLanguage] ?? adPrivacyCopy.en!;
   elements.languageButton.setAttribute("aria-label", t.language);
   elements.languageButton.title = t.language;
   [
@@ -1678,6 +1717,9 @@ elements.favoritesButton.addEventListener("click", () => {
 elements.closeLibraryButton.addEventListener("click", () => closePanel(elements.libraryPanel));
 elements.infoButton.addEventListener("click", showInfo);
 elements.closeInfoButton.addEventListener("click", () => closePanel(elements.infoOverlay));
+elements.adPrivacyButton.addEventListener("click", () => {
+  void showAdPrivacyOptions().finally(applyTranslations);
+});
 elements.infoOverlay.addEventListener("click", (event) => {
   if (event.target === elements.infoOverlay) closePanel(elements.infoOverlay);
 });
@@ -1713,3 +1755,4 @@ handleCheckoutReturn();
 handleSharedLink();
 updateCounter();
 elements.adBanner.hidden = noAdsPurchased || !ENABLE_AD_BANNER;
+void initializeAds().finally(applyTranslations);

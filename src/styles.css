@@ -460,9 +460,14 @@ button:focus-visible {
   border-radius: 8px;
   background: #fff;
   color: #651a2c;
+  cursor: pointer;
   font-size: 0.88rem;
   font-weight: 900;
   text-decoration: none;
+}
+
+.support-link[hidden] {
+  display: none;
 }
 
 .support-link svg {
