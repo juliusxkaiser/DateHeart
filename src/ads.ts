@@ -22,7 +22,9 @@ const TEST_INTERSTITIAL_IDS: Record<NativePlatform, string> = {
   ios: "ca-app-pub-3940256099942544/4411468910",
 };
 
-const REAL_BANNER_IDS: Partial<Record<NativePlatform, string>> = {};
+const REAL_BANNER_IDS: Partial<Record<NativePlatform, string>> = {
+  android: "ca-app-pub-5889615344998591/3027335192",
+};
 
 const REAL_INTERSTITIAL_IDS: Partial<Record<NativePlatform, string>> = {
   android: "ca-app-pub-5889615344998591/3985193642",
