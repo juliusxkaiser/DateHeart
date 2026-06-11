@@ -16,17 +16,17 @@ DateHeart helps couples decide what to do together without scrolling through vag
 
 Use filters for category, budget and time, save favorites, and revisit recent ideas in your history. DateHeart is built for quick planning when you want a real idea now.
 
-No account is required for the core app. The first native release is free, ad-supported and does not include the web-only Stripe purchase.
+No account is required for the core app. The first native release is free, ad-supported and does not include web-only Stripe purchases or subscriptions.
 
 ### Keywords
 date,dates,couples,love,relationship,ideas,planner,romance,activities
 
 ### Review Notes
-DateHeart is a free date idea generator for couples. No account is required. The native iOS build uses Google AdMob for ads and does not expose the web-only Stripe no-ads purchase; any future native digital unlock will use Apple In-App Purchase.
+DateHeart is a free date idea generator for couples. No account is required. The native iOS build uses Google AdMob for ads and does not expose web-only Stripe purchases or subscriptions; any future native digital unlock will use Apple In-App Purchase.
 
-Support contact: support@dateheart.app
-Support URL: https://czarletsgo.github.io/dateheart-web/support.html
-Privacy Policy URL: https://czarletsgo.github.io/dateheart-web/privacy.html
+Support contact: ceo@juliuskaiser.app
+Support URL: https://juliuskaiser.app/dateheart/support.html
+Privacy Policy URL: https://juliuskaiser.app/dateheart/privacy.html
 
 ### Age Rating Notes
 No user-generated public content, gambling, explicit content or unrestricted web browsing. Users choose which suggested activities are safe and appropriate for their situation.
@@ -55,17 +55,17 @@ DateHeart hilft Paaren, schnell eine passende Idee fuer gemeinsame Zeit zu finde
 
 Nutze Filter fuer Kategorie, Budget und Zeit, speichere Favoriten und finde kuerzlich gezogene Ideen in deiner History wieder. DateHeart ist fuer den Moment gemacht, in dem ihr nicht lange suchen wollt, sondern eine gute Idee braucht.
 
-Fuer die Kernfunktionen ist kein Account erforderlich. Der erste native Release ist kostenlos, werbefinanziert und enthaelt keinen Web-Stripe-Kauf.
+Fuer die Kernfunktionen ist kein Account erforderlich. Der erste native Release ist kostenlos, werbefinanziert und enthaelt keine Web-Stripe-Kaeufe oder Web-Stripe-Abos.
 
 ### Keywords
 date,dates,paare,liebe,beziehung,ideen,planung,romantik,aktivitaeten
 
 ### Review Notes
-DateHeart ist eine kostenlose Date-Ideen-App fuer Paare. Es ist kein Account erforderlich. Der native iOS-Build nutzt Google AdMob fuer Werbung und zeigt den web-only Stripe-Kauf nicht an; ein spaeterer nativer digitaler Unlock wird Apple In-App Purchase nutzen.
+DateHeart ist eine kostenlose Date-Ideen-App fuer Paare. Es ist kein Account erforderlich. Der native iOS-Build nutzt Google AdMob fuer Werbung und zeigt keine web-only Stripe-Kaeufe oder Web-Stripe-Abos an; ein spaeterer nativer digitaler Unlock wird Apple In-App Purchase nutzen.
 
-Support-Kontakt: support@dateheart.app
-Support-URL: https://czarletsgo.github.io/dateheart-web/support.html
-Datenschutz-URL: https://czarletsgo.github.io/dateheart-web/privacy.html
+Support-Kontakt: ceo@juliuskaiser.app
+Support-URL: https://juliuskaiser.app/dateheart/support.html
+Datenschutz-URL: https://juliuskaiser.app/dateheart/privacy.html
 
 ### Age Rating Notes
 Keine oeffentlichen nutzergenerierten Inhalte, kein Gluecksspiel, keine expliziten Inhalte und kein freies Web-Browsing. Nutzer entscheiden selbst, welche vorgeschlagenen Aktivitaeten sicher und passend sind.

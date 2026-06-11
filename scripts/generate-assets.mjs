@@ -2,16 +2,31 @@ import { mkdir } from "node:fs/promises";
 import sharp from "sharp";
 
 const heartRenderPath = "public/screenshots/dateheart-cdp-mobile-home.png";
+const iconSource = "public/icon.svg";
 const publicIconDir = "public/icons";
 const storeAssetDir = "store/assets";
+const iconBackground = "#c90432";
 
 await mkdir(publicIconDir, { recursive: true });
 await mkdir(storeAssetDir, { recursive: true });
 
-async function appIcon(size, output, crop = { left: 80, top: 590, width: 620, height: 620 }) {
-  await sharp(heartRenderPath)
-    .extract(crop)
-    .resize(size, size, { fit: "cover" })
+async function appIcon(size, output, scale = 1) {
+  const heart = await sharp(iconSource)
+    .resize(Math.round(size * scale), Math.round(size * scale), { fit: "contain" })
+    .png()
+    .toBuffer();
+
+  await sharp({
+    create: {
+      width: size,
+      height: size,
+      channels: 3,
+      background: iconBackground,
+    },
+  })
+    .composite([{ input: heart, gravity: "center" }])
+    .flatten({ background: iconBackground })
+    .removeAlpha()
     .png()
     .toFile(output);
 }
@@ -20,7 +35,7 @@ await Promise.all([
   appIcon(180, "public/apple-touch-icon.png"),
   appIcon(192, `${publicIconDir}/icon-192.png`),
   appIcon(512, `${publicIconDir}/icon-512.png`),
-  appIcon(512, `${publicIconDir}/maskable-512.png`, { left: 0, top: 520, width: 780, height: 780 }),
+  appIcon(512, `${publicIconDir}/maskable-512.png`, 0.84),
   appIcon(1024, `${storeAssetDir}/app-icon-1024.png`),
 ]);
 

@@ -1,6 +1,6 @@
 # Stripe Secrets Runbook
 
-DateHeart is already wired for Stripe Checkout. The only missing part for live payments is setting real hosting secrets and creating the webhook in Stripe.
+DateHeart is wired for Stripe Checkout for the one-time no-ads unlock and the DateHeart Pro web subscription. The only missing part for live web payments is setting real hosting secrets and creating the webhook in Stripe.
 
 Official Stripe references:
 
@@ -56,9 +56,12 @@ Subscribe to these events:
 ```text
 checkout.session.completed
 checkout.session.async_payment_succeeded
+customer.subscription.deleted
 ```
 
 After creating the endpoint, copy the signing secret that starts with `whsec_` into `STRIPE_WEBHOOK_SECRET`.
+
+Successful no-ads purchases mark the Stripe customer with `dateheart_no_ads=true`. Successful Pro subscriptions mark `dateheart_plus=true` and also unlock no-ads while the subscription is active. Restore checks the checkout email against Stripe customers, paid no-ads sessions and active Pro subscriptions.
 
 ## Verification commands
 
@@ -75,4 +78,4 @@ REQUIRE_CONFIGURED_PAYMENT=true npm run payment:doctor
 APP_URL=https://your-domain.example/ REQUIRE_CONFIGURED_PAYMENT=true npm run api:smoke
 ```
 
-The smoke test must return a Stripe Checkout URL for `create-checkout-session`.
+The smoke test must return a Stripe Checkout URL for both the no-ads checkout and the DateHeart Pro monthly checkout.

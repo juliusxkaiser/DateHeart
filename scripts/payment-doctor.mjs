@@ -1,4 +1,10 @@
-import { noAdsPriceByCurrency, stripeUnitAmountForCurrency } from "../server/pricing.mjs";
+import {
+  noAdsPriceByCurrency,
+  plusMonthlyPriceByCurrency,
+  plusYearlyPriceByCurrency,
+  stripeSubscriptionUnitAmountForCurrency,
+  stripeUnitAmountForCurrency,
+} from "../server/pricing.mjs";
 
 const requireConfiguredPayment = process.env.REQUIRE_CONFIGURED_PAYMENT === "true";
 const errors = [];
@@ -113,12 +119,24 @@ function validateViteEndpointSet() {
 function validatePricing() {
   const currencies = Object.keys(noAdsPriceByCurrency);
   if (noAdsPriceByCurrency.EUR !== 4.99) errors.push("EUR price must stay fixed at 4.99.");
+  if (plusMonthlyPriceByCurrency.EUR !== 1.99) errors.push("EUR monthly Plus price must stay fixed at 1.99.");
+  if (plusYearlyPriceByCurrency.EUR !== 14.99) errors.push("EUR yearly Plus price must stay fixed at 14.99.");
 
   for (const currency of currencies) {
     const amount = noAdsPriceByCurrency[currency];
+    const plusMonthly = plusMonthlyPriceByCurrency[currency];
+    const plusYearly = plusYearlyPriceByCurrency[currency];
     if (!/^[A-Z]{3}$/.test(currency)) errors.push(`Invalid currency code: ${currency}`);
     if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0) {
       errors.push(`${currency} price must be a positive number.`);
+      continue;
+    }
+    if (typeof plusMonthly !== "number" || !Number.isFinite(plusMonthly) || plusMonthly <= 0) {
+      errors.push(`${currency} monthly Plus price must be a positive number.`);
+      continue;
+    }
+    if (typeof plusYearly !== "number" || !Number.isFinite(plusYearly) || plusYearly <= 0) {
+      errors.push(`${currency} yearly Plus price must be a positive number.`);
       continue;
     }
 
@@ -126,13 +144,34 @@ function validatePricing() {
     if (!Number.isInteger(unitAmount) || unitAmount <= 0) {
       errors.push(`${currency} Stripe unit_amount must be a positive integer.`);
     }
+
+    const monthlyUnitAmount = stripeSubscriptionUnitAmountForCurrency(currency, "month").unitAmount;
+    const yearlyUnitAmount = stripeSubscriptionUnitAmountForCurrency(currency, "year").unitAmount;
+    if (!Number.isInteger(monthlyUnitAmount) || monthlyUnitAmount <= 0) {
+      errors.push(`${currency} monthly Plus Stripe unit_amount must be a positive integer.`);
+    }
+    if (!Number.isInteger(yearlyUnitAmount) || yearlyUnitAmount <= 0) {
+      errors.push(`${currency} yearly Plus Stripe unit_amount must be a positive integer.`);
+    }
   }
 
   return {
     currencies: currencies.length,
-    eur: noAdsPriceByCurrency.EUR,
-    usd: noAdsPriceByCurrency.USD,
-    gbp: noAdsPriceByCurrency.GBP,
+    noAds: {
+      eur: noAdsPriceByCurrency.EUR,
+      usd: noAdsPriceByCurrency.USD,
+      gbp: noAdsPriceByCurrency.GBP,
+    },
+    plusMonthly: {
+      eur: plusMonthlyPriceByCurrency.EUR,
+      usd: plusMonthlyPriceByCurrency.USD,
+      gbp: plusMonthlyPriceByCurrency.GBP,
+    },
+    plusYearly: {
+      eur: plusYearlyPriceByCurrency.EUR,
+      usd: plusYearlyPriceByCurrency.USD,
+      gbp: plusYearlyPriceByCurrency.GBP,
+    },
   };
 }
 

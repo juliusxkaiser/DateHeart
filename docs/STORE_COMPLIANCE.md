@@ -7,12 +7,12 @@ This file captures the current first native release state. Update it before subm
 - App id / package: `com.czarletsgo.dateheart`
 - Release model: free first native release
 - Accounts: no account required
-- Payments: no native payment or Stripe purchase exposed in the iOS/Android builds
+- Payments: no native payment, Stripe purchase or Stripe subscription exposed in the iOS/Android builds
 - Ads: Google AdMob is integrated for native iOS/Android ads
 - Analytics: no separate third-party analytics SDK loaded
 - User-generated public content: none
 - Native permissions: Android `INTERNET` only; no iOS camera, microphone, location, photo-library or tracking prompt
-- Local data: favorites, history, filters, language and no-ads state are stored locally on the user's device
+- Local data: favorites, history, filters, language, no-ads state and Pro state are stored locally on the user's device
 - AdMob/Google Mobile Ads can process IP address, ad/device identifiers, product interactions, ad interaction data and diagnostics for ad delivery, measurement, analytics and fraud prevention.
 
 ## Apple App Privacy Answers
@@ -35,7 +35,7 @@ Recommended answers:
 Review note:
 
 ```text
-DateHeart is a free date idea generator. The iOS build does not require an account, uses Google AdMob for ads, does not include a separate analytics SDK, and does not expose the web-only Stripe purchase. Favorites, history, filters and language are stored locally on device.
+DateHeart is a free date idea generator. The iOS build does not require an account, uses Google AdMob for ads, does not include a separate analytics SDK, and does not expose the web-only Stripe purchase or subscription. Favorites, history, filters and language are stored locally on device.
 ```
 
 The iOS project includes `ios/App/App/PrivacyInfo.xcprivacy` declaring no DateHeart-owned collected data and no App Tracking Transparency prompt. The Google Mobile Ads SDK can include its own privacy manifest data; confirm the final App Store Connect privacy labels before submission.
@@ -80,7 +80,7 @@ Target audience:
 Update this file and the store answers before release if any of these are added:
 
 - Apple In-App Purchase or Google Play Billing
-- Stripe or any other checkout inside native builds
+- Stripe or any other checkout/subscription inside native builds
 - Another ad network or a material AdMob configuration change
 - Analytics, crash reporting or attribution SDKs
 - Account login, email collection or cloud sync

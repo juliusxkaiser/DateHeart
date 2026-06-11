@@ -19,6 +19,11 @@ await mkdir("build/ios", { recursive: true });
 
 run("npm", ["run", "native:build"]);
 
+// iOS-Binary darf keine Google-Play-Referenzen enthalten (Guideline 2.3.10).
+// dist strippen und NUR iOS neu syncen — android/ behält die ungestrippte Fassung.
+run("node", ["scripts/strip-google-play-ios.mjs"]);
+run("npx", ["cap", "sync", "ios"]);
+
 run("xcodebuild", [
   "-project",
   "ios/App/App.xcodeproj",

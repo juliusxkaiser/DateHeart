@@ -43,6 +43,11 @@ async function writePng(file, image) {
   await image.png().toFile(file);
 }
 
+async function writeFlatPng(file, image, background = lightBackground) {
+  await ensureParent(file);
+  await image.flatten({ background }).removeAlpha().png().toFile(file);
+}
+
 function solidSquare(size, color) {
   return sharp({
     create: {
@@ -150,7 +155,7 @@ async function generateAndroidSplashes() {
 }
 
 async function generateIosAssets() {
-  await writePng(
+  await writeFlatPng(
     "ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png",
     sharp(iconSource).resize(1024, 1024, { fit: "cover" }),
   );

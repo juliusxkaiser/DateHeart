@@ -76,6 +76,39 @@ await check("checkout_without_or_with_secrets", async () => {
   };
 });
 
+await check("plus_checkout_without_or_with_secrets", async () => {
+  const response = await fetch(endpoint("/api/create-checkout-session"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: new URL(appUrl).origin,
+    },
+    body: JSON.stringify({
+      currency: "EUR",
+      returnUrl: appUrl,
+      clientReferenceId: "smoke-test-plus",
+      product: "dateheart_plus_monthly",
+    }),
+  });
+  const body = await json(response);
+
+  if (requireConfiguredPayment) {
+    assert(response.status === 200, `Plus checkout expected 200 with configured payment, got ${response.status}`);
+    assert(typeof body.url === "string" && body.url.startsWith("https://"), "Plus checkout did not return a Stripe URL");
+    assert(body.product === "dateheart_plus_monthly", "Plus checkout did not echo the requested product.");
+  } else {
+    assert([200, 503].includes(response.status), `Plus checkout returned unexpected ${response.status}`);
+    if (response.status === 503) assert(body.error === "payment_unavailable", "Plus checkout 503 did not return payment_unavailable");
+  }
+
+  return {
+    status: response.status,
+    error: body.error ?? null,
+    hasUrl: typeof body.url === "string",
+    product: body.product ?? null,
+  };
+});
+
 await check("checkout_body_limit", async () => {
   const response = await fetch(endpoint("/api/create-checkout-session"), {
     method: "POST",

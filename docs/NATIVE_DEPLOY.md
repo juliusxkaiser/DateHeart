@@ -7,7 +7,7 @@ DateHeart native builds use Capacitor with the app id `com.czarletsgo.dateheart`
 - iOS project: `ios/App/App.xcodeproj`
 - Android project: `android/`
 - Native icon and splash assets generated from `store/assets/app-icon-1024.png`
-- Native builds hide the web-only Stripe no-ads purchase until Apple IAP and Google Play Billing are implemented
+- Native builds use Apple In-App Purchase / Google Play Billing for Pro and no-ads products
 - Android release signing can be enabled with `android/key.properties`
 
 ## Build
@@ -46,7 +46,7 @@ VITE_ADMOB_TEST_MODE=false \
 npm run native:build
 ```
 
-Do not click real ads during local validation. Set `VITE_ADMOB_TEST_MODE=true` for dev/test builds.
+Do not click real ads during local validation. Set `VITE_ADMOB_TEST_MODE=true` for dev/test builds. The `android:debug` and `ios:build` scripts already do this automatically so simulator/debug builds request Google test ads.
 
 Native store-compliance check:
 
@@ -65,6 +65,8 @@ Android debug APK:
 ```bash
 npm run android:debug
 ```
+
+This build uses AdMob test mode.
 
 Output:
 
@@ -89,6 +91,8 @@ iOS simulator build:
 ```bash
 npm run ios:build
 ```
+
+This build uses AdMob test mode.
 
 Output:
 
@@ -134,6 +138,15 @@ The upload artifact remains:
 android/app/build/outputs/bundle/release/app-release.aab
 ```
 
+Current local Android release artifact:
+
+```text
+android/app/build/outputs/bundle/release/app-release.aab
+SHA-256: bcb69bd5717f2828e7b01c0edcfcc5dfc53b7e58903e06600da5980dd3d37fa0
+```
+
+The current AAB has been verified with `jarsigner -verify`. The expected warnings are from the self-signed Play upload certificate and AAB/JAR reading differences; the verification result is `jar verified`.
+
 ## iOS Archive
 
 The iOS target is configured as iPhone-only for the first store release.
@@ -175,9 +188,10 @@ store/screenshots/google-play/phone/
 
 ## Store Upload Blockers
 
-- Android: Google Play Console app, Play App Signing/upload key, final data-safety answers and production track access.
-- iOS: Apple Developer team, registered bundle id, signing certificate/provisioning profile, App Store Connect app record and privacy labels.
+- Android: D-U-N-S response for the Google Play organization account, Google Play Console app record, Play App Signing enrollment, final Data Safety answers and production track access.
+- iOS: Apple Developer team id in the build environment, registered bundle id, signing certificate/provisioning profile, App Store Connect app record and privacy labels.
 - Store forms: copy the current Apple App Privacy and Google Play Data Safety answers from `docs/STORE_COMPLIANCE.md`.
+- Store console transfer values: copy the app identity and form values from `docs/STORE_CONSOLE_VALUES.md`.
 - Store transfer: use `docs/STORE_SUBMISSION_PACKET.md` for the final file paths and commands.
-- Native payments: implement Apple IAP and Google Play Billing before selling the no-ads unlock inside the native apps.
+- Native payments: create matching App Store Connect and Play Console products for `dateheart_no_ads`, `dateheart_pro_monthly` and `dateheart_pro_yearly`, then test purchase and restore in sandbox/internal testing before public release.
 - Legal pages: replace the temporary private operator address with the final business address before public launch.

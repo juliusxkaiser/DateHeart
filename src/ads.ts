@@ -12,6 +12,8 @@ type AdState = {
   privacyOptionsAvailable: boolean;
 };
 
+type BannerVisibilityListener = (visible: boolean) => void;
+
 const TEST_BANNER_IDS: Record<NativePlatform, string> = {
   android: "ca-app-pub-3940256099942544/6300978111",
   ios: "ca-app-pub-3940256099942544/2934735716",
@@ -44,6 +46,14 @@ let adMob: AdMobPlugin | null = null;
 let adMobModule: AdMobModule | null = null;
 let initializePromise: Promise<AdState> | null = null;
 let preparingInterstitial = false;
+let adListenersRegistered = false;
+const bannerVisibilityListeners = new Set<BannerVisibilityListener>();
+
+function setBannerVisible(visible: boolean) {
+  if (state.bannerVisible === visible) return;
+  state.bannerVisible = visible;
+  bannerVisibilityListeners.forEach((listener) => listener(visible));
+}
 
 function nativePlatform(): NativePlatform | null {
   const platform = Capacitor.getPlatform();
@@ -74,17 +84,16 @@ function configuredBannerAdId(platform: NativePlatform) {
   return override?.trim() || REAL_BANNER_IDS[platform]?.trim() || "";
 }
 
+function useTestAds(platform: NativePlatform) {
+  return envFlag(import.meta.env.VITE_ADMOB_TEST_MODE, false) || !configuredInterstitialAdId(platform) || !configuredBannerAdId(platform);
+}
+
 function interstitialAdId(platform: NativePlatform) {
-  return configuredInterstitialAdId(platform) || TEST_INTERSTITIAL_IDS[platform];
+  return useTestAds(platform) ? TEST_INTERSTITIAL_IDS[platform] : configuredInterstitialAdId(platform);
 }
 
 function bannerAdId(platform: NativePlatform) {
-  return configuredBannerAdId(platform) || TEST_BANNER_IDS[platform];
-}
-
-function isTestMode(configuredAdId: string) {
-  if (!configuredAdId) return true;
-  return envFlag(import.meta.env.VITE_ADMOB_TEST_MODE, false);
+  return useTestAds(platform) ? TEST_BANNER_IDS[platform] : configuredBannerAdId(platform);
 }
 
 function consentDebugGeography(module: AdMobModule) {
@@ -101,7 +110,7 @@ function consentDebugGeography(module: AdMobModule) {
 function adRequestOptions(platform: NativePlatform) {
   return {
     adId: interstitialAdId(platform),
-    isTesting: isTestMode(configuredInterstitialAdId(platform)),
+    isTesting: useTestAds(platform),
     npa: envFlag(import.meta.env.VITE_ADMOB_NON_PERSONALIZED, true),
     immersiveMode: true,
   };
@@ -113,9 +122,31 @@ function bannerRequestOptions(module: AdMobModule, platform: NativePlatform) {
     adSize: module.BannerAdSize.ADAPTIVE_BANNER,
     position: module.BannerAdPosition.BOTTOM_CENTER,
     margin: 0,
-    isTesting: isTestMode(configuredBannerAdId(platform)),
+    isTesting: useTestAds(platform),
     npa: envFlag(import.meta.env.VITE_ADMOB_NON_PERSONALIZED, true),
   };
+}
+
+function registerAdListeners() {
+  if (!adMob || !adMobModule || adListenersRegistered) return;
+
+  adListenersRegistered = true;
+  void adMob.addListener(adMobModule.BannerAdPluginEvents.Loaded, () => {
+    setBannerVisible(true);
+    console.info("DateHeart AdMob banner loaded.");
+  });
+  void adMob.addListener(adMobModule.BannerAdPluginEvents.FailedToLoad, (error) => {
+    setBannerVisible(false);
+    console.warn("DateHeart AdMob banner failed to load.", error);
+  });
+  void adMob.addListener(adMobModule.InterstitialAdPluginEvents.Loaded, () => {
+    state.interstitialReady = true;
+    console.info("DateHeart AdMob interstitial loaded.");
+  });
+  void adMob.addListener(adMobModule.InterstitialAdPluginEvents.FailedToLoad, (error) => {
+    state.interstitialReady = false;
+    console.warn("DateHeart AdMob interstitial failed to load.", error);
+  });
 }
 
 async function prepareInterstitial() {
@@ -141,30 +172,51 @@ async function initializeNativeAds() {
   try {
     adMobModule = await import("@capacitor-community/admob");
     adMob = adMobModule.AdMob;
+    registerAdListeners();
 
     const testDeviceIds = envList(import.meta.env.VITE_ADMOB_TEST_DEVICE_IDS);
+    const testAds = useTestAds(platform);
     await adMob.initialize({
-      initializeForTesting:
-        isTestMode(configuredInterstitialAdId(platform)) || isTestMode(configuredBannerAdId(platform)) || testDeviceIds.length > 0,
+      initializeForTesting: testAds || testDeviceIds.length > 0,
       testingDevices: testDeviceIds,
       maxAdContentRating: adMobModule.MaxAdContentRating.Teen,
       tagForChildDirectedTreatment: false,
       tagForUnderAgeOfConsent: false,
     });
 
-    let consentInfo = await adMob.requestConsentInfo({
-      debugGeography: consentDebugGeography(adMobModule),
-      testDeviceIdentifiers: testDeviceIds,
-      tagForUnderAgeOfConsent: false,
-    });
+    state.initialized = true;
+    state.canRequestAds = false;
+    state.privacyOptionsAvailable = false;
 
-    if (!consentInfo.canRequestAds && consentInfo.isConsentFormAvailable) {
-      consentInfo = await adMob.showConsentForm();
+    try {
+      let consentInfo = await adMob.requestConsentInfo({
+        debugGeography: consentDebugGeography(adMobModule),
+        testDeviceIdentifiers: testDeviceIds,
+        tagForUnderAgeOfConsent: false,
+      });
+
+      if (!consentInfo.canRequestAds && consentInfo.isConsentFormAvailable) {
+        consentInfo = await adMob.showConsentForm();
+      }
+
+      state.canRequestAds = consentInfo.canRequestAds || testAds;
+      state.privacyOptionsAvailable = consentInfo.privacyOptionsRequirementStatus === "REQUIRED";
+      console.info("DateHeart AdMob consent checked.", {
+        consentCanRequestAds: consentInfo.canRequestAds,
+        privacyOptionsAvailable: state.privacyOptionsAvailable,
+      });
+    } catch (error) {
+      state.canRequestAds = testAds;
+      state.privacyOptionsAvailable = false;
+      console.warn("DateHeart AdMob consent check failed.", error);
     }
 
-    state.initialized = true;
-    state.canRequestAds = consentInfo.canRequestAds;
-    state.privacyOptionsAvailable = consentInfo.privacyOptionsRequirementStatus === "REQUIRED";
+    console.info("DateHeart AdMob initialized.", {
+      platform,
+      testAds,
+      canRequestAds: state.canRequestAds,
+      privacyOptionsAvailable: state.privacyOptionsAvailable,
+    });
 
     if (state.canRequestAds) {
       await prepareInterstitial();
@@ -174,7 +226,7 @@ async function initializeNativeAds() {
     state.initialized = false;
     state.canRequestAds = false;
     state.interstitialReady = false;
-    state.bannerVisible = false;
+    setBannerVisible(false);
     state.privacyOptionsAvailable = false;
   }
 
@@ -195,6 +247,12 @@ export function initializeAds() {
   }
 
   return initializePromise;
+}
+
+export function onBannerVisibilityChange(listener: BannerVisibilityListener) {
+  bannerVisibilityListeners.add(listener);
+  listener(state.bannerVisible);
+  return () => bannerVisibilityListeners.delete(listener);
 }
 
 export async function showInterstitialAd() {
@@ -228,14 +286,15 @@ export async function showBannerAd() {
   if (!platform) return false;
 
   await initializeAds();
-  if (!adMob || !adMobModule || !state.canRequestAds || state.bannerVisible) return false;
+  if (!adMob || !adMobModule || !state.canRequestAds) return false;
+  if (state.bannerVisible) return true;
 
   try {
     await adMob.showBanner(bannerRequestOptions(adMobModule, platform));
-    state.bannerVisible = true;
+    setBannerVisible(true);
     return true;
   } catch (error) {
-    state.bannerVisible = false;
+    setBannerVisible(false);
     console.warn("DateHeart AdMob banner could not be shown.", error);
     return false;
   }
@@ -246,7 +305,7 @@ export async function hideBannerAd() {
 
   try {
     await adMob.removeBanner();
-    state.bannerVisible = false;
+    setBannerVisible(false);
     return true;
   } catch (error) {
     console.warn("DateHeart AdMob banner could not be removed.", error);

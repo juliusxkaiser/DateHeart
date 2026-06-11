@@ -6,12 +6,15 @@ import {
   durationLabels,
   formatBudgetLabel,
   formatNoAdsPrice,
+  formatPlusPrice,
   iso6391LanguageCodes,
   isLanguageCode,
   labelFor,
   languages,
   localizeIdea,
   noAdsPriceByCurrency,
+  plusMonthlyPriceByCurrency,
+  plusYearlyPriceByCurrency,
   tagLabels,
   translations,
   verifiedLanguageCodes,
@@ -19,6 +22,9 @@ import {
 } from "../src/i18n.ts";
 import {
   noAdsPriceByCurrency as serverNoAdsPriceByCurrency,
+  plusMonthlyPriceByCurrency as serverPlusMonthlyPriceByCurrency,
+  plusYearlyPriceByCurrency as serverPlusYearlyPriceByCurrency,
+  stripeSubscriptionUnitAmountForCurrency,
   stripeUnitAmountForCurrency,
   zeroDecimalCurrencies as serverZeroDecimalCurrencies,
 } from "../server/pricing.mjs";
@@ -86,12 +92,40 @@ if (JSON.stringify(clientPriceEntries) !== JSON.stringify(serverPriceEntries)) {
   errors.push("Client and server no-ads price tables differ.");
 }
 
+const clientPlusMonthlyEntries = Object.entries(plusMonthlyPriceByCurrency).sort(([left], [right]) => left.localeCompare(right));
+const serverPlusMonthlyEntries = Object.entries(serverPlusMonthlyPriceByCurrency).sort(([left], [right]) => left.localeCompare(right));
+if (JSON.stringify(clientPlusMonthlyEntries) !== JSON.stringify(serverPlusMonthlyEntries)) {
+  errors.push("Client and server monthly Plus price tables differ.");
+}
+
+const clientPlusYearlyEntries = Object.entries(plusYearlyPriceByCurrency).sort(([left], [right]) => left.localeCompare(right));
+const serverPlusYearlyEntries = Object.entries(serverPlusYearlyPriceByCurrency).sort(([left], [right]) => left.localeCompare(right));
+if (JSON.stringify(clientPlusYearlyEntries) !== JSON.stringify(serverPlusYearlyEntries)) {
+  errors.push("Client and server yearly Plus price tables differ.");
+}
+
 if (noAdsPriceByCurrency.EUR !== 4.99) {
   errors.push(`Germany/EUR no-ads price must stay 4.99, got ${noAdsPriceByCurrency.EUR}.`);
 }
 
+if (plusMonthlyPriceByCurrency.EUR !== 1.99) {
+  errors.push(`Germany/EUR monthly Plus price must stay 1.99, got ${plusMonthlyPriceByCurrency.EUR}.`);
+}
+
+if (plusYearlyPriceByCurrency.EUR !== 14.99) {
+  errors.push(`Germany/EUR yearly Plus price must stay 14.99, got ${plusYearlyPriceByCurrency.EUR}.`);
+}
+
 if (stripeUnitAmountForCurrency("EUR").unitAmount !== 499) {
   errors.push("Stripe EUR unit amount must be 499 for a 4.99 EUR purchase.");
+}
+
+if (stripeSubscriptionUnitAmountForCurrency("EUR", "month").unitAmount !== 199) {
+  errors.push("Stripe EUR monthly Plus unit amount must be 199 for a 1.99 EUR subscription.");
+}
+
+if (stripeSubscriptionUnitAmountForCurrency("EUR", "year").unitAmount !== 1499) {
+  errors.push("Stripe EUR yearly Plus unit amount must be 1499 for a 14.99 EUR subscription.");
 }
 
 if (stripeUnitAmountForCurrency("JPY").unitAmount !== noAdsPriceByCurrency.JPY) {
@@ -100,6 +134,10 @@ if (stripeUnitAmountForCurrency("JPY").unitAmount !== noAdsPriceByCurrency.JPY) 
 
 if (stripeUnitAmountForCurrency("ZZZ").currency !== "EUR") {
   errors.push("Unsupported payment currencies must fall back to EUR.");
+}
+
+if (stripeSubscriptionUnitAmountForCurrency("ZZZ", "month").currency !== "EUR") {
+  errors.push("Unsupported subscription currencies must fall back to EUR.");
 }
 
 const clientZeroDecimals = [...zeroDecimalCurrencies].sort();
@@ -216,6 +254,8 @@ const japaneseNoAdsPrice = formatNoAdsPrice(japaneseMarket);
 const chineseMarket = budgetMarketFor("zh", { locales: ["zh-CN"], timeZone: "Asia/Shanghai" });
 const chineseBudget = formatBudgetLabel("Up to 40 EUR", "zh", chineseMarket);
 const chineseNoAdsPrice = formatNoAdsPrice(chineseMarket);
+const persianIranMarket = budgetMarketFor("fa", { locales: ["fa-IR"], timeZone: "Asia/Tehran" });
+const persianIranBudget = formatBudgetLabel("Up to 40 EUR", "fa", persianIranMarket);
 const additionalMarketChecks = [
   { language: "en", locales: ["en-GB"], timeZone: "Europe/London", currencyName: "GBP", currencyPattern: /£|GBP/ },
   { language: "en-US", locales: ["en-US"], timeZone: "America/New_York", currencyName: "USD", currencyPattern: /\$|USD/ },
@@ -228,6 +268,62 @@ const additionalMarketChecks = [
   { language: "uk", locales: ["uk-UA"], timeZone: "Europe/Kyiv", currencyName: "UAH", currencyPattern: /₴|UAH/ },
   { language: "vi", locales: ["vi-VN"], timeZone: "Asia/Ho_Chi_Minh", currencyName: "VND", currencyPattern: /₫|VND/ },
   { language: "th", locales: ["th-TH"], timeZone: "Asia/Bangkok", currencyName: "THB", currencyPattern: /฿|THB/ },
+  { language: "da", locales: ["da-DK"], timeZone: "Europe/Copenhagen", currencyName: "DKK", currencyPattern: /kr|DKK/ },
+  { language: "ro", locales: ["ro-RO"], timeZone: "Europe/Bucharest", currencyName: "RON", currencyPattern: /RON|lei/ },
+  { language: "hu", locales: ["hu-HU"], timeZone: "Europe/Budapest", currencyName: "HUF", currencyPattern: /Ft|HUF/ },
+  { language: "bn", locales: ["bn-BD"], timeZone: "Asia/Dhaka", currencyName: "BDT", currencyPattern: /৳|BDT/ },
+  { language: "ur", locales: ["ur-PK"], timeZone: "Asia/Karachi", currencyName: "PKR", currencyPattern: /Rs|PKR|₨/ },
+  { language: "he", locales: ["he-IL"], timeZone: "Asia/Jerusalem", currencyName: "ILS", currencyPattern: /₪|ILS/ },
+  { language: "bg", locales: ["bg-BG"], timeZone: "Europe/Sofia", currencyName: "BGN", currencyPattern: /лв\.?|BGN/ },
+  { language: "ms", locales: ["ms-MY"], timeZone: "Asia/Kuala_Lumpur", currencyName: "MYR", currencyPattern: /RM|MYR/ },
+  { language: "tl", locales: ["tl-PH"], timeZone: "Asia/Manila", currencyName: "PHP", currencyPattern: /₱|PHP/ },
+  { language: "ta", locales: ["ta-IN"], timeZone: "Asia/Kolkata", currencyName: "INR", currencyPattern: /₹|INR/ },
+  { language: "te", locales: ["te-IN"], timeZone: "Asia/Kolkata", currencyName: "INR", currencyPattern: /₹|INR/ },
+  { language: "sw", locales: ["sw-TZ"], timeZone: "Africa/Dar_es_Salaam", currencyName: "TZS", currencyPattern: /TSh|TZS/ },
+  { language: "sw", locales: ["sw-KE"], timeZone: "Africa/Nairobi", currencyName: "KES", currencyPattern: /Ksh|KSh|KES/ },
+  { language: "mr", locales: ["mr-IN"], timeZone: "Asia/Kolkata", currencyName: "INR", currencyPattern: /₹|INR/ },
+  { language: "gu", locales: ["gu-IN"], timeZone: "Asia/Kolkata", currencyName: "INR", currencyPattern: /₹|INR/ },
+  { language: "pa", locales: ["pa-IN"], timeZone: "Asia/Kolkata", currencyName: "INR", currencyPattern: /₹|INR/ },
+  { language: "kn", locales: ["kn-IN"], timeZone: "Asia/Kolkata", currencyName: "INR", currencyPattern: /₹|INR/ },
+  { language: "ml", locales: ["ml-IN"], timeZone: "Asia/Kolkata", currencyName: "INR", currencyPattern: /₹|INR/ },
+  { language: "ne", locales: ["ne-NP"], timeZone: "Asia/Kathmandu", currencyName: "NPR", currencyPattern: /रू|NPR|Rs/ },
+  { language: "si", locales: ["si-LK"], timeZone: "Asia/Colombo", currencyName: "LKR", currencyPattern: /රු|LKR|Rs/ },
+  { language: "et", locales: ["et-EE"], timeZone: "Europe/Tallinn", currencyName: "EUR", currencyPattern: /€|EUR/ },
+  { language: "lt", locales: ["lt-LT"], timeZone: "Europe/Vilnius", currencyName: "EUR", currencyPattern: /€|EUR/ },
+  { language: "lv", locales: ["lv-LV"], timeZone: "Europe/Riga", currencyName: "EUR", currencyPattern: /€|EUR/ },
+  { language: "sl", locales: ["sl-SI"], timeZone: "Europe/Ljubljana", currencyName: "EUR", currencyPattern: /€|EUR/ },
+  { language: "ca", locales: ["ca-ES"], timeZone: "Europe/Madrid", currencyName: "EUR", currencyPattern: /€|EUR/ },
+  { language: "eu", locales: ["eu-ES"], timeZone: "Europe/Madrid", currencyName: "EUR", currencyPattern: /€|EUR/ },
+  { language: "gl", locales: ["gl-ES"], timeZone: "Europe/Madrid", currencyName: "EUR", currencyPattern: /€|EUR/ },
+  { language: "ga", locales: ["ga-IE"], timeZone: "Europe/Dublin", currencyName: "EUR", currencyPattern: /€|EUR/ },
+  { language: "is", locales: ["is-IS"], timeZone: "Atlantic/Reykjavik", currencyName: "ISK", currencyPattern: /kr\.?|ISK/ },
+  { language: "mt", locales: ["mt-MT"], timeZone: "Europe/Malta", currencyName: "EUR", currencyPattern: /€|EUR/ },
+  { language: "mk", locales: ["mk-MK"], timeZone: "Europe/Skopje", currencyName: "MKD", currencyPattern: /ден|MKD/ },
+  { language: "sq", locales: ["sq-AL"], timeZone: "Europe/Tirane", currencyName: "ALL", currencyPattern: /Lek|ALL|L/ },
+  { language: "no", locales: ["no-NO"], timeZone: "Europe/Oslo", currencyName: "NOK", currencyPattern: /kr|NOK/ },
+  { language: "sr", locales: ["sr-RS"], timeZone: "Europe/Belgrade", currencyName: "RSD", currencyPattern: /дин|RSD/ },
+  { language: "bs", locales: ["bs-BA"], timeZone: "Europe/Sarajevo", currencyName: "BAM", currencyPattern: /KM|BAM/ },
+  { language: "be", locales: ["be-BY"], timeZone: "Europe/Minsk", currencyName: "BYN", currencyPattern: /Br|BYN/ },
+  { language: "af", locales: ["af-ZA"], timeZone: "Africa/Johannesburg", currencyName: "ZAR", currencyPattern: /R|ZAR/ },
+  { language: "az", locales: ["az-AZ"], timeZone: "Asia/Baku", currencyName: "AZN", currencyPattern: /₼|AZN/ },
+  { language: "hy", locales: ["hy-AM"], timeZone: "Asia/Yerevan", currencyName: "AMD", currencyPattern: /֏|AMD/ },
+  { language: "ka", locales: ["ka-GE"], timeZone: "Asia/Tbilisi", currencyName: "GEL", currencyPattern: /₾|GEL/ },
+  { language: "am", locales: ["am-ET"], timeZone: "Africa/Addis_Ababa", currencyName: "ETB", currencyPattern: /ብር|Br|ETB/ },
+  { language: "om", locales: ["om-ET"], timeZone: "Africa/Addis_Ababa", currencyName: "ETB", currencyPattern: /Br|ETB/ },
+  { language: "so", locales: ["so-SO"], timeZone: "Africa/Mogadishu", currencyName: "SOS", currencyPattern: /S|SOS/ },
+  { language: "rw", locales: ["rw-RW"], timeZone: "Africa/Kigali", currencyName: "RWF", currencyPattern: /RF|RWF/ },
+  { language: "ha", locales: ["ha-NG"], timeZone: "Africa/Lagos", currencyName: "NGN", currencyPattern: /₦|NGN/ },
+  { language: "ig", locales: ["ig-NG"], timeZone: "Africa/Lagos", currencyName: "NGN", currencyPattern: /₦|NGN/ },
+  { language: "yo", locales: ["yo-NG"], timeZone: "Africa/Lagos", currencyName: "NGN", currencyPattern: /₦|NGN/ },
+  { language: "zu", locales: ["zu-ZA"], timeZone: "Africa/Johannesburg", currencyName: "ZAR", currencyPattern: /R|ZAR/ },
+  { language: "as", locales: ["as-IN"], timeZone: "Asia/Kolkata", currencyName: "INR", currencyPattern: /₹|INR/ },
+  { language: "my", locales: ["my-MM"], timeZone: "Asia/Yangon", currencyName: "MMK", currencyPattern: /K|MMK/ },
+  { language: "km", locales: ["km-KH"], timeZone: "Asia/Phnom_Penh", currencyName: "KHR", currencyPattern: /៛|KHR|K/ },
+  { language: "lo", locales: ["lo-LA"], timeZone: "Asia/Vientiane", currencyName: "LAK", currencyPattern: /₭|LAK|K/ },
+  { language: "or", locales: ["or-IN"], timeZone: "Asia/Kolkata", currencyName: "INR", currencyPattern: /₹|INR/ },
+  { language: "ps", locales: ["ps-AF"], timeZone: "Asia/Kabul", currencyName: "AFN", currencyPattern: /؋|AFN/ },
+  { language: "sd", locales: ["sd-PK"], timeZone: "Asia/Karachi", currencyName: "PKR", currencyPattern: /Rs|PKR|₨/ },
+  { language: "ug", locales: ["ug-CN"], timeZone: "Asia/Urumqi", currencyName: "CNY", currencyPattern: /¥|￥|CNY|CN¥/ },
 ];
 
 if (/EUR|€|\$/.test(indianBudget) || !/(₹|INR)/.test(indianBudget)) {
@@ -270,12 +366,18 @@ if (/EUR|€|\$/.test(chineseNoAdsPrice) || !/[¥￥]|CNY|CN¥/.test(chineseNoAd
   errors.push(`Chinese market no-ads price must use CNY, got: ${chineseNoAdsPrice}`);
 }
 
+if (/EUR|€|\$/.test(persianIranBudget) || !/(ریال|IRR)/.test(persianIranBudget)) {
+  errors.push(`Persian Iranian market budget must use IRR, got: ${persianIranBudget}`);
+}
+
 for (const check of additionalMarketChecks) {
   const market = budgetMarketFor(check.language, { locales: check.locales, timeZone: check.timeZone });
   const budget = formatBudgetLabel("Up to 40 EUR", check.language, market);
   const noAdsPrice = formatNoAdsPrice(market);
+  const plusPrice = formatPlusPrice(market, "month");
 
-  const forbiddenCurrencyPattern = check.currencyName === "USD" ? /EUR|€/ : /EUR|€|\$/;
+  const forbiddenCurrencyPattern =
+    check.currencyName === "USD" ? /EUR|€/ : check.currencyName === "EUR" ? /\$/ : /EUR|€|\$/;
 
   if (forbiddenCurrencyPattern.test(budget) || !check.currencyPattern.test(budget)) {
     errors.push(`${check.language} market budget must use ${check.currencyName}, got: ${budget}`);
@@ -283,6 +385,10 @@ for (const check of additionalMarketChecks) {
 
   if (forbiddenCurrencyPattern.test(noAdsPrice) || !check.currencyPattern.test(noAdsPrice)) {
     errors.push(`${check.language} market no-ads price must use ${check.currencyName}, got: ${noAdsPrice}`);
+  }
+
+  if (forbiddenCurrencyPattern.test(plusPrice) || !check.currencyPattern.test(plusPrice)) {
+    errors.push(`${check.language} market Plus price must use ${check.currencyName}, got: ${plusPrice}`);
   }
 }
 

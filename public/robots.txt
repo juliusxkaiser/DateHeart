@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://czarletsgo.github.io/dateheart-web/sitemap.xml
+Sitemap: https://juliuskaiser.app/dateheart/sitemap.xml

@@ -57,8 +57,18 @@ assert(!mainSource.includes("<small>${count}</small>"), "Filter category choices
 assert(!mainSource.includes("filterPanelSummary.textContent = `${category} · ${count}`"), "Filter summary must not show idea counts.");
 assert(mainSource.includes('class="icon-button filter-action"'), "Filter action must stay in the top-left toolbar.");
 assert(!mainSource.includes('<button class="filter-action"'), "Filter action must not return as a large stage card.");
-assert(mainSource.includes("Capacitor.isNativePlatform()"), "Native platform detection must stay wired.");
-assert(mainSource.includes("elements.noAdsButton.hidden = IS_NATIVE_APP"), "Native builds must hide the web-only Stripe purchase action.");
+assert(mainSource.includes("Capacitor.getPlatform()"), "Native platform detection must stay wired.");
+assert(mainSource.includes("const SHOW_PLUS_ENTRY = true"), "DateHeart Pro entry must stay visible for native store purchases.");
+assert(mainSource.includes("elements.plusButton.hidden = !SHOW_PLUS_ENTRY"), "Pro purchase action visibility must stay controlled by SHOW_PLUS_ENTRY.");
+assert(mainSource.includes("purchaseStoreProduct(STORE_PRODUCTS.noAds)"), "Native no-ads purchase must use the app store billing product.");
+assert(mainSource.includes("buyPlus(STORE_PRODUCTS.proMonthly)"), "Native monthly Pro purchase must use the app store billing product.");
+assert(mainSource.includes("buyPlus(STORE_PRODUCTS.proYearly)"), "Native yearly Pro purchase must use the app store billing product.");
+
+const storePurchaseSource = await readFile("src/storePurchases.ts", "utf8");
+assert(storePurchaseSource.includes("capacitor-plugin-cdv-purchase"), "Native purchases must use the Capacitor store purchase plugin.");
+assert(storePurchaseSource.includes("dateheart_no_ads"), "Native no-ads product id must be configured.");
+assert(storePurchaseSource.includes("dateheart_pro_monthly"), "Native monthly Pro product id must be configured.");
+assert(storePurchaseSource.includes("dateheart_pro_yearly"), "Native yearly Pro product id must be configured.");
 
 try {
   await access("capacitor.config.ts");

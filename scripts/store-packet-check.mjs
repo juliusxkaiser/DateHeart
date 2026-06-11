@@ -12,6 +12,7 @@ const requiredFiles = [
   "store/metadata/web-listing.md",
   "public/support.html",
   "docs/STORE_COMPLIANCE.md",
+  "docs/STORE_CONSOLE_VALUES.md",
   "docs/STORE_RELEASE_INPUTS.md",
   "ios/App/App/PrivacyInfo.xcprivacy",
   "store/screenshots/app-store/iphone-69/01-home.png",

@@ -5,6 +5,8 @@ await mkdir("resources", { recursive: true });
 
 await sharp("store/assets/app-icon-1024.png")
   .resize(1024, 1024, { fit: "cover" })
+  .flatten({ background: "#c90432" })
+  .removeAlpha()
   .png()
   .toFile("resources/icon.png");
 

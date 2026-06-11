@@ -10,8 +10,9 @@ Free date-cue app for couples with a red animated 3D heart. The core interaction
 - Filter nach Kategorie, Budget und Dauer, inklusive `Unbegrenzt`
 - Getrennte Bereiche fuer History und Favorites
 - Info-Tafel ohne Date-Metadaten, Merken-Button oder Teilen-Button
+- DateHeart Pro ist fuer Web/Stripe und native In-App-Kaeufe vorbereitet: Monats-/Jahresabo, Werbefreiheit, Wochenplan, Challenges, Dateplanner, gemeinsame Favoriten und mehr Planungsmodi
 - ISO-639-1-Sprachkatalog mit 184 Sprachen plus US-English; 22 Sprachen sind als gepruefte Uebersetzungspakete auswaehlbar
-- Werbe-Banner und Interstitial bleiben im Code vorbereitet, sind aber deaktiviert
+- Native AdMob-Banner und Interstitials sind fuer Android/iOS verdrahtet; Web-Werbeplatzhalter bleiben standardmaessig deaktiviert
 - PWA-Manifest, Service Worker und eigenes SVG-App-Logo
 
 ## Entwicklung
@@ -117,7 +118,7 @@ Artefakte:
 
 Fuer Android Store-Uploads muss `android/key.properties` aus `android/key.properties.example` mit einer echten Play-Upload-Keystore-Konfiguration angelegt werden. Fuer iOS Store-Uploads fehlen noch Apple-Team, Bundle-Registrierung und Signing-Profil. Details stehen in `docs/NATIVE_DEPLOY.md`.
 
-In nativen Builds ist der web-only Stripe-Kauf fuer `DateHeart ohne Werbung` ausgeblendet, bis Apple IAP und Google Play Billing implementiert sind.
+In nativen Builds laufen `DateHeart Pro` und `DateHeart ohne Werbung` ueber Apple In-App Purchase bzw. Google Play Billing. Die Store Product IDs muessen in App Store Connect und Play Console angelegt werden: `dateheart_pro_monthly`, `dateheart_pro_yearly`, `dateheart_no_ads`.
 
 Store-Screenshots fuer Apple/Google koennen mit laufender Preview erzeugt werden:
 
@@ -148,13 +149,15 @@ Auf einem echten Vercel-/Netlify-Backend mit gesetzten Stripe-Secrets:
 APP_URL=https://deine-domain.example/ REQUIRE_CONFIGURED_PAYMENT=true npm run api:smoke
 ```
 
-Der Smoke-Test prueft `/api/health`, Checkout-Start, Session-Validation und Restore-Validation. Ohne Stripe-Secrets ist ein kontrolliertes `payment_unavailable` korrekt; mit `REQUIRE_CONFIGURED_PAYMENT=true` muss Checkout eine Stripe-URL liefern.
+Der Smoke-Test prueft `/api/health`, No-Ads-Checkout, Pro-Checkout, Session-Validation und Restore-Validation. Ohne Stripe-Secrets ist ein kontrolliertes `payment_unavailable` korrekt; mit `REQUIRE_CONFIGURED_PAYMENT=true` muss Checkout eine Stripe-URL liefern.
 
 Hinweis: Das private Source-Repo kann je nach GitHub-Plan/Runner-Verfuegbarkeit keine automatischen Push-Actions ausfuehren. Darum ist die CI-Workflow-Datei auf manuellen `workflow_dispatch` gestellt; die verbindlichen Checks laufen lokal ueber `npm run deploy:today` und `npm run api:smoke`.
 
 ## Zahlung
 
 Der einmalige Kauf `DateHeart ohne Werbung` laeuft ueber Stripe Checkout. Deutschland/EUR ist auf `4,99 EUR` gesetzt; fuer wichtige Maerkte gibt es eigene lokale Preise, z. B. USD, GBP, PLN, INR, JPY, KRW, SEK, CZK, UAH, VND und THB. Nicht konfigurierte Waehrungen fallen sicher auf EUR zurueck.
+
+DateHeart Pro ist als Abo vorbereitet: `1,99 EUR` monatlich oder `14,99 EUR` jaehrlich in Deutschland/EUR. Pro schaltet die Premium-Planung frei und entfernt Werbung, solange das Abo aktiv ist. Im Web laeuft Pro ueber Stripe Checkout; in iOS/Android ueber native Store-Kaeufe.
 
 Noetige Umgebung:
 
@@ -185,7 +188,7 @@ VITE_APP_SHARE_URL=https://dein-app-oder-store-link.example/
 
 Vercel nutzt `/api/create-checkout-session`, `/api/verify-checkout-session`, `/api/restore-purchase` und `/api/stripe-webhook`. Netlify nutzt die entsprechenden Funktionen unter `/.netlify/functions/...`. GitHub Pages braucht wegen fehlender Serverless-Funktionen ein externes Backend ueber die `VITE_*_ENDPOINT` Variablen.
 
-Der Webhook sollte in Stripe auf `checkout.session.completed` und `checkout.session.async_payment_succeeded` zeigen. Nach erfolgreichem Kauf wird der Stripe-Kunde mit `dateheart_no_ads=true` markiert; dadurch kann ein Kauf spaeter per Checkout-E-Mail wiederhergestellt werden.
+Der Webhook sollte in Stripe auf `checkout.session.completed`, `checkout.session.async_payment_succeeded` und `customer.subscription.deleted` zeigen. Nach erfolgreichem Einmalkauf wird der Stripe-Kunde mit `dateheart_no_ads=true` markiert. Nach erfolgreichem Pro-Abo wird zusaetzlich `dateheart_plus=true` gesetzt; dadurch kann ein Web-Kauf oder aktives Web-Abo spaeter per Checkout-E-Mail wiederhergestellt werden.
 
 Der genaue Stripe-Setup-Ablauf liegt in `docs/STRIPE_SECRETS.md`.
 

@@ -1,16 +1,17 @@
 # DateHeart Store Release Inputs
 
-These values must come from the app owner before final App Store and Google Play submission.
+Current owner-controlled values and blockers before final App Store and Google Play submission.
 
 ## Legal
 
-- Legal operator name or company name
-- Street and house number
-- Postal code and city
-- Country
-- Support email: `support@dateheart.app`
-- Responsible person for the German Impressum
-- VAT ID or business register details, if applicable
+- Temporary legal operator: Julius Kaiser
+- Temporary street and house number: Karl-Rothe-Str. 4
+- Temporary postal code and city: 04105 Leipzig
+- Country: Germany
+- Support email: `ceo@juliuskaiser.app`
+- Business email: `ceo@juliuskaiser.app`
+- Responsible person for the German Impressum: Julius Kaiser
+- VAT ID or business register details: not entered yet
 
 The public files currently contain a temporary private operator address and should be updated once the business address is available:
 
@@ -26,24 +27,25 @@ Keep `noindex` on those pages until the final business address is in place and t
 - App Store Connect app record for bundle id `com.czarletsgo.dateheart`
 - Distribution certificate and provisioning access
 - Privacy details answers
-- Support email: `support@dateheart.app`
-- Support URL: `https://czarletsgo.github.io/dateheart-web/support.html`
-- Privacy Policy URL: `https://czarletsgo.github.io/dateheart-web/privacy.html`
-- Marketing URL: `https://czarletsgo.github.io/dateheart-web/`
-- Copy the prepared answers from `docs/STORE_COMPLIANCE.md` if the submitted build is still the free native release without ads, analytics, login or native payments
+- Support email: `ceo@juliuskaiser.app`
+- Support URL: `https://juliuskaiser.app/dateheart/support.html`
+- Privacy Policy URL: `https://juliuskaiser.app/dateheart/privacy.html`
+- Marketing URL: `https://juliuskaiser.app/dateheart/`
+- Copy the prepared answers from `docs/STORE_COMPLIANCE.md` if the submitted build is still the free native release with Google AdMob ads, no separate analytics, no login and no native payments
 
 ## Google Play
 
+- Google Play Console organization account waits for the D-U-N-S number request
 - Google Play Console app record for package `com.czarletsgo.dateheart`
 - Play App Signing enabled
-- Upload key stored outside Git
+- Upload key exists locally and is ignored by Git
 - Data Safety answers
 - Content rating questionnaire
-- Support email: `support@dateheart.app`
-- Support URL: `https://czarletsgo.github.io/dateheart-web/support.html`
-- Privacy policy URL: `https://czarletsgo.github.io/dateheart-web/privacy.html`
-- Copy the prepared answers from `docs/STORE_COMPLIANCE.md` if the submitted build is still the free native release without ads, analytics, login or native payments
+- Support email: `ceo@juliuskaiser.app`
+- Support URL: `https://juliuskaiser.app/dateheart/support.html`
+- Privacy policy URL: `https://juliuskaiser.app/dateheart/privacy.html`
+- Copy the prepared answers from `docs/STORE_COMPLIANCE.md` if the submitted build is still the free native release with Google AdMob ads, no separate analytics, no login and no native payments
 
 ## Recommended First Store Release
 
-Ship the native apps as free apps first. The web-only Stripe no-ads purchase is already hidden in native builds. Add Apple In-App Purchase and Google Play Billing later if the no-ads unlock should be sold inside the native apps.
+Ship the native apps as free downloads. Enable the native no-ads and DateHeart Pro products only after `dateheart_no_ads`, `dateheart_pro_monthly` and `dateheart_pro_yearly` are created, approved and tested in App Store Connect / Play Console.

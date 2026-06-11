@@ -1,5 +1,13 @@
 import Stripe from "stripe";
-import { PRODUCT_ID, PRODUCT_NAME, stripeUnitAmountForCurrency } from "./pricing.mjs";
+import {
+  PLUS_PRODUCT_ID,
+  PLUS_PRODUCT_NAME,
+  PRODUCT_ID,
+  PRODUCT_NAME,
+  checkoutProducts,
+  stripeSubscriptionUnitAmountForCurrency,
+  stripeUnitAmountForCurrency,
+} from "./pricing.mjs";
 
 export const JSON_BODY_LIMIT_BYTES = 16 * 1024;
 export const WEBHOOK_BODY_LIMIT_BYTES = 1024 * 1024;
@@ -154,68 +162,146 @@ function appendCheckoutParams(url, params) {
   return `${url}${separator}${params}`;
 }
 
+function checkoutProductFromBody(value) {
+  const product = typeof value === "string" ? value.trim() : "";
+  if (product === checkoutProducts.plusMonthly || product === "plus_monthly") {
+    return {
+      entitlement: "plus",
+      interval: "month",
+      product: PLUS_PRODUCT_ID,
+      requestProduct: checkoutProducts.plusMonthly,
+    };
+  }
+  if (product === checkoutProducts.plusYearly || product === "plus_yearly") {
+    return {
+      entitlement: "plus",
+      interval: "year",
+      product: PLUS_PRODUCT_ID,
+      requestProduct: checkoutProducts.plusYearly,
+    };
+  }
+
+  return {
+    entitlement: "no_ads",
+    interval: undefined,
+    product: PRODUCT_ID,
+    requestProduct: checkoutProducts.noAds,
+  };
+}
+
 export async function createCheckoutSession(body = {}, context = {}) {
   const { origin, hostOrigin } = context;
   assertOriginAllowed(origin, hostOrigin);
   assertRateLimit(context, "checkout");
 
-  const price = stripeUnitAmountForCurrency(body.currency);
+  const checkoutProduct = checkoutProductFromBody(body.product);
+  const price =
+    checkoutProduct.entitlement === "plus"
+      ? stripeSubscriptionUnitAmountForCurrency(body.currency, checkoutProduct.interval)
+      : stripeUnitAmountForCurrency(body.currency);
   const returnUrl = cleanReturnUrl(body.returnUrl, origin, hostOrigin);
   const successUrl = appendCheckoutParams(returnUrl, "checkout=success&session_id={CHECKOUT_SESSION_ID}");
   const cancelUrl = appendCheckoutParams(returnUrl, "checkout=cancelled");
   const metadata = {
-    product: PRODUCT_ID,
+    product: checkoutProduct.product,
+    entitlement: checkoutProduct.entitlement,
+    plan: checkoutProduct.interval ?? "",
     currency: price.currency,
     locale: String(body.locale || ""),
     region: String(body.region || ""),
   };
 
-  const session = await stripe().checkout.sessions.create({
-    mode: "payment",
-    submit_type: "pay",
+  const lineItem =
+    checkoutProduct.entitlement === "plus"
+      ? {
+          quantity: 1,
+          price_data: {
+            currency: price.currency.toLowerCase(),
+            unit_amount: price.unitAmount,
+            recurring: {
+              interval: price.interval,
+            },
+            product_data: {
+              name: PLUS_PRODUCT_NAME,
+              description:
+                price.interval === "year"
+                  ? "Annual DateHeart Pro subscription with premium planning tools and ad-free use."
+                  : "Monthly DateHeart Pro subscription with premium planning tools and ad-free use.",
+              metadata: {
+                product: PLUS_PRODUCT_ID,
+              },
+            },
+          },
+        }
+      : {
+          quantity: 1,
+          price_data: {
+            currency: price.currency.toLowerCase(),
+            unit_amount: price.unitAmount,
+            product_data: {
+              name: PRODUCT_NAME,
+              description: "One-time purchase to remove future ad placements in DateHeart.",
+              metadata: {
+                product: PRODUCT_ID,
+              },
+            },
+          },
+        };
+
+  const sessionOptions = {
+    mode: checkoutProduct.entitlement === "plus" ? "subscription" : "payment",
     locale: "auto",
     billing_address_collection: "auto",
-    customer_creation: "always",
     automatic_tax: {
       enabled: process.env.STRIPE_AUTOMATIC_TAX === "true",
     },
     client_reference_id: typeof body.clientReferenceId === "string" ? body.clientReferenceId.slice(0, 200) : undefined,
-    line_items: [
-      {
-        quantity: 1,
-        price_data: {
-          currency: price.currency.toLowerCase(),
-          unit_amount: price.unitAmount,
-          product_data: {
-            name: PRODUCT_NAME,
-            description: "One-time purchase to remove future ad placements in DateHeart.",
-            metadata: {
-              product: PRODUCT_ID,
-            },
-          },
-        },
-      },
-    ],
+    line_items: [lineItem],
     metadata,
-    payment_intent_data: {
-      metadata,
-    },
     success_url: successUrl,
     cancel_url: cancelUrl,
-  });
+  };
+
+  if (checkoutProduct.entitlement === "plus") {
+    sessionOptions.subscription_data = { metadata };
+  } else {
+    sessionOptions.submit_type = "pay";
+    sessionOptions.customer_creation = "always";
+    sessionOptions.payment_intent_data = { metadata };
+  }
+
+  const session = await stripe().checkout.sessions.create(sessionOptions);
 
   return {
     amount: price.amount,
     currency: price.currency,
+    product: checkoutProduct.requestProduct,
     sessionId: session.id,
     url: session.url,
   };
 }
 
 async function markPaidCustomer(session) {
-  const isDateHeartPurchase = session.metadata?.product === PRODUCT_ID;
+  const product = session.metadata?.product;
   const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id;
-  if (!isDateHeartPurchase || session.payment_status !== "paid" || !customerId) return false;
+  if (!customerId) return false;
+
+  if (product === PLUS_PRODUCT_ID && session.payment_status === "paid") {
+    await stripe().customers.update(customerId, {
+      metadata: {
+        dateheart_plus: "true",
+        dateheart_plus_plan: session.metadata?.plan || "",
+        dateheart_plus_subscription: typeof session.subscription === "string" ? session.subscription : session.subscription?.id || "",
+        dateheart_product: PLUS_PRODUCT_ID,
+        dateheart_last_checkout_session: session.id,
+      },
+    });
+
+    return true;
+  }
+
+  const isDateHeartPurchase = product === PRODUCT_ID;
+  if (!isDateHeartPurchase || session.payment_status !== "paid") return false;
 
   await stripe().customers.update(customerId, {
     metadata: {
@@ -236,14 +322,31 @@ export async function verifyCheckoutSession(sessionId, context = {}) {
   assertRateLimit(context, "verify");
 
   const session = await stripe().checkout.sessions.retrieve(sessionId);
-  const isDateHeartPurchase = session.metadata?.product === PRODUCT_ID;
-  const paid = Boolean(isDateHeartPurchase && session.payment_status === "paid");
+  const isNoAdsPurchase = session.metadata?.product === PRODUCT_ID;
+  const isPlusPurchase = session.metadata?.product === PLUS_PRODUCT_ID;
+  let activePlusSubscription = false;
+
+  if (isPlusPurchase && session.payment_status === "paid") {
+    const subscriptionId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
+    if (subscriptionId) {
+      const subscription = await stripe().subscriptions.retrieve(subscriptionId);
+      activePlusSubscription = ["active", "trialing", "past_due"].includes(subscription.status);
+    } else {
+      activePlusSubscription = true;
+    }
+  }
+
+  const paid = Boolean((isNoAdsPurchase && session.payment_status === "paid") || activePlusSubscription);
   if (paid) await markPaidCustomer(session);
 
   return {
     amountTotal: session.amount_total,
     currency: session.currency?.toUpperCase() ?? null,
+    noAds: Boolean(isNoAdsPurchase && paid) || Boolean(isPlusPurchase && paid),
     paid,
+    plus: Boolean(activePlusSubscription),
+    plan: session.metadata?.plan ?? null,
+    product: session.metadata?.product ?? null,
     paymentStatus: session.payment_status,
     status: session.status,
   };
@@ -269,19 +372,41 @@ export async function restorePurchaseByEmail(emailInput, context = {}) {
   const customers = await stripe().customers.list({ email, limit: 10 });
 
   for (const customer of customers.data) {
-    if (customer.metadata?.dateheart_no_ads === "true") {
-      return { paid: true, restored: true };
+    let noAds = customer.metadata?.dateheart_no_ads === "true";
+    let plus = false;
+
+    const subscriptions = await stripe().subscriptions.list({ customer: customer.id, status: "all", limit: 100 });
+    const activePlusSubscription = subscriptions.data.find(
+      (subscription) =>
+        subscription.metadata?.product === PLUS_PRODUCT_ID && ["active", "trialing", "past_due"].includes(subscription.status),
+    );
+
+    if (activePlusSubscription) {
+      plus = true;
+      noAds = true;
+      await stripe().customers.update(customer.id, {
+        metadata: {
+          dateheart_plus: "true",
+          dateheart_plus_plan: activePlusSubscription.metadata?.plan || "",
+          dateheart_plus_subscription: activePlusSubscription.id,
+          dateheart_product: PLUS_PRODUCT_ID,
+        },
+      });
     }
 
     const sessions = await checkoutSessionsForCustomer(customer.id);
     const paidSession = sessions.find((session) => session.metadata?.product === PRODUCT_ID && session.payment_status === "paid");
     if (paidSession) {
       await markPaidCustomer(paidSession);
-      return { paid: true, restored: true };
+      noAds = true;
+    }
+
+    if (noAds || plus) {
+      return { paid: noAds, noAds, plus, restored: true };
     }
   }
 
-  return { paid: false, restored: false };
+  return { paid: false, noAds: false, plus: false, restored: false };
 }
 
 export async function handleStripeWebhook(rawBody, signature) {
@@ -294,6 +419,19 @@ export async function handleStripeWebhook(rawBody, signature) {
 
   if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     await markPaidCustomer(event.data.object);
+  }
+
+  if (event.type === "customer.subscription.deleted" && event.data.object?.metadata?.product === PLUS_PRODUCT_ID) {
+    const subscription = event.data.object;
+    const customerId = typeof subscription.customer === "string" ? subscription.customer : subscription.customer?.id;
+    if (customerId) {
+      await stripe().customers.update(customerId, {
+        metadata: {
+          dateheart_plus: "false",
+          dateheart_plus_subscription: "",
+        },
+      });
+    }
   }
 
   return {

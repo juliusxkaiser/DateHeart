@@ -5,27 +5,30 @@
 ### App Name
 DateHeart
 
+### Category
+Lifestyle
+
 ### Short Description
-Tap the heart for concrete date ideas.
+Date ideas for couples, ready in one tap.
 
 ### Full Description
-DateHeart gives couples a fast way to choose something to do together.
+Stop spending date night deciding what to do. DateHeart gives couples practical, ready-to-use date ideas with one simple tap.
 
-Tap the animated heart and get a concrete date idea with budget, duration, preparation notes and tags. Use filters for category, budget and time, save favorites, and keep a local history of recent ideas.
+Tap the animated 3D heart and get a concrete plan with a category, budget, duration, preparation notes and helpful tags. Whether you want something cozy at home, a food plan, a walk, a creative activity, a deep conversation, a rainy-day backup or a bigger mini adventure, DateHeart helps you move from "what should we do?" to "let's do this."
 
-DateHeart is designed for quick planning: open the app, tap once, and get an idea you can actually use.
+Use filters to narrow ideas by category, budget and time. Save favorites for later and revisit your recent picks in your local history, so good ideas do not disappear after one tap.
 
-No account is required for the core app. The first native release is free, ad-supported and does not include the web-only Stripe no-ads purchase.
+DateHeart is built for real-life couples: quick enough for tonight, flexible enough for weekends, and concrete enough to actually follow. The core app is free and does not require an account.
 
 ### Tags
 Dating, Lifestyle, Relationships, Planning
 
 ### Review Notes
-DateHeart is a free practical date idea app. No login is required. The native Android build uses Google AdMob for ads and does not expose the web-only Stripe no-ads purchase; any future native digital unlock will use Google Play Billing.
+DateHeart is a free practical date idea app. No login is required. The native Android build uses Google AdMob for ads and does not expose web-only Stripe purchases or subscriptions; any future native digital unlock will use Google Play Billing.
 
-Support contact: support@dateheart.app
-Support URL: https://czarletsgo.github.io/dateheart-web/support.html
-Privacy Policy URL: https://czarletsgo.github.io/dateheart-web/privacy.html
+Support contact: ceo@juliuskaiser.app
+Support URL: https://juliuskaiser.app/dateheart/support.html
+Privacy Policy URL: https://juliuskaiser.app/dateheart/privacy.html
 
 ### Data Safety Draft
 - Location: DateHeart does not request device location; Google Mobile Ads can use IP address to estimate approximate location.
@@ -54,17 +57,17 @@ Tippe auf das animierte Herz und erhalte eine konkrete Date-Idee mit Budget, Dau
 
 DateHeart ist fuer schnelle Planung gemacht: App oeffnen, einmal tippen und eine Idee bekommen, die ihr direkt nutzen koennt.
 
-Fuer die Kernfunktionen ist kein Account erforderlich. Der erste native Release ist kostenlos, werbefinanziert und enthaelt keinen Web-Stripe-Kauf.
+Fuer die Kernfunktionen ist kein Account erforderlich. Der erste native Release ist kostenlos, werbefinanziert und enthaelt keine Web-Stripe-Kaeufe oder Web-Stripe-Abos.
 
 ### Tags
 Dating, Lifestyle, Beziehungen, Planung
 
 ### Review Notes
-DateHeart ist eine kostenlose praktische Date-Ideen-App. Es ist kein Login erforderlich. Der native Android-Build nutzt Google AdMob fuer Werbung und zeigt den web-only Stripe-Kauf nicht an; ein spaeterer nativer digitaler Unlock wird Google Play Billing nutzen.
+DateHeart ist eine kostenlose praktische Date-Ideen-App. Es ist kein Login erforderlich. Der native Android-Build nutzt Google AdMob fuer Werbung und zeigt keine web-only Stripe-Kaeufe oder Web-Stripe-Abos an; ein spaeterer nativer digitaler Unlock wird Google Play Billing nutzen.
 
-Support-Kontakt: support@dateheart.app
-Support-URL: https://czarletsgo.github.io/dateheart-web/support.html
-Datenschutz-URL: https://czarletsgo.github.io/dateheart-web/privacy.html
+Support-Kontakt: ceo@juliuskaiser.app
+Support-URL: https://juliuskaiser.app/dateheart/support.html
+Datenschutz-URL: https://juliuskaiser.app/dateheart/privacy.html
 
 ### Data Safety Draft
 - Standort: DateHeart fragt keinen Geraetestandort ab; Google Mobile Ads kann die IP-Adresse nutzen, um einen ungefaehren Standort abzuschaetzen.
