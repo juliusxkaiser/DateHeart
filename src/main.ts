@@ -5627,7 +5627,12 @@ function nativeStoreErrorMessage() {
 }
 
 function canUseLocalPurchaseTesting(errorMessage: string) {
-  return ENABLE_LOCAL_PURCHASE_TESTING && isStoreProductUnavailable(errorMessage);
+  if (!ENABLE_LOCAL_PURCHASE_TESTING) return false;
+  // In test builds (Simulator without StoreKit products), the store can also
+  // report the product as "not found" (e.g. cdv-purchase #400). Treat that the
+  // same as "not available" so the local purchase flow can be demoed/recorded.
+  const lower = errorMessage.toLowerCase();
+  return isStoreProductUnavailable(errorMessage) || lower.includes("not found") || lower.includes("#400");
 }
 
 function applyStoreEntitlement(entitlement: StoreEntitlement, productId: StoreProductId) {
