@@ -24,6 +24,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-5889615344998591~7633631365</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier is used to show you more relevant ads and measure ad performance.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
