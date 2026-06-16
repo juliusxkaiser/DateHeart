@@ -20,7 +20,12 @@ if (!existsSync(resolve(root, androidManifestPath))) {
 } else {
   const manifest = read(androidManifestPath);
   const permissions = [...manifest.matchAll(/<uses-permission[^>]+android:name="([^"]+)"/g)].map((match) => match[1]);
-  const allowedPermissions = new Set(["android.permission.INTERNET"]);
+  // AdMob (added 2026-06-15) legitimately requires AD_ID + ACCESS_NETWORK_STATE.
+  const allowedPermissions = new Set([
+    "android.permission.INTERNET",
+    "com.google.android.gms.permission.AD_ID",
+    "android.permission.ACCESS_NETWORK_STATE",
+  ]);
   const unexpectedPermissions = permissions.filter((permission) => !allowedPermissions.has(permission));
 
   if (!permissions.includes("android.permission.INTERNET")) {
@@ -41,18 +46,25 @@ if (!existsSync(resolve(root, infoPlistPath))) {
   fail(`${infoPlistPath} is missing`);
 } else {
   const infoPlist = read(infoPlistPath);
+  // These usage keys are NOT expected for these apps and would indicate scope creep.
+  // NSUserTrackingUsageDescription is intentionally excluded: AdMob/ATT (added 2026-06-15)
+  // requires it, so it is expected (and checked for presence below) rather than rejected.
   const sensitiveUsageKeys = [
     "NSCameraUsageDescription",
     "NSMicrophoneUsageDescription",
     "NSLocationWhenInUseUsageDescription",
     "NSLocationAlwaysAndWhenInUseUsageDescription",
     "NSPhotoLibraryUsageDescription",
-    "NSUserTrackingUsageDescription",
   ];
   const presentUsageKeys = sensitiveUsageKeys.filter((key) => infoPlist.includes(`<key>${key}</key>`));
 
   if (presentUsageKeys.length > 0) {
     fail(`Unexpected iOS sensitive usage keys: ${presentUsageKeys.join(", ")}`);
+  }
+
+  // ATT requires a tracking usage description string; if AdMob is present, this must exist.
+  if (!infoPlist.includes("<key>NSUserTrackingUsageDescription</key>")) {
+    fail("iOS NSUserTrackingUsageDescription is missing (required for AdMob/ATT)");
   }
 
   if (!infoPlist.includes("<key>GADApplicationIdentifier</key>")) {
