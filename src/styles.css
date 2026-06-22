@@ -21,6 +21,9 @@
 
 * {
   box-sizing: border-box;
+  /* iOS WKWebView zeigt sonst ein dunkles Kaestchen beim Tippen auf
+     interaktive Elemente (Herz/Birne/Wuerfel). Transparent = weg. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -274,6 +277,14 @@ button:focus-visible {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.heart-button:focus,
+.heart-button:active,
+.heart-button:focus-visible {
+  background: transparent;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .heart-button.is-pulsing {
