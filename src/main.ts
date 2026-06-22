@@ -1075,20 +1075,20 @@ const plusCopy: Record<LanguageCode, PlusCopy> = {
     button: "DateHeart Pro",
     label: "Pro",
     title: "DateHeart Pro",
-    body: "Pro entfernt Werbung und schaltet die volle Planungsebene fuer Paare frei.",
-    plusIntro: "Pro enthaelt Werbefreiheit, Dateplanner, Wochenplaene, Date-Challenges, gemeinsame Favoriten und exklusive Ideenpakete.",
+    body: "Pro entfernt Werbung und schaltet die volle Planungsebene für Paare frei.",
+    plusIntro: "Pro enthält Werbefreiheit, Dateplanner, Wochenpläne, Date-Challenges, gemeinsame Favoriten und exklusive Ideenpakete.",
     monthly: "Monatlich",
-    yearly: "Jaehrlich",
+    yearly: "Jährlich",
     monthSuffix: "/ Monat",
     yearSuffix: "/ Jahr",
     subscribeMonthly: "Monatlich starten",
-    subscribeYearly: "Jaehrlich starten",
+    subscribeYearly: "Jährlich starten",
     active: "Pro aktiv",
-    nativeBilling: "In-App-Kauf ueber App Store oder Google Play.",
-    nativeNoAdsBilling: "Einmaliger In-App-Kauf ueber App Store oder Google Play.",
-    statusNote: "Web-Checkout laeuft ueber Stripe. iOS und Android nutzen native In-App-Kaeufe.",
-    statusStarting: "Sicherer Pro-Kauf wird geoeffnet...",
-    statusVerifying: "Pro-Abo wird geprueft...",
+    nativeBilling: "In-App-Kauf über App Store oder Google Play.",
+    nativeNoAdsBilling: "Einmaliger In-App-Kauf über App Store oder Google Play.",
+    statusNote: "Web-Checkout läuft über Stripe. iOS und Android nutzen native In-App-Käufe.",
+    statusStarting: "Sicherer Pro-Kauf wird geöffnet...",
+    statusVerifying: "Pro-Abo wird geprüft...",
     statusConfirmed: "DateHeart Pro ist aktiv.",
     statusFailed: "Pro-Kauf konnte nicht gestartet werden. Bitte erneut versuchen.",
     statusUnavailable: "Zahlung ist eingebaut, aber dieses Store-Produkt ist noch nicht live. Lege die Product IDs in App Store Connect oder Play Console an und gib sie frei.",
@@ -4624,7 +4624,7 @@ const plusPlannerPromptCopy: Record<LanguageCode, { intro: string; outro: string
     outro: "Return schedule, preparation, budget, timing, one challenge and a short share message.",
   },
   de: {
-    intro: "Erstelle einen konkreten DateHeart Pro Date-Plan fuer ein Paar.",
+    intro: "Erstelle einen konkreten DateHeart Pro Date-Plan für ein Paar.",
     outro: "Gib Ablauf, Vorbereitung, Budget, Zeitfenster, eine Challenge und eine kurze Nachricht zum Teilen aus.",
   },
   pl: {
@@ -5096,6 +5096,7 @@ app.innerHTML = `
         <h2 id="languageTitle">Language</h2>
         <button class="close-button" id="closeLanguageButton" type="button" aria-label="Close" title="Close">${icon("x")}</button>
       </div>
+      <p class="language-subtitle" id="languageSubtitle"></p>
       <div class="language-list" id="languageList"></div>
     </section>
   </div>
@@ -5318,6 +5319,7 @@ const elements = {
   languagePanel: document.querySelector<HTMLDivElement>("#languagePanel")!,
   closeLanguageButton: document.querySelector<HTMLButtonElement>("#closeLanguageButton")!,
   languageTitle: document.querySelector<HTMLHeadingElement>("#languageTitle")!,
+  languageSubtitle: document.querySelector<HTMLParagraphElement>("#languageSubtitle")!,
   languageList: document.querySelector<HTMLDivElement>("#languageList")!,
   adBanner: document.querySelector<HTMLElement>("#adBanner")!,
   adBannerLabel: document.querySelector<HTMLElement>("#adBannerLabel")!,
@@ -5350,10 +5352,24 @@ function normalizeFilters(value: IdeaFilters): IdeaFilters {
   };
 }
 
-function loadLanguage() {
+function detectDeviceLanguage(): LanguageCode {
+  // First run (no saved choice): match the device language so users see the
+  // app in their own language instead of always-English. navigator.languages
+  // is ordered by preference; try full tag (de-AT) then base (de).
+  const prefs = navigator.languages?.length ? navigator.languages : [navigator.language];
+  for (const pref of prefs) {
+    if (!pref) continue;
+    if (isLanguageCode(pref)) return pref;
+    const base = pref.split("-")[0];
+    if (isLanguageCode(base)) return base;
+  }
+  return "en";
+}
+
+function loadLanguage(): LanguageCode {
   const saved = localStorage.getItem(STORAGE_KEYS.language);
   if (isLanguageCode(saved)) return saved;
-  return "en";
+  return detectDeviceLanguage();
 }
 
 function uiCopy() {
@@ -6832,6 +6848,14 @@ function renderLanguageList() {
       `,
     )
     .join("");
+
+  const availableCount = languages.filter((language) => language.available).length;
+  const base = activeLanguage.split("-")[0];
+  elements.languageSubtitle.textContent =
+    base === "de" ? `${availableCount} Sprachen verfügbar`
+    : base === "es" ? `${availableCount} idiomas disponibles`
+    : base === "fr" ? `${availableCount} langues disponibles`
+    : `${availableCount} languages available`;
 
   elements.languageList.querySelectorAll<HTMLButtonElement>(".language-row").forEach((button) => {
     button.addEventListener("click", () => {
