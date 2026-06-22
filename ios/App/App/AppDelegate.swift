@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import AVFoundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,7 +8,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Route WebAudio to the .playback category so UI sounds are NOT silenced
+        // by the hardware mute switch (WKWebView defaults to the ambient category →
+        // silent when the ring/silent switch is on). .mixWithOthers keeps short UI
+        // ticks from killing the user's background music.
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            NSLog("AVAudioSession setup failed: \(error)")
+        }
         return true
     }
 

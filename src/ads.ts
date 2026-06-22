@@ -199,7 +199,15 @@ async function initializeNativeAds() {
         consentInfo = await adMob.showConsentForm();
       }
 
-      state.canRequestAds = consentInfo.canRequestAds || testAds;
+      // Ads may be requested when consent is OBTAINED *or* simply NOT REQUIRED
+      // (most non-EEA users, and any setup where no UMP message is published yet).
+      // Relying on canRequestAds alone left it false on every device when no consent
+      // form exists in the AdMob dashboard → zero ads, no error. Treat "not required"
+      // as permission to serve.
+      const consentNotRequired =
+        consentInfo.status === adMobModule!.AdmobConsentStatus.NOT_REQUIRED ||
+        (!consentInfo.isConsentFormAvailable && consentInfo.privacyOptionsRequirementStatus !== "REQUIRED");
+      state.canRequestAds = consentInfo.canRequestAds || consentNotRequired || testAds;
       state.privacyOptionsAvailable = consentInfo.privacyOptionsRequirementStatus === "REQUIRED";
       console.info("DateHeart AdMob consent checked.", {
         consentCanRequestAds: consentInfo.canRequestAds,
