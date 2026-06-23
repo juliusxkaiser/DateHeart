@@ -1,82 +1,82 @@
 {
-  "identifier" : "A1B2C3D4-DATE-HEART-STOREKIT-CONFIG",
-  "nonRenewingSubscriptions" : [],
-  "products" : [
+  "identifier": "A1B2C3D4-DATE-HEART-STOREKIT-CONFIG",
+  "nonRenewingSubscriptions": [],
+  "products": [
     {
-      "displayPrice" : "0.99",
-      "familyShareable" : false,
-      "internalID" : "DH00000001",
-      "localizations" : [
+      "displayPrice": "3.99",
+      "familyShareable": false,
+      "internalID": "DH00000001",
+      "localizations": [
         {
-          "description" : "Remove all ads from DateHeart.",
-          "displayName" : "Ad-Free",
-          "locale" : "en_US"
+          "description": "Remove all ads from DateHeart.",
+          "displayName": "Ad-Free",
+          "locale": "en_US"
         }
       ],
-      "productID" : "dateheart_no_ads",
-      "referenceName" : "Ad-Free",
-      "type" : "NonConsumable"
+      "productID": "dateheart_no_ads",
+      "referenceName": "Ad-Free",
+      "type": "NonConsumable"
     }
   ],
-  "settings" : {
-    "_failTransactionsEnabled" : false,
-    "_locale" : "en_US",
-    "_storefront" : "DEU",
-    "_storeKitErrors" : []
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "en_US",
+    "_storefront": "DEU",
+    "_storeKitErrors": []
   },
-  "subscriptionGroups" : [
+  "subscriptionGroups": [
     {
-      "id" : "DHGRP00001",
-      "localizations" : [],
-      "name" : "dateheart_pro",
-      "subscriptions" : [
+      "id": "DHGRP00001",
+      "localizations": [],
+      "name": "dateheart_pro",
+      "subscriptions": [
         {
-          "adHocOffers" : [],
-          "codeOffers" : [],
-          "displayPrice" : "1.99",
-          "familyShareable" : false,
-          "groupNumber" : 1,
-          "internalID" : "DH00000002",
-          "introductoryOffer" : null,
-          "localizations" : [
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "1.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "DH00000002",
+          "introductoryOffer": null,
+          "localizations": [
             {
-              "description" : "DateHeart Pro — ad-free, Dateplanner, weekly plans, date challenges, shared favorites and exclusive idea packs.",
-              "displayName" : "DateHeart Pro (Monthly)",
-              "locale" : "en_US"
+              "description": "DateHeart Pro \u2014 ad-free, Dateplanner, weekly plans, date challenges, shared favorites and exclusive idea packs.",
+              "displayName": "DateHeart Pro (Monthly)",
+              "locale": "en_US"
             }
           ],
-          "productID" : "dateheart_pro_monthly",
-          "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "DateHeart Pro Monthly",
-          "subscriptionGroupID" : "DHGRP00001",
-          "type" : "RecurringSubscription"
+          "productID": "dateheart_pro_monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "DateHeart Pro Monthly",
+          "subscriptionGroupID": "DHGRP00001",
+          "type": "RecurringSubscription"
         },
         {
-          "adHocOffers" : [],
-          "codeOffers" : [],
-          "displayPrice" : "14.99",
-          "familyShareable" : false,
-          "groupNumber" : 1,
-          "internalID" : "DH00000003",
-          "introductoryOffer" : null,
-          "localizations" : [
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "14.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "DH00000003",
+          "introductoryOffer": null,
+          "localizations": [
             {
-              "description" : "DateHeart Pro — ad-free, Dateplanner, weekly plans, date challenges, shared favorites and exclusive idea packs.",
-              "displayName" : "DateHeart Pro (Yearly)",
-              "locale" : "en_US"
+              "description": "DateHeart Pro \u2014 ad-free, Dateplanner, weekly plans, date challenges, shared favorites and exclusive idea packs.",
+              "displayName": "DateHeart Pro (Yearly)",
+              "locale": "en_US"
             }
           ],
-          "productID" : "dateheart_pro_yearly",
-          "recurringSubscriptionPeriod" : "P1Y",
-          "referenceName" : "DateHeart Pro Yearly",
-          "subscriptionGroupID" : "DHGRP00001",
-          "type" : "RecurringSubscription"
+          "productID": "dateheart_pro_yearly",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "DateHeart Pro Yearly",
+          "subscriptionGroupID": "DHGRP00001",
+          "type": "RecurringSubscription"
         }
       ]
     }
   ],
-  "version" : {
-    "major" : 4,
-    "minor" : 0
+  "version": {
+    "major": 4,
+    "minor": 0
   }
 }
