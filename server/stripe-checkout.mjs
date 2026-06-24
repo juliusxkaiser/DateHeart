@@ -16,7 +16,11 @@ let stripeClient;
 const rateBuckets = new Map();
 const rateLimits = {
   checkout: { max: 20, windowMs: 5 * 60 * 1000 },
-  restore: { max: 8, windowMs: 10 * 60 * 1000 },
+  // restore = Premium per Email wiederherstellen. Niedrig gehalten gegen
+  // Email-Enumeration (Angreifer probiert fremde Emails durch). ponytail:
+  // echter Schutz wäre Email-OTP, aber Impact ist begrenzt (Gratis-Premium,
+  // kein Geld-Diebstahl) — striktes Rate-Limit reicht als Mitigation.
+  restore: { max: 4, windowMs: 15 * 60 * 1000 },
   verify: { max: 80, windowMs: 10 * 60 * 1000 },
 };
 
