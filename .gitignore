@@ -9,3 +9,9 @@ build/
 coverage/
 .playwright-cli/
 android/.idea/
+
+# Lokale Setup-Scripts mit Credentials (nie committen)
+supabase-setup.mjs
+hostinger-dns.mjs
+.env
+.env.local
