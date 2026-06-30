@@ -5709,7 +5709,7 @@ class HeartScene {
 
     this.heart = new THREE.Mesh(heartGeometry, this.heartMaterial);
     this.heart.rotation.x = -0.2;
-    this.heart.rotation.z = Math.PI;
+    this.heart.rotation.z = 0;
     this.scene.add(this.heart);
 
     this.scene.add(new THREE.HemisphereLight(0xfff2f4, 0x7a102a, 1.85));
@@ -5738,24 +5738,30 @@ class HeartScene {
   }
 
   private createHeartGeometry() {
-    const points: THREE.Vector2[] = [];
-    const steps = 160;
+    // Real Bézier heart (Three.js canonical shape). The old sin³ point-sampling
+    // produced a degenerate tail/kink at the bottom tip (visible on the live
+    // app). This shape is symmetric by construction: two mirror Béziers meeting
+    // at one clean bottom tip. Authored at scale 16 (x right, y up, tip near
+    // origin), scaled by 0.16 to match the previous size; already upright, so
+    // the constructor/animate rotation.z is 0 (was Math.PI to flip the old one).
+    const s = 0.16;
+    const shape = new THREE.Shape();
+    shape.moveTo(0, 6 * s);
+    shape.bezierCurveTo(0, 6.3 * s, -1.2 * s, 9 * s, -4 * s, 9 * s);
+    shape.bezierCurveTo(-8.5 * s, 9 * s, -9 * s, 3.7 * s, -9 * s, 3.2 * s);
+    shape.bezierCurveTo(-9 * s, -0.8 * s, -5.5 * s, -4.3 * s, 0, -8 * s);
+    shape.bezierCurveTo(5.5 * s, -4.3 * s, 9 * s, -0.8 * s, 9 * s, 3.2 * s);
+    shape.bezierCurveTo(9 * s, 3.7 * s, 8.5 * s, 9 * s, 4 * s, 9 * s);
+    shape.bezierCurveTo(1.2 * s, 9 * s, 0, 6.3 * s, 0, 6 * s);
+    shape.closePath();
 
-    for (let index = 0; index <= steps; index += 1) {
-      const t = (Math.PI * 2 * index) / steps;
-      const x = 16 * Math.sin(t) ** 3;
-      const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-      points.push(new THREE.Vector2(x * 0.16, -y * 0.16));
-    }
-
-    const shape = new THREE.Shape(points);
     const geometry = new THREE.ExtrudeGeometry(shape, {
       depth: 0.9,
       bevelEnabled: true,
       bevelThickness: 0.25,
       bevelSize: 0.22,
       bevelSegments: 16,
-      curveSegments: 24,
+      curveSegments: 48,
     });
 
     geometry.center();
@@ -5780,7 +5786,7 @@ class HeartScene {
 
     this.heart.rotation.y = Math.sin(elapsed * 0.9) * 0.22 + pulse * 0.56 * this.pulseDirection;
     this.heart.rotation.x = -0.2 + Math.sin(elapsed * 1.35) * 0.06 - pulse * 0.18 + hit * 0.1;
-    this.heart.rotation.z = Math.PI + pulse * 0.1 * this.pulseDirection;
+    this.heart.rotation.z = pulse * 0.1 * this.pulseDirection;
     this.heart.position.x = pulse * 0.18 * this.pulseDirection;
     this.heart.scale.setScalar(0.78 + pulse * 0.24 + Math.sin(elapsed * 2.1) * 0.01 + Math.max(hit, 0) * 0.03);
     this.heartMaterial.emissiveIntensity = 0.12 + pulse * 0.52;
