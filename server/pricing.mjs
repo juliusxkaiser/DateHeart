@@ -92,9 +92,9 @@ export const zeroDecimalCurrencies = new Set([
 ]);
 
 const plusMonthlyOverrides = {
-  EUR: 1.99,
-  GBP: 1.99,
-  USD: 1.99,
+  EUR: 2.99,
+  GBP: 2.99,
+  USD: 2.99,
 };
 
 const plusYearlyOverrides = {

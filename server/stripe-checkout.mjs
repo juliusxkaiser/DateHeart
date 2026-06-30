@@ -267,7 +267,10 @@ export async function createCheckoutSession(body = {}, context = {}) {
   };
 
   if (checkoutProduct.entitlement === "plus") {
-    sessionOptions.subscription_data = { metadata };
+    sessionOptions.subscription_data = {
+      metadata,
+      ...(checkoutProduct.interval === "year" ? {} : { trial_period_days: 3 }),
+    };
   } else {
     sessionOptions.submit_type = "pay";
     sessionOptions.customer_creation = "always";
