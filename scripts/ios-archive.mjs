@@ -28,7 +28,7 @@ run("xcodebuild", [
   "-project",
   "ios/App/App.xcodeproj",
   "-scheme",
-  "App",
+  "DateHeart",
   "-configuration",
   "Release",
   "-destination",

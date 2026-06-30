@@ -62,9 +62,12 @@ if (!existsSync(resolve(root, infoPlistPath))) {
     fail(`Unexpected iOS sensitive usage keys: ${presentUsageKeys.join(", ")}`);
   }
 
-  // ATT requires a tracking usage description string; if AdMob is present, this must exist.
-  if (!infoPlist.includes("<key>NSUserTrackingUsageDescription</key>")) {
-    fail("iOS NSUserTrackingUsageDescription is missing (required for AdMob/ATT)");
+  // DateHeart serves non-personalized AdMob ads (npa:true) and does NOT track
+  // users, so NSUserTrackingUsageDescription must be ABSENT — Apple rejects the
+  // binary with BINARY_INDICATES_APP_TRACKS_USERS if the key is present without
+  // actual tracking (see commit 05ba43b). Flag it if it sneaks back in.
+  if (infoPlist.includes("<key>NSUserTrackingUsageDescription</key>")) {
+    fail("iOS NSUserTrackingUsageDescription present but app does not track (triggers BINARY_INDICATES_APP_TRACKS_USERS); remove it");
   }
 
   if (!infoPlist.includes("<key>GADApplicationIdentifier</key>")) {
