@@ -5341,7 +5341,14 @@ function loadJson<T>(key: string, fallback: T): T {
 }
 
 function saveJson(key: string, value: unknown) {
-  localStorage.setItem(key, JSON.stringify(value));
+  // try/catch: localStorage.setItem wirft bei Quota (voll) oder Safari-Private-Mode.
+  // Ohne Guard würde ein Wurf hier den revealLocked-Reset (im setTimeout) überspringen
+  // → Haupt-Button ewig gesperrt. Best-effort: Persistenz-Fehler nie den Flow killen.
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* Speicher voll / deaktiviert — Wert bleibt nur im Memory, App läuft weiter */
+  }
 }
 
 function normalizeFilters(value: IdeaFilters): IdeaFilters {
@@ -5617,6 +5624,8 @@ let revealLocked = false;
 let noAdsPurchased = localStorage.getItem(STORAGE_KEYS.noAds) === "true";
 let plusActive = localStorage.getItem(STORAGE_KEYS.plus) === "true";
 let paymentBusy = false;
+// Bounded-Retry-Zähler für verifyCheckoutSession bei Webhook-Lag (Bug: ewig 'Verifying').
+let verifyRetryCount = 0;
 let paymentStatusKey: PaymentStatusKey = "paymentNote";
 let plusStatus: PlusStatus = plusActive ? "confirmed" : "note";
 let restoreOpen = false;
@@ -5675,7 +5684,17 @@ function ensureNativeStorePurchases() {
 }
 
 function randomIndex(length: number) {
-  return crypto.getRandomValues(new Uint32Array(1))[0] % length;
+  // Rejection sampling gegen Modulo-Bias: uint32 % length bevorzugt untere Indizes,
+  // wenn length 2^32 nicht teilt. Wir verwerfen Werte im "Rest"-Bereich, damit jeder
+  // Index exakt gleich wahrscheinlich ist. length<=0 → 0 (statt NaN via % 0).
+  if (length <= 0) return 0;
+  const limit = Math.floor(0x100000000 / length) * length;
+  const buf = new Uint32Array(1);
+  let value = 0;
+  do {
+    value = crypto.getRandomValues(buf)[0];
+  } while (value >= limit);
+  return value % length;
 }
 
 class HeartScene {
@@ -6290,6 +6309,21 @@ function pickPlusIdeas(count: number, filterOverride?: IdeaFilters) {
     if (!picks.some((entry) => entry.id === candidate.id)) picks.push(candidate);
   }
 
+  // Backfill: enger Filter → wenige distinct families → obige Runde liefert evtl. <count
+  // (Wochenplan zeigt sonst <7 Tage). Zweite Runde lockert die family-Regel, nur id-unique,
+  // bis count erreicht ist oder der Pool erschoepft ist. ponytail: einfacher linearer scan reicht.
+  if (picks.length < count) {
+    const pickedIds = new Set(picks.map((entry) => entry.id));
+    let backfillGuard = 0;
+    while (picks.length < count && pickedIds.size < source.length && backfillGuard < source.length * 4) {
+      backfillGuard += 1;
+      const candidate = source[randomIndex(source.length)];
+      if (pickedIds.has(candidate.id)) continue;
+      pickedIds.add(candidate.id);
+      picks.push(candidate);
+    }
+  }
+
   return picks;
 }
 
@@ -6679,6 +6713,7 @@ async function verifyCheckoutSession(sessionId: string, showStatus: boolean, per
     const payload = await getJsonFromFirstAvailable(endpoints);
     if (payload.plus === true) {
       setPlusActive(sessionId);
+      verifyRetryCount = 0;
       paymentStatusKey = "paymentConfirmed";
     } else if (payload.paid === true || payload.noAds === true) {
       setNoAdsPurchased();
@@ -6689,6 +6724,18 @@ async function verifyCheckoutSession(sessionId: string, showStatus: boolean, per
         paymentStatusKey = "paymentVerifying";
         plusStatus = "verifying";
         localStorage.setItem(STORAGE_KEYS.pendingCheckoutSession, sessionId);
+        // Webhook-Lag: die Session ist noch nicht als bezahlt markiert (Stripe braucht
+        // ein paar Sekunden). Ohne Retry haengt der User ewig auf "Verifying" bis er
+        // manuell neu laedt. Bounded poll: bis zu 5x alle 3s, dann aufgeben (User kann
+        // spaeter per Reload / restore selbst nachziehen). ponytail: fixe 3s/5x reichen.
+        if (persistPending && verifyRetryCount < 5) {
+          verifyRetryCount += 1;
+          window.setTimeout(() => {
+            if (localStorage.getItem(STORAGE_KEYS.pendingCheckoutSession) === sessionId && !plusActive) {
+              void verifyCheckoutSession(sessionId, false);
+            }
+          }, 3000);
+        }
       } else {
         clearPlusActive();
         paymentStatusKey = "paymentFailed";
@@ -6767,7 +6814,7 @@ async function restoreNoAdsPurchase() {
   }
 }
 
-function handleCheckoutReturn() {
+async function handleCheckoutReturn() {
   const params = new URLSearchParams(window.location.search);
   const checkoutState = params.get("checkout");
   const sessionId = params.get("session_id");
@@ -6786,14 +6833,17 @@ function handleCheckoutReturn() {
     return;
   }
 
+  // Sequenziell (await) statt parallel: beide teilen paymentBusy/plusStatus/paymentStatusKey.
+  // Parallel wuerde die 2. (persistPending=false) in der not-paid-branch clearPlusActive()
+  // rufen und ein gerade von der 1. bestaetigtes Plus wieder loeschen. Race → falscher Status.
   const pendingSessionId = localStorage.getItem(STORAGE_KEYS.pendingCheckoutSession);
   if (pendingSessionId && !adsRemoved()) {
-    void verifyCheckoutSession(pendingSessionId, false);
+    await verifyCheckoutSession(pendingSessionId, false);
   }
 
   const plusSessionId = localStorage.getItem(STORAGE_KEYS.plusSession);
   if (plusActive && plusSessionId) {
-    void verifyCheckoutSession(plusSessionId, false, false);
+    await verifyCheckoutSession(plusSessionId, false, false);
   }
 }
 
@@ -7138,7 +7188,7 @@ onBannerVisibilityChange(setNativeBannerLayout);
 applyTranslations();
 renderFilters();
 renderLanguageList();
-handleCheckoutReturn();
+void handleCheckoutReturn();
 handleSharedLink();
 updateCounter();
 void ensureNativeStorePurchases().finally(() => applyTranslations());
