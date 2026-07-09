@@ -73,7 +73,9 @@ function hostOrigin(request) {
 
 async function handleApi(request, response, url) {
   const context = {
-    clientIp: clientIpFromHeaders(request.headers),
+    // request.socket.remoteAddress = echte Peer-IP (unspoofbar bei self-host),
+    // gewinnt gegen client-gesetzte x-forwarded-for-Header im Rate-Limiter.
+    clientIp: clientIpFromHeaders(request.headers, request.socket?.remoteAddress),
     hostOrigin: hostOrigin(request),
     origin: request.headers.origin,
   };

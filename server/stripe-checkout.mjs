@@ -81,7 +81,14 @@ export function originFromHeaders(headers = {}) {
   return headers.origin || headers.Origin;
 }
 
-export function clientIpFromHeaders(headers = {}) {
+export function clientIpFromHeaders(headers = {}, trustedIp) {
+  // trustedIp = die echte Socket-Peer-Adresse (self-host node-server). Wenn
+  // vorhanden, gewinnt sie IMMER — der Client kann sie nicht faelschen.
+  // x-forwarded-for u.ae. sind vom Client frei setzbar → nur Fallback, wenn
+  // keine vertrauenswuerdige Peer-IP da ist (z.B. serverless hinter Proxy).
+  // ponytail: perfekter Schutz waere plattform-spezifisch (Vercel real-ip);
+  // Impact ist begrenzt (nur Gratis-Premium/Enumeration, kein Geld) → best-effort.
+  if (typeof trustedIp === "string" && trustedIp.trim()) return trustedIp.trim();
   const forwarded = headers["x-forwarded-for"] || headers["X-Forwarded-For"];
   if (typeof forwarded === "string" && forwarded.trim()) return forwarded.split(",")[0].trim();
   return headers["x-real-ip"] || headers["X-Real-IP"] || headers["cf-connecting-ip"] || headers["CF-Connecting-IP"] || undefined;
