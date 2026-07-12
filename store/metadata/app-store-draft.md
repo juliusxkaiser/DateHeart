@@ -6,10 +6,10 @@
 DateHeart
 
 ### Subtitle
-Date ideas for couples
+Date Night Ideas for Couples
 
 ### Promotional Text
-Tap the heart for a concrete date plan with budget, timing, prep notes and favorites.
+Stuck on plans? Tap the heart for a fun date idea with budget, timing and prep — perfect for date night.
 
 ### Description
 DateHeart helps couples decide what to do together without scrolling through vague lists. Tap the animated heart and get a practical date idea with budget, duration, preparation notes and tags.
@@ -19,7 +19,7 @@ Use filters for category, budget and time, save favorites, and revisit recent id
 No account is required for the core app. The first native release is free, ad-supported and does not include web-only Stripe purchases or subscriptions.
 
 ### Keywords
-date,dates,couples,love,relationship,ideas,planner,romance,activities
+date,night,couple,plan,idea,romantic,activity,thing,do,relationship,love,together
 
 ### Review Notes
 DateHeart is a free date idea generator for couples. No account is required. The native iOS build uses Google AdMob for ads and does not expose web-only Stripe purchases or subscriptions; any future native digital unlock will use Apple In-App Purchase.
@@ -45,10 +45,10 @@ No user-generated public content, gambling, explicit content or unrestricted web
 DateHeart
 
 ### Subtitle
-Date-Ideen fuer Paare
+Date-Ideen für Paare & Abende
 
 ### Promotional Text
-Tippe aufs Herz und bekomme eine konkrete Date-Idee mit Budget, Dauer, Vorbereitung und Favoriten.
+Keine Idee? Tippe aufs Herz und bekomme eine Date-Idee mit Budget, Zeit und Vorbereitung — perfekt für den Abend.
 
 ### Description
 DateHeart hilft Paaren, schnell eine passende Idee fuer gemeinsame Zeit zu finden. Tippe auf das animierte Herz und erhalte eine konkrete Date-Idee mit Budget, Dauer, Vorbereitung und Tags.
@@ -58,7 +58,7 @@ Nutze Filter fuer Kategorie, Budget und Zeit, speichere Favoriten und finde kuer
 Fuer die Kernfunktionen ist kein Account erforderlich. Der erste native Release ist kostenlos, werbefinanziert und enthaelt keine Web-Stripe-Kaeufe oder Web-Stripe-Abos.
 
 ### Keywords
-date,dates,paare,liebe,beziehung,ideen,planung,romantik,aktivitaeten
+date,abend,paar,idee,plan,romantisch,zweit,beziehung,unternehmung,liebe,zusammen
 
 ### Review Notes
 DateHeart ist eine kostenlose Date-Ideen-App fuer Paare. Es ist kein Account erforderlich. Der native iOS-Build nutzt Google AdMob fuer Werbung und zeigt keine web-only Stripe-Kaeufe oder Web-Stripe-Abos an; ein spaeterer nativer digitaler Unlock wird Apple In-App Purchase nutzen.
