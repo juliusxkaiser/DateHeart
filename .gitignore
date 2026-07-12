@@ -15,3 +15,4 @@ supabase-setup.mjs
 hostinger-dns.mjs
 .env
 .env.local
+fastlane/play-service-account.json

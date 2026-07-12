@@ -1,0 +1,8 @@
+# Fastlane Supplyfile — DateHeart. Lädt NUR Metadata/Texte hoch (keine APK/AAB).
+package_name("com.czarletsgo.dateheart")
+metadata_path("./fastlane/metadata/android")
+skip_upload_apk(true)
+skip_upload_aab(true)
+skip_upload_images(true)
+skip_upload_screenshots(true)
+# track: production o. via CLI --track. Für reine Text-Updates production ok.
